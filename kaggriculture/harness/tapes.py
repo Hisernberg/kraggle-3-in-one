@@ -31,12 +31,26 @@ def build(paths, out):
         seed = d["info"].get("seed")
         names = d["info"].get("TeamNames") or ["p0", "p1"]
         steps = d["steps"]
+        # world events to force in re-simulation: shop unlocks and weed spawns per player per day
+        shops_by_day, weeds_by_day = {}, [{}, {}]
+        for day in range(30):
+            s_end = day * 24 + 23
+            if s_end + 1 >= len(steps):
+                break
+            o0, o1 = steps[s_end][0]["observation"], steps[s_end + 1][0]["observation"]
+            shops_by_day[day] = list(o1["town"]["unlocked_shops"])
+            for p in range(2):
+                t0, t1 = o0["farms"][p]["tiles"], o1["farms"][p]["tiles"]
+                w = [(x, y) for y in range(10) for x in range(10)
+                     if t0[y][x] is None and isinstance(t1[y][x], dict) and t1[y][x].get("kind") == "WEED"]
+                weeds_by_day[p][day] = w
         for i in range(2):
             acts = [steps[t + 1][i].get("action") for t in range(len(steps) - 1)]
             dd = os.path.join(out, f"{ep}_{i}")
             os.makedirs(dd, exist_ok=True)
             json.dump({"episode": ep, "seed": seed, "player": i, "team": names[i], "opponent": names[1 - i],
-                       "rewards": d.get("rewards"), "actions": acts}, open(os.path.join(dd, "tape.json"), "w"))
+                       "rewards": d.get("rewards"), "actions": acts,
+                       "shops_by_day": shops_by_day, "weeds_by_day": weeds_by_day[i]}, open(os.path.join(dd, "tape.json"), "w"))
             open(os.path.join(dd, "main.py"), "w").write(TAPE_AGENT)
             made.append(dd)
     return made
