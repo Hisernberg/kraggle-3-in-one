@@ -120,7 +120,10 @@ the maximum score; H6 was below the +0.0001 adoption bar, so the base for single
      full10 is training; `H8_reg10.zip` should be ready around 03:00. Adopt if Δ vs H7 ≥ +0.0001 and within 0.0002 of +0.00026.
    - Submit only after H7 has scored and landed within 0.0002 of its local ΔJ (the H7 → H8 step is regular rows only).
    - If the container restarts, re-run the same command: training skips models already saved.
-3. **Remaining slots:** only probes that answer an open question.
+3. **H9** (third boosted seed `hold11/full11`, seed 8, density model up to 15000 rounds). Starts automatically after H8's
+   pipeline (`/home/user/work/chain_hold11.sh`, log `/home/user/work/H9_reg11.log`); ETA about 10:00.
+   - Gated against the two-seed scheme (b3 = equal thirds, b3w = hold11 at 0.5).
+4. **Remaining slots:** only probes that answer an open question.
 
 **Paused lines (27 Sep evidence):**
 - **Ongoing:** 4 of the last 5 changes lost on March despite passing every local test (G8 passed the full gate).
