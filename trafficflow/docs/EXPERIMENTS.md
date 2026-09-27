@@ -373,3 +373,27 @@ Holdout J with regular cells = mean(hold3, 4, 5, 7) and the blackout rows below 
   All passed plain CV, and H1b and G8 passed the shift-weighted and footprint checks too. Only v5 (+0.016) transferred.
   The March ongoing windows reward something our CV does not measure. Until that is understood, ongoing edits
   have no reliable local gate.
+
+## Task 1 regular booster hold9 (2026-09-27; H7 for 28 Sep)
+Regular-cell models only (`TFB_KINDS=reg`, `reg_member.sh`), seed 6, 300k rows per panel (the other members use
+150k), lr 0.05, up to 6000 rounds, no ramp features. Single-model holdout RMSE against hold7:
+
+| model | hold7 (best iter) | hold9 (best iter) | change |
+|---|---|---|---|
+| speed | 1.5067 (970) | 1.4388 (3649) | −4.5% |
+| flow per lane | 30.16 (1110) | 29.37 (4533) | −2.6% |
+| density | 0.5558 (3000, cap) | 0.5167 (5999, cap) | −7.0%, still at the cap |
+
+Holdout J, blackout rows fixed (= hold7) so only the regular change is measured (`t1_weighted_eval regs`):
+
+| regular rows | D12_I405_N | D12_I5_S | D7_I10_W | D7_I405_S | mean J | ΔJ | panels up |
+|---|---|---|---|---|---|---|---|
+| mean(hold3, 4, 5, 7) (= H5w) | 0.39474 | 0.39008 | 0.39140 | 0.38527 | 0.39037 | – | – |
+| add hold9 (equal weight) | 0.39502 | 0.39043 | 0.39161 | 0.38558 | 0.39066 | +0.00029 | 4 |
+| **0.5·hold9 + 0.5·mean(old)** | **0.39526** | **0.39081** | **0.39174** | **0.38579** | **0.39090** | **+0.00053** | **4** |
+| hold9 alone | 0.39520 | 0.39084 | 0.39150 | 0.38574 | 0.39082 | +0.00045 | 4 |
+
+- The regular speed RMSE of the ensemble drops from 1.248 / 1.732 / 1.311 / 2.044 to 1.218 / 1.692 / 1.301 / 2.002.
+- More data plus a slower learning rate beats seed averaging: one boosted model is better than the 4-seed ensemble.
+- Next steps are more boosted seeds, and more rounds for the density model, which is still at the cap.
+- H7 = H5w with regular rows = 0.5·full9 + 0.5·mean(full3, 4, 5, 7). Expected LB about +0.0005, since regular-cell changes transfer exactly.
