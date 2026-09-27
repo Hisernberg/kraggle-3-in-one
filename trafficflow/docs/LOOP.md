@@ -13,10 +13,10 @@ This loop works only on the traffic project:
 - it never edits another competition's folder or the shared root files;
 - data and artefacts stay outside the repository (`/home/user/data`, `/home/user/cache`, `/home/user/work`).
 
-> **Research: at most one agent at a time (since 2026-09-27).**
-> - The user stopped two parallel agents on 25 Sep, then said "continue". So research resumes with
->   one agent at a time, and local shell jobs (model training, builds) need no agent at all.
-> - If the user stops an agent again, treat it as a firm "no agents".
+> **No research agents (firm, since 2026-09-27 04:50 UTC).**
+> - The user stopped a research agent again right after it started.
+> - Research continues only as local shell jobs (training, builds, evaluations) and as analysis in the
+>   main session.
 
 ## Schedule (UTC; Routines fire into this session)
 | Time | Job |
@@ -114,7 +114,7 @@ Adoption rules are fixed before submitting:
    - LB probe: adopt if Δ ≥ +0.0005. If it loses, ongoing label work is closed.
 3. **H5** (Task 1 ensemble plus a ramp-feature member, `ens3457`). Training now; `seed_member.sh` applies the J gate automatically.
    - Adopt if Δ ≥ +0.0001 and it matches the local ΔJ within 0.0002.
-4. **Task 2 onset with ramp-flow features** (agent), if it passes the Task 2 gate. Adopt if Δ ≥ +0.0005.
+4. **Task 2 onset with ramp-flow features.** The agent was stopped by the user; this would need to be done in the main session.
 5. **Remaining slots:** only probes that answer an open question.
 
 **New data source (27 Sep): on/off-ramp flows.** Neither task used them.
