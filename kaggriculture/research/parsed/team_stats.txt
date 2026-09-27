@@ -1,0 +1,476 @@
+####################################################################################################
+team: Vadim Vasilenko
+n: 16
+wins: 11
+final_mean: 108337.9
+margin_mean: 2463.4
+margin_pct: 2.6
+opps: Counter({'Unknown Mother-Goose': 3, 'DSM': 2, 'Azat Akhtyamov': 2, 'M & M & P & Q': 2, 'Majkel1337': 1, 'Boey': 1, 'Anton Tikhonov': 1, 'KawattaTaido': 1, 'Fourth Quadrant': 1, 'DECEM': 1, 'Yizhou': 1})
+buys_per_game: {'WHEAT': 288.5, 'CARROT': 54.1, 'STRAWBERRY': 32.0, 'MELON': 11.7, 'GOOSE': 8.6, 'COW': 6.1, 'SHEEP': 5.8}
+first_buy_day_min: {'COW': 0, 'WHEAT': 0, 'SHEEP': 0, 'MELON': 0, 'STRAWBERRY': 2, 'GOOSE': 6, 'CARROT': 9}
+buys_by_window_per_game: {'d0': {'WHEAT': 20.2, 'MELON': 6.0, 'SHEEP': 3.0, 'COW': 2.0}, 'd1-2': {'WHEAT': 9.4, 'MELON': 2.0, 'STRAWBERRY': 2.0, 'COW': 1.0}, 'd3-5': {'WHEAT': 8.2, 'STRAWBERRY': 6.4, 'COW': 2.0, 'SHEEP': 0.6}, 'd6-10': {'WHEAT': 127.1, 'STRAWBERRY': 15.7, 'GOOSE': 8.6, 'MELON': 3.7, 'SHEEP': 1.2, 'CARROT': 1.1, 'COW': 0.9}, 'd11-20': {'WHEAT': 68.9, 'CARROT': 17.6, 'STRAWBERRY': 7.9, 'SHEEP': 0.9, 'COW': 0.1}, 'd21+': {'WHEAT': 54.7, 'CARROT': 35.3}}
+land: [(((6, 1000), (8, 2000)), 16)]
+land_day_by_price: {1000: 6.1, 2000: 8.3, 4000: None}
+n_quadrants_mean: 3
+hires_by_day_mean: [5, 3, 5, 5, 6, 5.4, 9, 7.4, 10.1, 9.6, 11.2, 10.6, 10.4, 10.1, 9.9, 11, 11.6, 10.7, 11.4, 11.2, 10.8, 11.1, 11.5, 10.8, 11, 11, 11.1, 10.8, 10.2, 9]
+hire_cost_mean: 4859.1
+revenue_per_game: {'STRAWBERRY': 37657, 'WHEAT': 16869, 'WOOL': 16430, 'MELON': 14238, 'EGG': 13513, 'MILK': 13369, 'FERTILIZER': 12744, 'CARROT': 7390}
+units_per_game: {'WHEAT': 505, 'EGG': 304, 'STRAWBERRY': 239, 'FERTILIZER': 233, 'CARROT': 172, 'MILK': 145, 'WOOL': 120, 'MELON': 70}
+avg_price: {'WHEAT': 33.4, 'FERTILIZER': 54.7, 'WOOL': 136.4, 'MILK': 92.3, 'MELON': 203.2, 'EGG': 44.4, 'STRAWBERRY': 157.3, 'CARROT': 42.8}
+price_vs_base: {'WHEAT': 1.34, 'FERTILIZER': 0.55, 'WOOL': 0.68, 'MILK': 0.58, 'MELON': 0.81, 'EGG': 0.89, 'STRAWBERRY': 1.31, 'CARROT': 1.22}
+spend_per_game: {'BUY_PRODUCT:WHEAT': 4237, 'BUY_SEED:STRAWBERRY': 3200, 'BUY_ANIMAL:SHEEP': 2875, 'BUY_ANIMAL:GOOSE': 2588, 'BUY_ANIMAL:COW': 2425, 'BUY_SEED:WHEAT': 1671, 'BUY_SEED:CARROT': 1081, 'BUY_SEED:MELON': 935}
+sell_sizes: {'CARROT:1': 3, 'CARROT:10+': 138, 'CARROT:2-3': 24, 'CARROT:4-9': 107, 'EGG:1': 8, 'EGG:2-3': 84, 'EGG:4-9': 687, 'FERTILIZER:1': 544, 'FERTILIZER:10+': 61, 'FERTILIZER:2-3': 673, 'FERTILIZER:4-9': 145, 'MELON:10+': 23, 'MELON:4-9': 141, 'MILK:1': 20, 'MILK:2-3': 361, 'MILK:4-9': 289, 'STRAWBERRY:1': 19, 'STRAWBERRY:10+': 34, 'STRAWBERRY:2-3': 500, 'STRAWBERRY:4-9': 460, 'WHEAT:1': 92, 'WHEAT:10+': 412, 'WHEAT:2-3': 51, 'WHEAT:4-9': 378, 'WOOL:1': 120, 'WOOL:10+': 3, 'WOOL:2-3': 323, 'WOOL:4-9': 224}
+sell_orders_per_game: 370.2
+sells_near_opp_frac: 0.7
+premium_units_by_hour: [645, 964, 122, 304, 215, 639, 408, 144, 56, 1086, 267, 160, 229, 1060, 121, 113, 93, 1047, 122, 28, 50, 961, 197, 165]
+final_tiles_mean: {'EMPTY': 49.4, 'LOCKED': 25.0, 'GOOSE': 8.4, 'STRAWBERRY': 5.4, 'COW': 4.6, 'PASTURE_EMPTY': 3.4, 'WEED': 3.2, 'SHEEP': 0.4, 'COOP_EMPTY': 0.1, 'WHEAT': 0.1}
+tiles_by_day_mean: {0: {'WHEAT': 12.0, 'MELON': 6.0, 'SHEEP': 3.0, 'COW': 2.0, 'EMPTY': 2.0}, 1: {'WHEAT': 12.0, 'MELON': 8.0, 'SHEEP': 3.0, 'COW': 2.0}, 2: {'WHEAT': 9.0, 'MELON': 8.0, 'COW': 3.0, 'SHEEP': 3.0, 'STRAWBERRY': 2.0}, 3: {'MELON': 8.0, 'STRAWBERRY': 5.8, 'WHEAT': 4.2, 'COW': 3.8, 'SHEEP': 3.2}, 5: {'STRAWBERRY': 8.2, 'MELON': 8.0, 'COW': 5.0, 'SHEEP': 3.6, 'WHEAT': 0.2}, 7: {'STRAWBERRY': 20.8, 'MELON': 11.7, 'COW': 5.5, 'SHEEP': 4.8, 'WHEAT': 3.8, 'GOOSE': 3.4, 'EMPTY': 0.1}, 10: {'WHEAT': 25.5, 'STRAWBERRY': 23.8, 'GOOSE': 8.6, 'COW': 5.9, 'MELON': 5.7, 'SHEEP': 4.8, 'CARROT': 0.4, 'EMPTY': 0.3}, 15: {'STRAWBERRY': 31.8, 'WHEAT': 15.6, 'GOOSE': 8.6, 'COW': 6.1, 'SHEEP': 5.6, 'MELON': 3.7, 'CARROT': 3.6, 'EMPTY': 0.2}, 20: {'WHEAT': 25.6, 'STRAWBERRY': 23.2, 'GOOSE': 8.4, 'CARROT': 5.9, 'SHEEP': 5.6, 'COW': 5.4, 'EMPTY': 0.5, 'WEED': 0.2, 'PASTURE_EMPTY': 0.1, 'COOP_EMPTY': 0.1}, 25: {'WHEAT': 28.1, 'CARROT': 20.1, 'GOOSE': 8.4, 'STRAWBERRY': 8.1, 'COW': 4.9, 'SHEEP': 3.6, 'PASTURE_EMPTY': 1.1, 'EMPTY': 0.6, 'WEED': 0.2}}
+money_by_day_mean: {0: 7, 1: 132, 2: 49, 3: 10, 5: 398, 7: 321, 10: 9287, 15: 30811, 20: 62557, 25: 83233, 28: 100465}
+end_shed_mean: {'FERTILIZER': 0.7, 'CARROT': 0.1, 'EGG': 0.6, 'WHEAT': 1.3}
+unit_actions_per_game: {'WATER': 1097, 'NORTH': 968, 'WEST': 900, 'SOUTH': 615, 'EAST': 589, 'HARVEST': 534, 'COLLECT_FERTILIZER': 456, 'CARE': 377, 'FEED': 374, 'PASS': 310, 'PLANT': 267, 'FERTILIZE': 219, 'PICKUP': 184, 'DROP': 132, 'PLACE': 49, 'DIG': 30, 'BUILD_PASTURE': 12, 'BUILD_COOP': 9}
+wheat_bought_units: 121.4
+fert_bought_units: 0
+t0: [('[[0, "BUY_PRODUCT", 5, 136], [1, "SELL", 1, 28]]', 9), ('[[0, "BUY_PRODUCT", 5, 139], [1, "SELL", 1, 28]]', 3), ('[[0, "BUY_PRODUCT", 5, 133], [1, "SELL", 1, 29]]', 1)]
+day0_market_first6: [("[['BUY_ANIMAL', 'COW', 1], ['BUY_PRODUCT', 'WHEAT', 5], ['BUY_ANIMAL', 'SHEEP', 1], ['BUY_ANIMAL', 'SHEEP', 1], ['BUY_ANIMAL', 'SHEEP', 1]] | [['SELL', 'WHEAT', 1], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'COW', 1], ['HIRE']] | [['SELL', 'WHEAT', 1]]", 16)]
+####################################################################################################
+team: KawattaTaido
+n: 11
+wins: 8
+final_mean: 97502.4
+margin_mean: 4407.1
+margin_pct: 5.4
+opps: Counter({'M & M & P & Q': 2, 'Fourth Quadrant': 2, 'Pii': 1, 'Anton Tikhonov': 1, 'Azat Akhtyamov': 1, 'mtmr_s1': 1, 'We wanna be tomatos': 1, 'Just A game on your lips': 1, 'Vadim Vasilenko': 1})
+buys_per_game: {'WHEAT': 291.8, 'CARROT': 102.2, 'STRAWBERRY': 33.8, 'TOMATO': 18.9, 'MELON': 12.0, 'COW': 9.3, 'GOOSE': 6.5, 'SHEEP': 3.3}
+first_buy_day_min: {'WHEAT': 0, 'COW': 0, 'SHEEP': 0, 'MELON': 0, 'STRAWBERRY': 2, 'GOOSE': 6, 'CARROT': 10, 'TOMATO': 9}
+buys_by_window_per_game: {'d0': {'WHEAT': 17.0, 'MELON': 6.0, 'SHEEP': 3.0, 'COW': 2.0}, 'd1-2': {'WHEAT': 10.4, 'MELON': 4.0, 'STRAWBERRY': 2.7}, 'd3-5': {'STRAWBERRY': 7.6, 'WHEAT': 0.7}, 'd6-10': {'WHEAT': 116.9, 'STRAWBERRY': 14.7, 'COW': 7.1, 'GOOSE': 5.5, 'TOMATO': 3.8, 'CARROT': 2.5, 'MELON': 2.0}, 'd11-20': {'WHEAT': 82.6, 'CARROT': 43.8, 'TOMATO': 15.1, 'STRAWBERRY': 8.7, 'GOOSE': 1.0, 'SHEEP': 0.3, 'COW': 0.2}, 'd21+': {'WHEAT': 64.2, 'CARROT': 55.9}}
+land: [(((6, 1000), (9, 2000), (10, 4000)), 11)]
+land_day_by_price: {1000: 6.2, 2000: 9.1, 4000: 10.6}
+n_quadrants_mean: 4
+hires_by_day_mean: [4, 4, 5.8, 6, 6, 6, 8, 8.9, 9.1, 10, 11.5, 11.8, 11.6, 11.4, 12, 12, 12, 12, 12, 11.8, 11.9, 12, 12, 11.9, 11.9, 12, 11.8, 11.5, 11, 10]
+hire_cost_mean: 7276.9
+revenue_per_game: {'STRAWBERRY': 27263, 'MILK': 20129, 'WHEAT': 15567, 'MELON': 14753, 'TOMATO': 12093, 'CARROT': 11776, 'FERTILIZER': 11646, 'EGG': 8769, 'WOOL': 7299}
+units_per_game: {'WHEAT': 489, 'CARROT': 291, 'STRAWBERRY': 233, 'MILK': 200, 'FERTILIZER': 199, 'EGG': 199, 'TOMATO': 130, 'MELON': 72, 'WOOL': 56}
+avg_price: {'WHEAT': 31.8, 'FERTILIZER': 58.5, 'WOOL': 131.0, 'MILK': 100.7, 'MELON': 206.2, 'STRAWBERRY': 117.1, 'CARROT': 40.4, 'EGG': 44.1, 'TOMATO': 92.7}
+price_vs_base: {'WHEAT': 1.27, 'FERTILIZER': 0.59, 'WOOL': 0.65, 'MILK': 0.63, 'MELON': 0.82, 'STRAWBERRY': 0.98, 'CARROT': 1.15, 'EGG': 0.88, 'TOMATO': 1.55}
+spend_per_game: {'BUY_PRODUCT:WHEAT': 4176, 'BUY_ANIMAL:COW': 3709, 'BUY_SEED:STRAWBERRY': 3382, 'BUY_SEED:CARROT': 2044, 'BUY_ANIMAL:GOOSE': 1936, 'BUY_SEED:WHEAT': 1727, 'BUY_ANIMAL:SHEEP': 1636, 'BUY_SEED:MELON': 960, 'BUY_SEED:TOMATO': 945}
+sell_sizes: {'CARROT:1': 39, 'CARROT:10+': 114, 'CARROT:2-3': 53, 'CARROT:4-9': 203, 'EGG:1': 53, 'EGG:10+': 81, 'EGG:2-3': 59, 'EGG:4-9': 169, 'FERTILIZER:1': 421, 'FERTILIZER:10+': 44, 'FERTILIZER:2-3': 272, 'FERTILIZER:4-9': 98, 'MELON:10+': 13, 'MELON:2-3': 1, 'MELON:4-9': 106, 'MILK:1': 155, 'MILK:10+': 1, 'MILK:2-3': 307, 'MILK:4-9': 224, 'STRAWBERRY:1': 157, 'STRAWBERRY:10+': 50, 'STRAWBERRY:2-3': 481, 'STRAWBERRY:4-9': 140, 'TOMATO:1': 32, 'TOMATO:10+': 70, 'TOMATO:2-3': 46, 'TOMATO:4-9': 87, 'WHEAT:1': 190, 'WHEAT:10+': 276, 'WHEAT:2-3': 147, 'WHEAT:4-9': 231, 'WOOL:1': 107, 'WOOL:2-3': 31, 'WOOL:4-9': 92}
+sell_orders_per_game: 413.6
+sells_near_opp_frac: 0.6
+premium_units_by_hour: [883, 845, 207, 187, 120, 478, 142, 141, 38, 573, 108, 160, 107, 520, 76, 78, 71, 547, 72, 20, 31, 577, 68, 110]
+final_tiles_mean: {'EMPTY': 63.5, 'WEED': 13.6, 'COW': 6.4, 'GOOSE': 5.3, 'TOMATO': 4.4, 'PASTURE_EMPTY': 3.5, 'WHEAT': 1.2, 'STRAWBERRY': 1.0, 'COOP_EMPTY': 0.9, 'CARROT': 0.2}
+tiles_by_day_mean: {0: {'WHEAT': 10.0, 'MELON': 6.0, 'EMPTY': 4.0, 'SHEEP': 3.0, 'COW': 2.0}, 1: {'WHEAT': 10.0, 'MELON': 10.0, 'SHEEP': 3.0, 'COW': 2.0}, 2: {'MELON': 10.0, 'WHEAT': 5.3, 'SHEEP': 3.0, 'STRAWBERRY': 2.7, 'EMPTY': 2.0, 'COW': 2.0}, 3: {'MELON': 10.0, 'STRAWBERRY': 8.5, 'SHEEP': 3.0, 'COW': 2.0, 'EMPTY': 0.8, 'WHEAT': 0.6}, 5: {'MELON': 10.0, 'STRAWBERRY': 9.8, 'SHEEP': 3.0, 'COW': 2.0, 'EMPTY': 0.2}, 7: {'STRAWBERRY': 20.1, 'MELON': 11.0, 'COW': 7.2, 'WHEAT': 5.5, 'SHEEP': 3.0, 'GOOSE': 1.7, 'EMPTY': 1.5}, 10: {'WHEAT': 28.6, 'STRAWBERRY': 24.9, 'EMPTY': 17.7, 'COW': 9.1, 'MELON': 6.0, 'GOOSE': 5.5, 'TOMATO': 3.2, 'SHEEP': 3.0, 'CARROT': 1.9, 'WEED': 0.1}, 15: {'STRAWBERRY': 33.6, 'WHEAT': 20.3, 'TOMATO': 13.0, 'CARROT': 10.4, 'COW': 9.3, 'GOOSE': 6.3, 'SHEEP': 3.3, 'MELON': 2.0, 'EMPTY': 1.6, 'WEED': 0.3}, 20: {'STRAWBERRY': 23.2, 'WHEAT': 21.6, 'TOMATO': 17.3, 'CARROT': 16.4, 'COW': 8.9, 'GOOSE': 6.3, 'SHEEP': 3.3, 'EMPTY': 2.2, 'WEED': 0.8, 'PASTURE_EMPTY': 0.1}, 25: {'WHEAT': 29.6, 'CARROT': 27.7, 'STRAWBERRY': 10.8, 'TOMATO': 8.0, 'COW': 7.9, 'GOOSE': 6.2, 'EMPTY': 4.0, 'WEED': 2.5, 'SHEEP': 2.1, 'PASTURE_EMPTY': 1.0, 'COOP_EMPTY': 0.1}}
+money_by_day_mean: {0: 8, 1: 7, 2: 80, 3: 45, 5: 763, 7: 153, 10: 2354, 15: 24105, 20: 52978, 25: 73962, 28: 90360}
+end_shed_mean: {'MILK': 0.3, 'FERTILIZER': 0.3}
+unit_actions_per_game: {'WATER': 1451, 'NORTH': 830, 'SOUTH': 795, 'WEST': 770, 'EAST': 691, 'HARVEST': 617, 'PASS': 423, 'COLLECT_FERTILIZER': 411, 'PLANT': 339, 'FEED': 314, 'CARE': 307, 'FERTILIZE': 211, 'PICKUP': 179, 'PLACE': 92, 'DROP': 74, 'DIG': 44, 'BUILD_PASTURE': 13, 'BUILD_COOP': 6}
+wheat_bought_units: 119.1
+fert_bought_units: 0
+t0: [('[[0, "BUY_PRODUCT", 5, 133], [1, "SELL", 1, 28]]', 8), ('[[0, "BUY_PRODUCT", 5, 133], [1, "SELL", 1, 27]]', 2), ('[[0, "BUY_PRODUCT", 5, 136], [1, "SELL", 1, 28]]', 1)]
+day0_market_first6: [("[['BUY_PRODUCT', 'WHEAT', 5], ['BUY_ANIMAL', 'COW', 1]] | [['SELL', 'WHEAT', 1], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'COW', 1], ['BUY_ANIMAL', 'SHEEP', 3]] | [['SELL', 'WHEAT', 1]]", 11)]
+####################################################################################################
+team: DSM
+n: 11
+wins: 10
+final_mean: 112433.5
+margin_mean: 3231.9
+margin_pct: 2.9
+opps: Counter({'Boey': 6, 'Vadim Vasilenko': 2, 'Majkel1337': 2, 'M & M & P & Q': 1})
+buys_per_game: {'WHEAT': 290.5, 'CARROT': 42.5, 'STRAWBERRY': 32.5, 'MELON': 11.9, 'COW': 7.5, 'GOOSE': 7.3, 'SHEEP': 5.8, 'TOMATO': 0.9}
+first_buy_day_min: {'COW': 0, 'WHEAT': 0, 'SHEEP': 0, 'MELON': 0, 'STRAWBERRY': 2, 'GOOSE': 6, 'CARROT': 10, 'TOMATO': 18}
+buys_by_window_per_game: {'d0': {'WHEAT': 20.2, 'MELON': 6.0, 'SHEEP': 3.0, 'COW': 2.0}, 'd1-2': {'WHEAT': 9.5, 'MELON': 2.0, 'STRAWBERRY': 2.0, 'COW': 1.0}, 'd3-5': {'WHEAT': 8.5, 'STRAWBERRY': 6.0, 'COW': 2.3, 'SHEEP': 0.5}, 'd6-10': {'WHEAT': 127.6, 'STRAWBERRY': 16.0, 'GOOSE': 7.3, 'MELON': 3.9, 'COW': 1.8, 'SHEEP': 1.7, 'CARROT': 0.5}, 'd11-20': {'WHEAT': 68.4, 'CARROT': 11.5, 'STRAWBERRY': 8.5, 'TOMATO': 0.9, 'SHEEP': 0.5, 'COW': 0.5}, 'd21+': {'WHEAT': 56.3, 'CARROT': 30.5}}
+land: [(((6, 1000), (8, 2000)), 11)]
+land_day_by_price: {1000: 6.1, 2000: 8.2, 4000: None}
+n_quadrants_mean: 3
+hires_by_day_mean: [5, 3, 5, 5, 6, 5.6, 9, 7.4, 10, 9.9, 11.2, 10.6, 10.6, 10, 9.9, 11.2, 11.6, 10.8, 11.3, 11.4, 11.2, 11.2, 11.5, 10.8, 11, 11.3, 11, 10.6, 10.4, 9.1]
+hire_cost_mean: 5044.9
+revenue_per_game: {'STRAWBERRY': 37000, 'MILK': 21391, 'WHEAT': 17226, 'WOOL': 16178, 'MELON': 14278, 'FERTILIZER': 12405, 'EGG': 11526, 'CARROT': 5677, 'TOMATO': 966}
+units_per_game: {'WHEAT': 520, 'EGG': 266, 'STRAWBERRY': 247, 'FERTILIZER': 234, 'MILK': 192, 'CARROT': 137, 'WOOL': 124, 'MELON': 71, 'TOMATO': 5}
+avg_price: {'WHEAT': 33.1, 'FERTILIZER': 53.0, 'WOOL': 130.4, 'MILK': 111.5, 'MELON': 199.8, 'EGG': 43.4, 'STRAWBERRY': 149.5, 'CARROT': 41.4, 'TOMATO': 177.1}
+price_vs_base: {'WHEAT': 1.32, 'FERTILIZER': 0.53, 'WOOL': 0.65, 'MILK': 0.7, 'MELON': 0.8, 'EGG': 0.87, 'STRAWBERRY': 1.25, 'CARROT': 1.18, 'TOMATO': 2.95}
+spend_per_game: {'BUY_PRODUCT:WHEAT': 4260, 'BUY_SEED:STRAWBERRY': 3255, 'BUY_ANIMAL:COW': 3018, 'BUY_ANIMAL:SHEEP': 2909, 'BUY_ANIMAL:GOOSE': 2182, 'BUY_SEED:WHEAT': 1697, 'BUY_SEED:MELON': 953, 'BUY_SEED:CARROT': 851, 'BUY_SEED:TOMATO': 45}
+sell_sizes: {'CARROT:10+': 70, 'CARROT:2-3': 19, 'CARROT:4-9': 77, 'EGG:1': 5, 'EGG:2-3': 44, 'EGG:4-9': 413, 'FERTILIZER:1': 360, 'FERTILIZER:10+': 41, 'FERTILIZER:2-3': 466, 'FERTILIZER:4-9': 107, 'MELON:10+': 15, 'MELON:4-9': 101, 'MILK:1': 9, 'MILK:2-3': 284, 'MILK:4-9': 270, 'STRAWBERRY:1': 8, 'STRAWBERRY:10+': 26, 'STRAWBERRY:2-3': 348, 'STRAWBERRY:4-9': 317, 'TOMATO:1': 1, 'TOMATO:10+': 2, 'TOMATO:2-3': 2, 'TOMATO:4-9': 3, 'WHEAT:1': 59, 'WHEAT:10+': 285, 'WHEAT:2-3': 37, 'WHEAT:4-9': 267, 'WOOL:1': 73, 'WOOL:10+': 2, 'WOOL:2-3': 243, 'WOOL:4-9': 159}
+sell_orders_per_game: 373.9
+sells_near_opp_frac: 0.7
+premium_units_by_hour: [594, 792, 148, 224, 197, 467, 338, 102, 62, 823, 186, 131, 136, 796, 58, 116, 104, 672, 123, 24, 51, 656, 40, 143]
+final_tiles_mean: {'EMPTY': 48.2, 'LOCKED': 25.0, 'GOOSE': 7.3, 'COW': 6.5, 'STRAWBERRY': 4.2, 'WEED': 4.1, 'PASTURE_EMPTY': 3.2, 'TOMATO': 0.9, 'SHEEP': 0.3, 'CARROT': 0.2, 'WHEAT': 0.2}
+tiles_by_day_mean: {0: {'WHEAT': 12.0, 'MELON': 6.0, 'SHEEP': 3.0, 'COW': 2.0, 'EMPTY': 2.0}, 1: {'WHEAT': 12.0, 'MELON': 8.0, 'SHEEP': 3.0, 'COW': 2.0}, 2: {'WHEAT': 9.0, 'MELON': 8.0, 'COW': 3.0, 'SHEEP': 3.0, 'STRAWBERRY': 2.0}, 3: {'MELON': 8.0, 'STRAWBERRY': 5.8, 'WHEAT': 4.2, 'COW': 3.8, 'SHEEP': 3.2}, 5: {'STRAWBERRY': 8.0, 'MELON': 8.0, 'COW': 5.3, 'SHEEP': 3.5, 'WHEAT': 0.2}, 7: {'STRAWBERRY': 20.2, 'MELON': 11.9, 'COW': 6.1, 'SHEEP': 4.6, 'WHEAT': 4.1, 'GOOSE': 3.0, 'EMPTY': 0.1}, 10: {'WHEAT': 24.9, 'STRAWBERRY': 23.9, 'GOOSE': 7.3, 'COW': 7.1, 'MELON': 5.9, 'SHEEP': 5.3, 'EMPTY': 0.4, 'CARROT': 0.3}, 15: {'STRAWBERRY': 32.5, 'WHEAT': 15.9, 'COW': 7.5, 'GOOSE': 7.3, 'SHEEP': 5.6, 'MELON': 3.9, 'CARROT': 2.3}, 20: {'WHEAT': 25.1, 'STRAWBERRY': 24.7, 'COW': 7.3, 'GOOSE': 7.3, 'SHEEP': 5.4, 'CARROT': 3.5, 'TOMATO': 0.9, 'EMPTY': 0.7, 'PASTURE_EMPTY': 0.1}, 25: {'WHEAT': 32.4, 'CARROT': 14.3, 'STRAWBERRY': 8.3, 'GOOSE': 7.3, 'COW': 6.7, 'SHEEP': 3.3, 'PASTURE_EMPTY': 1.0, 'TOMATO': 0.9, 'EMPTY': 0.8, 'WEED': 0.1}}
+money_by_day_mean: {0: 6, 1: 114, 2: 49, 3: 9, 5: 348, 7: 352, 10: 8975, 15: 33241, 20: 66979, 25: 88686, 28: 105070}
+end_shed_mean: {'FERTILIZER': 0.7, 'CARROT': 0.2, 'WOOL': 1.4, 'WHEAT': 0.1, 'MILK': 0.1, 'EGG': 0.1}
+unit_actions_per_game: {'WATER': 1087, 'NORTH': 1000, 'WEST': 909, 'SOUTH': 614, 'EAST': 568, 'HARVEST': 533, 'COLLECT_FERTILIZER': 461, 'CARE': 390, 'FEED': 387, 'PASS': 310, 'PLANT': 258, 'FERTILIZE': 223, 'PICKUP': 188, 'DROP': 134, 'PLACE': 51, 'DIG': 29, 'BUILD_PASTURE': 13, 'BUILD_COOP': 7}
+wheat_bought_units: 120.7
+fert_bought_units: 0
+t0: [('[[0, "BUY_PRODUCT", 5, 137], [1, "SELL", 1, 28]]', 6), ('[[0, "BUY_PRODUCT", 5, 136], [1, "SELL", 1, 28]]', 3), ('[[0, "BUY_PRODUCT", 5, 133], [1, "SELL", 1, 29]]', 2)]
+day0_market_first6: [("[['BUY_ANIMAL', 'COW', 1], ['BUY_PRODUCT', 'WHEAT', 5], ['BUY_ANIMAL', 'SHEEP', 1], ['BUY_ANIMAL', 'SHEEP', 1], ['BUY_ANIMAL', 'SHEEP', 1]] | [['SELL', 'WHEAT', 1], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'COW', 1], ['HIRE']] | [['SELL', 'WHEAT', 1]]", 11)]
+####################################################################################################
+team: Anton Tikhonov
+n: 10
+wins: 4
+final_mean: 94319.1
+margin_mean: -3333.2
+margin_pct: -3.0
+opps: Counter({'Fourth Quadrant': 2, 'Azat Akhtyamov': 2, 'DECEM': 1, 'Yizhou': 1, 'KawattaTaido': 1, 'My second life': 1, 'Just A game on your lips': 1, 'Vadim Vasilenko': 1})
+buys_per_game: {'WHEAT': 296.6, 'CARROT': 56.0, 'STRAWBERRY': 31.0, 'TOMATO': 13.8, 'MELON': 10.0, 'COW': 9.5, 'SHEEP': 6.2, 'GOOSE': 5.8}
+first_buy_day_min: {'WHEAT': 0, 'COW': 0, 'SHEEP': 0, 'MELON': 0, 'STRAWBERRY': 2, 'GOOSE': 6, 'TOMATO': 6, 'CARROT': 9}
+buys_by_window_per_game: {'d0': {'WHEAT': 18.7, 'MELON': 6.0, 'SHEEP': 3.0, 'COW': 2.0}, 'd1-2': {'WHEAT': 9.0, 'MELON': 4.0, 'STRAWBERRY': 4.0}, 'd3-5': {'STRAWBERRY': 6.3, 'WHEAT': 2.4}, 'd6-10': {'WHEAT': 128.9, 'STRAWBERRY': 12.0, 'COW': 7.4, 'GOOSE': 4.9, 'TOMATO': 4.9, 'SHEEP': 2.8, 'CARROT': 2.0}, 'd11-20': {'WHEAT': 88.4, 'CARROT': 18.0, 'TOMATO': 8.9, 'STRAWBERRY': 8.7, 'GOOSE': 0.9, 'SHEEP': 0.4, 'COW': 0.1}, 'd21+': {'WHEAT': 49.2, 'CARROT': 36.0}}
+land: [(((6, 1000), (9, 2000), (10, 4000)), 6), (((6, 1000), (9, 2000)), 4)]
+land_day_by_price: {1000: 6.2, 2000: 9.1, 4000: 10.6}
+n_quadrants_mean: 3.6
+hires_by_day_mean: [4, 3.8, 6, 6, 5.3, 6, 8, 8.8, 9, 10.1, 11.4, 11.5, 11.4, 11, 11.7, 11.8, 11.7, 11.8, 11.8, 11.5, 11.4, 11.4, 11.4, 11.4, 11.3, 11.3, 11.3, 11.2, 10.2, 9.9]
+hire_cost_mean: 6156.0
+revenue_per_game: {'STRAWBERRY': 27050, 'WOOL': 18581, 'MILK': 17182, 'WHEAT': 14651, 'MELON': 13270, 'FERTILIZER': 11761, 'EGG': 8546, 'CARROT': 6198, 'TOMATO': 6102}
+units_per_game: {'WHEAT': 496, 'FERTILIZER': 224, 'STRAWBERRY': 222, 'MILK': 187, 'EGG': 181, 'CARROT': 168, 'WOOL': 136, 'TOMATO': 96, 'MELON': 60}
+avg_price: {'WHEAT': 29.5, 'FERTILIZER': 52.6, 'WOOL': 136.9, 'MILK': 91.8, 'MELON': 221.2, 'STRAWBERRY': 121.8, 'EGG': 47.3, 'TOMATO': 63.9, 'CARROT': 36.9}
+price_vs_base: {'WHEAT': 1.18, 'FERTILIZER': 0.53, 'WOOL': 0.68, 'MILK': 0.57, 'MELON': 0.88, 'STRAWBERRY': 1.02, 'EGG': 0.95, 'TOMATO': 1.06, 'CARROT': 1.05}
+spend_per_game: {'BUY_PRODUCT:WHEAT': 4409, 'BUY_ANIMAL:COW': 3800, 'BUY_ANIMAL:SHEEP': 3100, 'BUY_SEED:STRAWBERRY': 3100, 'BUY_ANIMAL:GOOSE': 1740, 'BUY_SEED:WHEAT': 1706, 'BUY_SEED:CARROT': 1120, 'BUY_SEED:MELON': 800, 'BUY_SEED:TOMATO': 690}
+sell_sizes: {'CARROT:10+': 86, 'CARROT:2-3': 18, 'CARROT:4-9': 43, 'EGG:1': 2, 'EGG:10+': 50, 'EGG:2-3': 31, 'EGG:4-9': 152, 'FERTILIZER:1': 359, 'FERTILIZER:10+': 56, 'FERTILIZER:2-3': 202, 'FERTILIZER:4-9': 119, 'MELON:10+': 12, 'MELON:4-9': 76, 'MILK:1': 82, 'MILK:10+': 3, 'MILK:2-3': 194, 'MILK:4-9': 214, 'STRAWBERRY:1': 46, 'STRAWBERRY:10+': 50, 'STRAWBERRY:2-3': 406, 'STRAWBERRY:4-9': 136, 'TOMATO:1': 2, 'TOMATO:10+': 39, 'TOMATO:2-3': 46, 'TOMATO:4-9': 62, 'WHEAT:1': 174, 'WHEAT:10+': 245, 'WHEAT:2-3': 94, 'WHEAT:4-9': 238, 'WOOL:1': 179, 'WOOL:10+': 8, 'WOOL:2-3': 89, 'WOOL:4-9': 182}
+sell_orders_per_game: 369.5
+sells_near_opp_frac: 0.6
+premium_units_by_hour: [732, 924, 196, 217, 229, 427, 223, 244, 108, 438, 129, 187, 140, 249, 157, 146, 115, 143, 88, 48, 48, 711, 51, 99]
+final_tiles_mean: {'EMPTY': 54.0, 'WEED': 11.8, 'LOCKED': 10.0, 'PASTURE_EMPTY': 6.2, 'COW': 6.0, 'GOOSE': 4.5, 'TOMATO': 2.9, 'STRAWBERRY': 1.5, 'COOP_EMPTY': 1.1, 'WHEAT': 0.8, 'CARROT': 0.7, 'SHEEP': 0.5}
+tiles_by_day_mean: {0: {'WHEAT': 9.0, 'MELON': 6.0, 'EMPTY': 5.0, 'SHEEP': 3.0, 'COW': 2.0}, 1: {'WHEAT': 10.0, 'MELON': 10.0, 'SHEEP': 3.0, 'COW': 2.0}, 2: {'MELON': 10.0, 'STRAWBERRY': 4.0, 'WHEAT': 4.0, 'SHEEP': 3.0, 'EMPTY': 2.0, 'COW': 2.0}, 3: {'MELON': 10.0, 'STRAWBERRY': 9.8, 'SHEEP': 3.0, 'COW': 2.0, 'EMPTY': 0.2}, 5: {'STRAWBERRY': 10.0, 'MELON': 10.0, 'SHEEP': 3.0, 'COW': 2.0}, 7: {'STRAWBERRY': 17.1, 'MELON': 10.0, 'WHEAT': 9.0, 'COW': 6.8, 'SHEEP': 4.7, 'GOOSE': 1.3, 'EMPTY': 0.7, 'PASTURE_EMPTY': 0.2, 'COOP_EMPTY': 0.2}, 10: {'WHEAT': 25.3, 'STRAWBERRY': 21.5, 'EMPTY': 12.9, 'COW': 9.3, 'SHEEP': 5.8, 'GOOSE': 4.8, 'MELON': 4.1, 'TOMATO': 4.1, 'CARROT': 1.8, 'WEED': 0.2, 'COOP_EMPTY': 0.2}, 15: {'STRAWBERRY': 30.8, 'WHEAT': 21.4, 'COW': 9.5, 'TOMATO': 8.7, 'SHEEP': 6.1, 'GOOSE': 5.7, 'CARROT': 4.6, 'EMPTY': 2.7, 'WEED': 0.4, 'PASTURE_EMPTY': 0.1}, 20: {'WHEAT': 27.3, 'STRAWBERRY': 20.9, 'TOMATO': 10.6, 'COW': 8.8, 'CARROT': 6.6, 'SHEEP': 5.9, 'GOOSE': 5.7, 'EMPTY': 3.1, 'WEED': 1.0, 'PASTURE_EMPTY': 0.1}, 25: {'WHEAT': 27.5, 'CARROT': 20.1, 'STRAWBERRY': 12.0, 'COW': 7.4, 'TOMATO': 5.6, 'GOOSE': 5.6, 'SHEEP': 5.3, 'EMPTY': 4.9, 'WEED': 1.4, 'PASTURE_EMPTY': 0.2}}
+money_by_day_mean: {0: 8, 1: 3, 2: 8, 3: 30, 5: 799, 7: 127, 10: 4399, 15: 31352, 20: 58000, 25: 75942, 28: 89268}
+end_shed_mean: {'GOOSE': 0.1, 'STRAWBERRY': 0.1, 'WOOL': 0.9, 'CARROT': 0.4, 'MILK': 0.8, 'FERTILIZER': 0.4}
+unit_actions_per_game: {'WATER': 1252, 'NORTH': 912, 'WEST': 803, 'SOUTH': 772, 'EAST': 634, 'HARVEST': 560, 'COLLECT_FERTILIZER': 460, 'CARE': 361, 'FEED': 355, 'PLANT': 315, 'PASS': 296, 'FERTILIZE': 232, 'PICKUP': 190, 'PLACE': 94, 'DROP': 82, 'DIG': 39, 'BUILD_PASTURE': 16, 'BUILD_COOP': 6}
+wheat_bought_units: 126
+fert_bought_units: 0
+t0: [('[[0, "BUY_PRODUCT", 5, 133], [1, "SELL", 1, 28]]', 3), ('[[0, "BUY_PRODUCT", 5, 133]]', 3), ('[[0, "BUY_PRODUCT", 5, 136]]', 2)]
+day0_market_first6: [("[['BUY_PRODUCT', 'WHEAT', 5], ['BUY_ANIMAL', 'COW', 1]] | [['SELL', 'WHEAT', 1], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'COW', 1], ['BUY_ANIMAL', 'SHEEP', 3]] | [['SELL', 'WHEAT', 1]]", 5), ("[['BUY_PRODUCT', 'WHEAT', 5], ['BUY_ANIMAL', 'COW', 1]] | [['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'COW', 1], ['BUY_ANIMAL', 'SHEEP', 3]] | [['SELL', 'WHEAT', 1]]", 5)]
+####################################################################################################
+team: Fourth Quadrant
+n: 10
+wins: 6
+final_mean: 91602.4
+margin_mean: -1260.3
+margin_pct: -1.2
+opps: Counter({'DECEM': 2, 'Anton Tikhonov': 2, 'KawattaTaido': 2, 'Just A game on your lips': 1, 'Majkel1337': 1, 'We wanna be tomatos': 1, 'Vadim Vasilenko': 1})
+buys_per_game: {'WHEAT': 1958.2, 'FERTILIZER': 761.9, 'CARROT': 100.4, 'STRAWBERRY': 41.1, 'MELON': 13.0, 'COW': 9.0, 'SHEEP': 6.2}
+first_buy_day_min: {'COW': 0, 'SHEEP': 0, 'WHEAT': 0, 'MELON': 0, 'STRAWBERRY': 2, 'FERTILIZER': 2, 'CARROT': 8}
+buys_by_window_per_game: {'d0': {'WHEAT': 33.4, 'COW': 4.0, 'MELON': 3.0, 'SHEEP': 2.0}, 'd1-2': {'WHEAT': 80.7, 'MELON': 6.1, 'STRAWBERRY': 2.0, 'FERTILIZER': 1.9, 'SHEEP': 1.0}, 'd3-5': {'WHEAT': 144.6, 'FERTILIZER': 10.2, 'STRAWBERRY': 7.2, 'COW': 2.0, 'MELON': 0.3, 'SHEEP': 0.3}, 'd6-10': {'WHEAT': 394.6, 'FERTILIZER': 86.4, 'STRAWBERRY': 26.2, 'MELON': 3.6, 'SHEEP': 2.9, 'COW': 2.6, 'CARROT': 1.8}, 'd11-20': {'WHEAT': 749.5, 'FERTILIZER': 299.1, 'CARROT': 68.9, 'STRAWBERRY': 5.7, 'COW': 0.4}, 'd21+': {'WHEAT': 555.4, 'FERTILIZER': 364.3, 'CARROT': 29.7}}
+land: [(((6, 1000), (8, 2000), (10, 4000)), 10)]
+land_day_by_price: {1000: 6.1, 2000: 8.2, 4000: 10.4}
+n_quadrants_mean: 4
+hires_by_day_mean: [4.8, 4.5, 6.2, 6.2, 6.1, 5.8, 8.2, 7.7, 10.3, 9.6, 12, 12, 11.1, 11.1, 11.1, 11.9, 12, 12, 12.2, 11.6, 11.5, 11.3, 11.4, 11.2, 11, 11, 10.8, 10.6, 9.7, 9.6]
+hire_cost_mean: 6188.5
+revenue_per_game: {'WHEAT': 73546, 'FERTILIZER': 46344, 'STRAWBERRY': 36917, 'MILK': 17154, 'MELON': 14517, 'WOOL': 10510, 'CARROT': 10401}
+units_per_game: {'WHEAT': 2275, 'FERTILIZER': 984, 'STRAWBERRY': 278, 'CARROT': 277, 'MILK': 201, 'WOOL': 97, 'MELON': 78}
+avg_price: {'WHEAT': 32.3, 'FERTILIZER': 47.1, 'WOOL': 108.4, 'MILK': 85.5, 'MELON': 186.4, 'CARROT': 37.5, 'STRAWBERRY': 132.8}
+price_vs_base: {'WHEAT': 1.29, 'FERTILIZER': 0.47, 'WOOL': 0.54, 'MILK': 0.53, 'MELON': 0.75, 'CARROT': 1.07, 'STRAWBERRY': 1.11}
+spend_per_game: {'BUY_PRODUCT:WHEAT': 57848, 'BUY_PRODUCT:FERTILIZER': 33536, 'BUY_SEED:STRAWBERRY': 4110, 'BUY_ANIMAL:COW': 3600, 'BUY_ANIMAL:SHEEP': 3100, 'BUY_SEED:WHEAT': 2355, 'BUY_SEED:CARROT': 2008, 'BUY_SEED:MELON': 1040}
+sell_sizes: {'CARROT:1': 15, 'CARROT:10+': 142, 'CARROT:2-3': 127, 'CARROT:4-9': 151, 'FERTILIZER:1': 4271, 'FERTILIZER:10+': 37, 'FERTILIZER:2-3': 1410, 'FERTILIZER:4-9': 374, 'MELON:10+': 26, 'MELON:2-3': 26, 'MELON:4-9': 78, 'MILK:1': 14, 'MILK:10+': 33, 'MILK:2-3': 201, 'MILK:4-9': 217, 'STRAWBERRY:1': 2, 'STRAWBERRY:10+': 142, 'STRAWBERRY:2-3': 76, 'STRAWBERRY:4-9': 208, 'WHEAT:1': 7608, 'WHEAT:10+': 506, 'WHEAT:2-3': 2945, 'WHEAT:4-9': 650, 'WOOL:1': 6, 'WOOL:10+': 8, 'WOOL:2-3': 57, 'WOOL:4-9': 148}
+sell_orders_per_game: 1947.8
+sells_near_opp_frac: 0.3
+premium_units_by_hour: [495, 950, 236, 183, 189, 394, 159, 102, 109, 366, 187, 153, 259, 396, 184, 177, 123, 398, 124, 93, 144, 837, 133, 145]
+final_tiles_mean: {'EMPTY': 79.1, 'COW': 6.5, 'WEED': 5.9, 'WHEAT': 2.4, 'STRAWBERRY': 2.3, 'SHEEP': 2.1, 'PASTURE_EMPTY': 1.7}
+tiles_by_day_mean: {0: {'WHEAT': 9.0, 'EMPTY': 6.9, 'COW': 4.0, 'MELON': 3.0, 'SHEEP': 2.0, 'WEED': 0.1}, 1: {'WHEAT': 10.2, 'MELON': 8.0, 'COW': 4.0, 'SHEEP': 2.0, 'EMPTY': 0.8}, 2: {'MELON': 9.1, 'WHEAT': 6.8, 'COW': 4.0, 'SHEEP': 3.0, 'STRAWBERRY': 1.9, 'EMPTY': 0.2}, 3: {'MELON': 9.4, 'COW': 4.9, 'STRAWBERRY': 3.9, 'WHEAT': 3.7, 'SHEEP': 3.1}, 5: {'MELON': 9.4, 'STRAWBERRY': 6.2, 'COW': 6.0, 'SHEEP': 3.3, 'WHEAT': 0.1}, 7: {'STRAWBERRY': 26.5, 'MELON': 11.8, 'COW': 6.5, 'SHEEP': 3.5, 'WHEAT': 1.6, 'EMPTY': 0.1}, 10: {'STRAWBERRY': 35.2, 'WHEAT': 33.7, 'MELON': 10.0, 'COW': 8.6, 'SHEEP': 6.2, 'EMPTY': 4.7, 'CARROT': 1.6}, 15: {'STRAWBERRY': 40.8, 'WHEAT': 24.9, 'CARROT': 14.9, 'COW': 8.8, 'SHEEP': 6.2, 'MELON': 3.6, 'EMPTY': 0.8}, 20: {'STRAWBERRY': 29.1, 'CARROT': 25.7, 'WHEAT': 24.8, 'COW': 8.5, 'SHEEP': 6.1, 'EMPTY': 4.1, 'WEED': 1.6, 'PASTURE_EMPTY': 0.1}, 25: {'WHEAT': 54.4, 'CARROT': 16.6, 'COW': 7.4, 'EMPTY': 7.3, 'STRAWBERRY': 6.4, 'SHEEP': 3.9, 'WEED': 2.3, 'PASTURE_EMPTY': 1.7}}
+money_by_day_mean: {0: 2, 1: 5, 2: 3, 3: 14, 5: 68, 7: 57, 10: 2174, 15: 23540, 20: 57467, 25: 73002, 28: 84872}
+end_shed_mean: {}
+unit_actions_per_game: {'WATER': 1522, 'WEST': 983, 'NORTH': 943, 'SOUTH': 846, 'EAST': 822, 'HARVEST': 555, 'PLANT': 382, 'COLLECT_FERTILIZER': 348, 'FEED': 247, 'CARE': 219, 'PICKUP': 140, 'FERTILIZE': 125, 'DROP': 110, 'PLACE': 81, 'DIG': 42, 'BUILD_PASTURE': 16}
+wheat_bought_units: 1722.7
+fert_bought_units: 761.9
+t0: [('[[1, "BUY_PRODUCT", 1, 28], [1, "BUY_PRODUCT", 1, 28], [1, "BUY_PRODUCT", 1, 28], [1, "BUY_PRODUCT", 1, 28], [1, "BUY_PRODUCT", 1, 28], [1, "BUY_PRODUCT", 1, 28], [1, "BUY_PRODUCT", 1, 28], [1, "BUY_PRODUCT", 1, 29], [1, "BUY_PRODUCT", 1, 29]]', 5), ('[[1, "BUY_PRODUCT", 1, 28], [1, "BUY_PRODUCT", 1, 28], [1, "BUY_PRODUCT", 1, 28], [1, "BUY_PRODUCT", 1, 28], [1, "BUY_PRODUCT", 1, 28], [1, "BUY_PRODUCT", 1, 28], [1, "BUY_PRODUCT", 1, 28], [1, "BUY_PRODUCT", 1, 29]]', 3), ('[[1, "BUY_PRODUCT", 1, 28], [1, "BUY_PRODUCT", 1, 28], [1, "BUY_PRODUCT", 1, 29], [1, "BUY_PRODUCT", 1, 29], [1, "BUY_PRODUCT", 1, 29], [1, "BUY_PRODUCT", 1, 29], [1, "BUY_PRODUCT", 1, 29], [1, "BUY_PRODUCT", 1, 29]]', 1)]
+day0_market_first6: [("[['BUY_ANIMAL', 'COW', 1], ['BUY_ANIMAL', 'COW', 1], ['BUY_ANIMAL', 'COW', 1], ['BUY_ANIMAL', 'COW', 1], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'SHEEP', 1], ['HIRE'], ['BUY_ANIMAL', 'SHEEP', 1]] | [['BUY_PRODUCT', 'WHEAT', 1], ['BUY_PRODUCT', 'WHEAT', 1], ['BUY_PRODUCT', 'WHEAT', 1], ['BUY_PRODUCT', 'WHEAT', 1], ['BUY_PRODUCT', 'WHEAT', 1], ['BUY_PRODUCT', 'WHEAT', 1], ['BUY_PRODUCT', 'WHEAT', 1], ['BUY_PRODUCT', 'WHEAT', 1]] | [['BUY_SEED', 'MELON', 1], ['BUY_SEED', 'MELON', 1], ['SELL', 'WHEAT', 10], ['BUY_PRODUCT', 'WHEAT', 1], ['BUY_SEED', 'MELON', 1], ['SELL', 'WHEAT', 10]]", 5), ("[['BUY_ANIMAL', 'COW', 1], ['BUY_ANIMAL', 'COW', 1], ['BUY_ANIMAL', 'COW', 1], ['BUY_ANIMAL', 'COW', 1], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'SHEEP', 1], ['HIRE'], ['BUY_ANIMAL', 'SHEEP', 1]] | [['BUY_PRODUCT', 'WHEAT', 1], ['BUY_PRODUCT', 'WHEAT', 1], ['BUY_PRODUCT', 'WHEAT', 1], ['BUY_PRODUCT', 'WHEAT', 1], ['BUY_PRODUCT', 'WHEAT', 1], ['BUY_PRODUCT', 'WHEAT', 1], ['BUY_PRODUCT', 'WHEAT', 1], ['BUY_PRODUCT', 'WHEAT', 1], ['BUY_PRODUCT', 'WHEAT', 1]] | [['SELL', 'WHEAT', 10], ['BUY_SEED', 'MELON', 1], ['BUY_SEED', 'MELON', 1], ['BUY_SEED', 'MELON', 1]]", 5)]
+####################################################################################################
+team: Fried Chicken Lovers
+n: 10
+wins: 2
+final_mean: 105734.7
+margin_mean: -4782.6
+margin_pct: -3.6
+opps: Counter({'dauriel': 1, 'Liyi xin jie': 1, 'Humanitis': 1, 'KKY': 1, 'Hamna Kaleem': 1, 'WUZB': 1, 'maoxin123': 1, 'Chahat Mehra': 1, 'Márcio Santos': 1, 'MCZK': 1})
+buys_per_game: {'WHEAT': 532.9, 'FERTILIZER': 79.5, 'CARROT': 38.4, 'STRAWBERRY': 33.0, 'MELON': 12.0, 'SHEEP': 7.9, 'COW': 7.2, 'GOOSE': 2.5}
+first_buy_day_min: {'WHEAT': 0, 'COW': 0, 'SHEEP': 0, 'MELON': 0, 'STRAWBERRY': 5, 'FERTILIZER': 6, 'GOOSE': 6, 'CARROT': 6}
+buys_by_window_per_game: {'d0': {'WHEAT': 22.0, 'MELON': 12.0, 'COW': 2.0, 'SHEEP': 2.0}, 'd1-2': {'WHEAT': 10.0, 'COW': 1.0}, 'd3-5': {'WHEAT': 13.0, 'STRAWBERRY': 4.0, 'COW': 1.0}, 'd6-10': {'WHEAT': 88.1, 'STRAWBERRY': 16.0, 'FERTILIZER': 8.9, 'SHEEP': 5.0, 'COW': 3.2, 'GOOSE': 1.8, 'CARROT': 1.6}, 'd11-20': {'WHEAT': 243.3, 'FERTILIZER': 14.8, 'STRAWBERRY': 13.0, 'CARROT': 1.3, 'SHEEP': 0.9, 'GOOSE': 0.7}, 'd21+': {'WHEAT': 156.5, 'FERTILIZER': 55.8, 'CARROT': 35.5}}
+land: [(((6, 1000), (11, 2000)), 9), (((6, 1000), (11, 2000), (11, 4000)), 1)]
+land_day_by_price: {1000: 6.2, 2000: 11.0, 4000: 11.1}
+n_quadrants_mean: 3.1
+hires_by_day_mean: [5, 3, 4, 5, 4, 4, 7.3, 7.3, 8.3, 8.3, 11, 10.5, 9.2, 9.4, 9.4, 10.4, 11.1, 11.2, 11.4, 10.7, 11.5, 11.1, 11.4, 11.6, 11.5, 11.4, 11.3, 11.2, 11.1, 11.1]
+hire_cost_mean: 5091.6
+revenue_per_game: {'STRAWBERRY': 28333, 'WOOL': 27142, 'MILK': 24376, 'WHEAT': 24299, 'FERTILIZER': 14721, 'MELON': 14380, 'CARROT': 5288, 'EGG': 4151}
+units_per_game: {'WHEAT': 606, 'FERTILIZER': 337, 'STRAWBERRY': 248, 'MILK': 204, 'WOOL': 180, 'CARROT': 114, 'EGG': 77, 'MELON': 72}
+avg_price: {'WHEAT': 40.1, 'FERTILIZER': 43.7, 'WOOL': 150.9, 'MILK': 119.4, 'MELON': 199.7, 'EGG': 53.6, 'STRAWBERRY': 114.4, 'CARROT': 46.3}
+price_vs_base: {'WHEAT': 1.6, 'FERTILIZER': 0.44, 'WOOL': 0.75, 'MILK': 0.75, 'MELON': 0.8, 'EGG': 1.07, 'STRAWBERRY': 0.95, 'CARROT': 1.32}
+spend_per_game: {'BUY_PRODUCT:WHEAT': 15039, 'BUY_ANIMAL:SHEEP': 3950, 'BUY_SEED:STRAWBERRY': 3300, 'BUY_ANIMAL:COW': 2880, 'BUY_PRODUCT:FERTILIZER': 2238, 'BUY_SEED:WHEAT': 1578, 'BUY_SEED:MELON': 960, 'BUY_SEED:CARROT': 768, 'BUY_ANIMAL:GOOSE': 750}
+sell_sizes: {'CARROT:10+': 41, 'CARROT:2-3': 42, 'CARROT:4-9': 24, 'EGG:1': 29, 'EGG:10+': 7, 'EGG:2-3': 80, 'EGG:4-9': 94, 'FERTILIZER:1': 358, 'FERTILIZER:10+': 99, 'FERTILIZER:2-3': 266, 'FERTILIZER:4-9': 152, 'MELON:10+': 33, 'MELON:4-9': 40, 'MILK:1': 33, 'MILK:10+': 37, 'MILK:2-3': 138, 'MILK:4-9': 178, 'STRAWBERRY:1': 25, 'STRAWBERRY:10+': 88, 'STRAWBERRY:2-3': 29, 'STRAWBERRY:4-9': 188, 'WHEAT:1': 38, 'WHEAT:10+': 152, 'WHEAT:2-3': 206, 'WHEAT:4-9': 200, 'WOOL:1': 44, 'WOOL:10+': 44, 'WOOL:2-3': 91, 'WOOL:4-9': 184}
+sell_orders_per_game: 294
+sells_near_opp_frac: 0.8
+premium_units_by_hour: [981, 747, 98, 180, 223, 276, 220, 157, 196, 146, 291, 298, 207, 255, 157, 264, 121, 313, 203, 565, 216, 515, 255, 152]
+final_tiles_mean: {'EMPTY': 58.8, 'LOCKED': 22.5, 'SHEEP': 7.9, 'COW': 7.2, 'GOOSE': 2.4, 'COOP_EMPTY': 1.1, 'WEED': 0.1}
+tiles_by_day_mean: {0: {'MELON': 12.0, 'WHEAT': 8.0, 'SHEEP': 2.0, 'COW': 2.0, 'EMPTY': 1.0}, 1: {'MELON': 12.0, 'WHEAT': 8.0, 'SHEEP': 2.0, 'COW': 2.0, 'PASTURE_EMPTY': 1.0}, 2: {'MELON': 12.0, 'WHEAT': 8.0, 'COW': 3.0, 'SHEEP': 2.0}, 3: {'MELON': 12.0, 'WHEAT': 7.0, 'COW': 4.0, 'SHEEP': 2.0}, 5: {'MELON': 12.0, 'STRAWBERRY': 4.0, 'COW': 4.0, 'WHEAT': 3.0, 'SHEEP': 2.0}, 7: {'STRAWBERRY': 16.0, 'MELON': 12.0, 'WHEAT': 9.0, 'COW': 7.0, 'PASTURE_EMPTY': 3.0, 'SHEEP': 2.6, 'GOOSE': 0.4}, 10: {'STRAWBERRY': 20.0, 'WHEAT': 12.0, 'COW': 7.2, 'SHEEP': 7.0, 'GOOSE': 1.8, 'COOP_EMPTY': 1.7, 'PASTURE_EMPTY': 0.3}, 15: {'STRAWBERRY': 33.0, 'WHEAT': 24.3, 'SHEEP': 7.9, 'COW': 7.2, 'EMPTY': 2.6, 'GOOSE': 2.5}, 20: {'STRAWBERRY': 33.0, 'WHEAT': 24.9, 'SHEEP': 7.9, 'COW': 7.2, 'GOOSE': 2.5, 'EMPTY': 1.9, 'CARROT': 0.1}, 25: {'WHEAT': 26.4, 'CARROT': 18.6, 'STRAWBERRY': 13.0, 'SHEEP': 7.9, 'COW': 7.2, 'GOOSE': 2.5, 'EMPTY': 1.8, 'WEED': 0.1}}
+money_by_day_mean: {0: 12, 1: 101, 2: 214, 3: 265, 5: 785, 7: 486, 10: 15953, 15: 29321, 20: 60424, 25: 81686, 28: 96847}
+end_shed_mean: {}
+unit_actions_per_game: {'WATER': 1098, 'NORTH': 928, 'WEST': 884, 'EAST': 603, 'SOUTH': 525, 'PASS': 524, 'HARVEST': 481, 'CARE': 413, 'COLLECT_FERTILIZER': 380, 'FEED': 346, 'PLANT': 239, 'PICKUP': 195, 'FERTILIZE': 113, 'PLACE': 105, 'DROP': 45, 'DIG': 37, 'BUILD_PASTURE': 15, 'BUILD_COOP': 4}
+wheat_bought_units: 375.1
+fert_bought_units: 79.5
+t0: [('[[0, "BUY_PRODUCT", 8, 222], [0, "SELL", 3, 90]]', 4), ('[[0, "BUY_PRODUCT", 20, 578], [0, "SELL", 15, 438]]', 3), ('[[0, "BUY_PRODUCT", 20, 585], [0, "SELL", 15, 449]]', 1)]
+day0_market_first6: [("[['BUY_PRODUCT', 'WHEAT', 20], ['SELL', 'WHEAT', 15], ['BUY_SEED', 'WHEAT', 1]] | [['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'COW', 2], ['BUY_ANIMAL', 'SHEEP', 2]] | []", 5), ("[['BUY_PRODUCT', 'WHEAT', 8], ['SELL', 'WHEAT', 3], ['BUY_SEED', 'WHEAT', 1]] | [['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'COW', 2], ['BUY_ANIMAL', 'SHEEP', 2]] | []", 5)]
+####################################################################################################
+team: Majkel1337
+n: 9
+wins: 6
+final_mean: 103114.2
+margin_mean: 167.0
+margin_pct: 0.4
+opps: Counter({'Unknown Mother-Goose': 2, 'DSM': 2, 'Just A game on your lips': 1, 'Vadim Vasilenko': 1, 'DECEM': 1, 'Fourth Quadrant': 1, 'Russell Kirk': 1})
+buys_per_game: {'WHEAT': 357.0, 'CARROT': 51.9, 'STRAWBERRY': 24.6, 'TOMATO': 14.1, 'MELON': 13.8, 'COW': 7.3, 'SHEEP': 7.0, 'GOOSE': 4.8}
+first_buy_day_min: {'COW': 0, 'SHEEP': 0, 'WHEAT': 0, 'MELON': 0, 'STRAWBERRY': 1, 'GOOSE': 4, 'TOMATO': 6, 'CARROT': 8}
+buys_by_window_per_game: {'d0': {'WHEAT': 19.6, 'MELON': 5.3, 'SHEEP': 2.9, 'COW': 2.1}, 'd1-2': {'WHEAT': 9.9, 'MELON': 4.7, 'COW': 1.0, 'STRAWBERRY': 0.1}, 'd3-5': {'WHEAT': 6.0, 'STRAWBERRY': 3.7, 'MELON': 3.1, 'COW': 1.4, 'GOOSE': 0.2, 'SHEEP': 0.1}, 'd6-10': {'WHEAT': 143.3, 'STRAWBERRY': 16.9, 'GOOSE': 4.6, 'CARROT': 4.4, 'COW': 2.3, 'SHEEP': 2.0, 'TOMATO': 1.3, 'MELON': 0.3}, 'd11-20': {'WHEAT': 96.8, 'CARROT': 21.9, 'TOMATO': 12.8, 'STRAWBERRY': 3.9, 'SHEEP': 2.0, 'COW': 0.4, 'MELON': 0.3}, 'd21+': {'WHEAT': 81.4, 'CARROT': 25.6}}
+land: [(((6, 1000), (9, 2000)), 8), (((6, 1000), (8, 2000), (10, 4000)), 1)]
+land_day_by_price: {1000: 6.2, 2000: 9.2, 4000: 10.5}
+n_quadrants_mean: 3.1
+hires_by_day_mean: [5, 4.2, 4, 5, 5.1, 5.1, 8.9, 7.9, 7.9, 10.9, 10.3, 10.4, 10.3, 10.3, 10.1, 11.3, 11.2, 11.1, 11, 11.2, 10.8, 10.8, 11.3, 11.1, 11.3, 11.6, 11.3, 11.1, 10.1, 10]
+hire_cost_mean: 5019.6
+revenue_per_game: {'WOOL': 21626, 'STRAWBERRY': 20898, 'MILK': 19593, 'WHEAT': 18507, 'MELON': 15561, 'FERTILIZER': 11529, 'EGG': 8294, 'TOMATO': 7780, 'CARROT': 6377}
+units_per_game: {'WHEAT': 570, 'FERTILIZER': 203, 'EGG': 185, 'MILK': 185, 'STRAWBERRY': 160, 'CARROT': 156, 'WOOL': 154, 'TOMATO': 104, 'MELON': 81}
+avg_price: {'WHEAT': 32.5, 'FERTILIZER': 56.7, 'WOOL': 140.8, 'MILK': 106.1, 'MELON': 192.6, 'EGG': 44.9, 'STRAWBERRY': 130.2, 'TOMATO': 74.8, 'CARROT': 41.0}
+price_vs_base: {'WHEAT': 1.3, 'FERTILIZER': 0.57, 'WOOL': 0.7, 'MILK': 0.66, 'MELON': 0.77, 'EGG': 0.9, 'STRAWBERRY': 1.09, 'TOMATO': 1.25, 'CARROT': 1.17}
+spend_per_game: {'BUY_PRODUCT:WHEAT': 6734, 'BUY_ANIMAL:SHEEP': 3500, 'BUY_ANIMAL:COW': 2933, 'BUY_SEED:STRAWBERRY': 2456, 'BUY_SEED:WHEAT': 1683, 'BUY_ANIMAL:GOOSE': 1433, 'BUY_SEED:MELON': 1102, 'BUY_SEED:CARROT': 1038, 'BUY_SEED:TOMATO': 706}
+sell_sizes: {'CARROT:1': 3, 'CARROT:10+': 37, 'CARROT:2-3': 56, 'CARROT:4-9': 119, 'EGG:1': 15, 'EGG:10+': 55, 'EGG:2-3': 32, 'EGG:4-9': 144, 'FERTILIZER:1': 494, 'FERTILIZER:10+': 18, 'FERTILIZER:2-3': 219, 'FERTILIZER:4-9': 109, 'MELON:1': 8, 'MELON:10+': 22, 'MELON:2-3': 14, 'MELON:4-9': 65, 'MILK:1': 294, 'MILK:10+': 5, 'MILK:2-3': 282, 'MILK:4-9': 118, 'STRAWBERRY:1': 131, 'STRAWBERRY:10+': 16, 'STRAWBERRY:2-3': 189, 'STRAWBERRY:4-9': 128, 'TOMATO:1': 5, 'TOMATO:10+': 35, 'TOMATO:2-3': 60, 'TOMATO:4-9': 63, 'WHEAT:1': 138, 'WHEAT:10+': 208, 'WHEAT:2-3': 95, 'WHEAT:4-9': 246, 'WOOL:1': 216, 'WOOL:10+': 10, 'WOOL:2-3': 200, 'WOOL:4-9': 100}
+sell_orders_per_game: 438.8
+sells_near_opp_frac: 0.5
+premium_units_by_hour: [254, 388, 140, 86, 167, 400, 168, 123, 18, 393, 83, 18, 121, 368, 82, 41, 59, 432, 198, 13, 16, 751, 557, 339]
+final_tiles_mean: {'EMPTY': 47.0, 'LOCKED': 22.2, 'WEED': 8.3, 'PASTURE_EMPTY': 5.9, 'COW': 5.9, 'GOOSE': 4.7, 'TOMATO': 4.0, 'STRAWBERRY': 0.9, 'SHEEP': 0.6, 'WHEAT': 0.3, 'COOP_EMPTY': 0.1, 'CARROT': 0.1}
+tiles_by_day_mean: {0: {'WHEAT': 8.8, 'EMPTY': 5.9, 'MELON': 5.3, 'SHEEP': 2.9, 'COW': 2.1}, 1: {'MELON': 10.0, 'WHEAT': 8.9, 'SHEEP': 2.9, 'COW': 2.1, 'EMPTY': 1.0, 'STRAWBERRY': 0.1}, 2: {'MELON': 10.0, 'WHEAT': 8.9, 'COW': 3.1, 'SHEEP': 2.9, 'STRAWBERRY': 0.1}, 3: {'MELON': 10.9, 'WHEAT': 6.0, 'COW': 4.1, 'SHEEP': 2.9, 'STRAWBERRY': 1.1}, 5: {'MELON': 13.1, 'COW': 4.6, 'STRAWBERRY': 3.8, 'SHEEP': 3.0, 'GOOSE': 0.2, 'WHEAT': 0.2, 'EMPTY': 0.1}, 7: {'STRAWBERRY': 16.9, 'MELON': 13.1, 'COW': 6.4, 'WHEAT': 5.7, 'SHEEP': 4.0, 'GOOSE': 3.1, 'EMPTY': 0.7, 'TOMATO': 0.1}, 10: {'WHEAT': 23.0, 'STRAWBERRY': 20.2, 'MELON': 8.1, 'COW': 6.8, 'SHEEP': 5.0, 'GOOSE': 4.8, 'CARROT': 4.3, 'EMPTY': 4.0, 'TOMATO': 1.3, 'PASTURE_EMPTY': 0.1, 'WEED': 0.1}, 15: {'STRAWBERRY': 24.2, 'WHEAT': 20.1, 'COW': 7.0, 'CARROT': 6.9, 'TOMATO': 6.1, 'SHEEP': 6.0, 'GOOSE': 4.8, 'EMPTY': 2.0, 'MELON': 0.7}, 20: {'WHEAT': 23.3, 'STRAWBERRY': 16.9, 'TOMATO': 12.7, 'SHEEP': 6.9, 'COW': 6.9, 'GOOSE': 4.8, 'CARROT': 4.2, 'EMPTY': 1.8, 'WEED': 0.2, 'MELON': 0.1}, 25: {'WHEAT': 35.4, 'TOMATO': 9.2, 'COW': 6.3, 'SHEEP': 6.1, 'CARROT': 6.0, 'GOOSE': 4.8, 'STRAWBERRY': 4.8, 'EMPTY': 3.8, 'WEED': 0.8, 'PASTURE_EMPTY': 0.6}}
+money_by_day_mean: {0: 19, 1: 48, 2: 7, 3: 56, 5: 610, 7: 48, 10: 4466, 15: 30951, 20: 54808, 25: 75755, 28: 92664}
+end_shed_mean: {'FERTILIZER': 0.2}
+unit_actions_per_game: {'WATER': 1258, 'NORTH': 946, 'WEST': 922, 'EAST': 601, 'SOUTH': 557, 'HARVEST': 490, 'COLLECT_FERTILIZER': 426, 'CARE': 371, 'FEED': 365, 'PLANT': 273, 'FERTILIZE': 212, 'PASS': 211, 'PICKUP': 206, 'DROP': 158, 'DIG': 34, 'PLACE': 26, 'BUILD_PASTURE': 15, 'BUILD_COOP': 7}
+wheat_bought_units: 188.7
+fert_bought_units: 0
+t0: [('[[0, "BUY_PRODUCT", 10, 282]]', 8), ('[[0, "BUY_PRODUCT", 9, 244]]', 1)]
+day0_market_first6: [("[['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'COW', 1], ['BUY_ANIMAL', 'SHEEP', 1], ['BUY_PRODUCT', 'WHEAT', 10]] | [] | []", 8), ("[['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'COW', 1], ['BUY_ANIMAL', 'SHEEP', 1], ['BUY_PRODUCT', 'WHEAT', 9]] | [] | [['SELL', 'WHEAT', 1]]", 1)]
+####################################################################################################
+team: Boey
+n: 9
+wins: 3
+final_mean: 100976.1
+margin_mean: -1132.0
+margin_pct: -1.0
+opps: Counter({'DSM': 6, 'M & M & P & Q': 1, 'DECEM': 1, 'Vadim Vasilenko': 1})
+buys_per_game: {'WHEAT': 3644.0, 'FERTILIZER': 765.6, 'CARROT': 78.7, 'STRAWBERRY': 30.6, 'MELON': 13.1, 'COW': 8.0, 'GOOSE': 6.4, 'SHEEP': 5.4}
+first_buy_day_min: {'WHEAT': 0, 'SHEEP': 0, 'MELON': 0, 'COW': 0, 'FERTILIZER': 0, 'GOOSE': 2, 'STRAWBERRY': 3, 'CARROT': 10}
+buys_by_window_per_game: {'d0': {'WHEAT': 66.1, 'FERTILIZER': 8.7, 'MELON': 7.0, 'COW': 3.0, 'SHEEP': 2.0}, 'd1-2': {'WHEAT': 80.3, 'FERTILIZER': 5.0, 'MELON': 2.9, 'GOOSE': 2.0}, 'd3-5': {'WHEAT': 404.2, 'FERTILIZER': 12.3, 'STRAWBERRY': 4.7, 'COW': 1.4, 'SHEEP': 1.0, 'MELON': 0.9, 'GOOSE': 0.6}, 'd6-10': {'WHEAT': 732.2, 'FERTILIZER': 57.6, 'STRAWBERRY': 22.2, 'GOOSE': 3.9, 'COW': 2.4, 'MELON': 2.2, 'SHEEP': 1.6, 'CARROT': 0.7}, 'd11-20': {'WHEAT': 1587.1, 'FERTILIZER': 310.7, 'CARROT': 26.7, 'STRAWBERRY': 3.7, 'COW': 1.1, 'SHEEP': 0.8, 'MELON': 0.1}, 'd21+': {'WHEAT': 774.0, 'FERTILIZER': 371.3, 'CARROT': 51.3, 'SHEEP': 0.1}}
+land: [(((6, 1000), (8, 2000)), 7), (((6, 1000), (9, 2000)), 2)]
+land_day_by_price: {1000: 6.0, 2000: 8.5, 4000: None}
+n_quadrants_mean: 3
+hires_by_day_mean: [5, 2.4, 5, 5, 5.7, 5, 9, 6, 9.8, 9.2, 11.2, 9.2, 10.4, 9.7, 10.1, 10.8, 11.1, 10.4, 11.4, 11.1, 10.7, 10.8, 11.2, 10.9, 11.1, 11.6, 10.8, 9.8, 9.4, 9.1]
+hire_cost_mean: 4450.8
+revenue_per_game: {'WHEAT': 136236, 'FERTILIZER': 41618, 'STRAWBERRY': 27711, 'MILK': 19619, 'MELON': 15150, 'WOOL': 14361, 'EGG': 11377, 'CARROT': 10278}
+units_per_game: {'WHEAT': 3792, 'FERTILIZER': 995, 'EGG': 264, 'CARROT': 250, 'STRAWBERRY': 208, 'MILK': 197, 'WOOL': 121, 'MELON': 79}
+avg_price: {'WHEAT': 35.9, 'FERTILIZER': 41.8, 'WOOL': 119.1, 'EGG': 43.0, 'MILK': 99.6, 'MELON': 192.9, 'STRAWBERRY': 133.3, 'CARROT': 41.1}
+price_vs_base: {'WHEAT': 1.44, 'FERTILIZER': 0.42, 'WOOL': 0.6, 'EGG': 0.86, 'MILK': 0.62, 'MELON': 0.77, 'STRAWBERRY': 1.11, 'CARROT': 1.17}
+spend_per_game: {'BUY_PRODUCT:WHEAT': 126938, 'BUY_PRODUCT:FERTILIZER': 28952, 'BUY_ANIMAL:COW': 3200, 'BUY_SEED:STRAWBERRY': 3056, 'BUY_ANIMAL:SHEEP': 2722, 'BUY_ANIMAL:GOOSE': 1933, 'BUY_SEED:CARROT': 1573, 'BUY_SEED:WHEAT': 1500, 'BUY_SEED:MELON': 1049}
+sell_sizes: {'CARROT:1': 39, 'CARROT:10+': 88, 'CARROT:2-3': 68, 'CARROT:4-9': 89, 'EGG:1': 116, 'EGG:10+': 40, 'EGG:2-3': 203, 'EGG:4-9': 243, 'FERTILIZER:1': 1372, 'FERTILIZER:10+': 73, 'FERTILIZER:2-3': 1351, 'FERTILIZER:4-9': 661, 'MELON:1': 21, 'MELON:10+': 11, 'MELON:2-3': 29, 'MELON:4-9': 82, 'MILK:1': 47, 'MILK:10+': 1, 'MILK:2-3': 255, 'MILK:4-9': 198, 'STRAWBERRY:1': 27, 'STRAWBERRY:10+': 12, 'STRAWBERRY:2-3': 277, 'STRAWBERRY:4-9': 202, 'WHEAT:1': 1105, 'WHEAT:10+': 736, 'WHEAT:2-3': 1575, 'WHEAT:4-9': 3629, 'WOOL:1': 181, 'WOOL:10+': 12, 'WOOL:2-3': 177, 'WOOL:4-9': 74}
+sell_orders_per_game: 1443.8
+sells_near_opp_frac: 0.2
+premium_units_by_hour: [224, 1118, 156, 40, 243, 272, 98, 122, 100, 417, 126, 135, 115, 341, 62, 113, 96, 474, 93, 80, 52, 587, 261, 110]
+final_tiles_mean: {'EMPTY': 53.2, 'LOCKED': 25.0, 'COW': 7.1, 'GOOSE': 6.4, 'PASTURE_EMPTY': 3.2, 'WEED': 2.6, 'STRAWBERRY': 1.3, 'SHEEP': 0.9, 'CARROT': 0.1, 'WHEAT': 0.1}
+tiles_by_day_mean: {0: {'WHEAT': 12.8, 'MELON': 7.0, 'COW': 3.0, 'SHEEP': 2.0, 'EMPTY': 0.2}, 1: {'WHEAT': 12.8, 'MELON': 7.2, 'COW': 3.0, 'SHEEP': 2.0}, 2: {'MELON': 9.9, 'WHEAT': 8.1, 'COW': 3.0, 'GOOSE': 2.0, 'SHEEP': 2.0}, 3: {'MELON': 10.3, 'COW': 4.0, 'WHEAT': 3.7, 'STRAWBERRY': 2.8, 'SHEEP': 2.1, 'GOOSE': 2.0, 'EMPTY': 0.1}, 5: {'MELON': 10.7, 'COW': 4.4, 'STRAWBERRY': 4.2, 'SHEEP': 3.0, 'GOOSE': 2.6, 'WHEAT': 0.1}, 7: {'STRAWBERRY': 20.3, 'MELON': 12.1, 'COW': 5.2, 'GOOSE': 4.4, 'SHEEP': 4.0, 'WHEAT': 3.2, 'EMPTY': 0.7}, 10: {'STRAWBERRY': 26.4, 'WHEAT': 23.3, 'COW': 6.9, 'GOOSE': 6.4, 'MELON': 6.0, 'SHEEP': 4.6, 'EMPTY': 1.3}, 15: {'STRAWBERRY': 30.4, 'WHEAT': 17.6, 'COW': 7.8, 'GOOSE': 6.4, 'CARROT': 5.1, 'SHEEP': 4.9, 'MELON': 2.4, 'EMPTY': 0.3}, 20: {'STRAWBERRY': 22.1, 'WHEAT': 21.8, 'CARROT': 11.1, 'COW': 7.8, 'GOOSE': 6.4, 'SHEEP': 5.0, 'EMPTY': 0.4, 'PASTURE_EMPTY': 0.2, 'MELON': 0.1}, 25: {'WHEAT': 31.4, 'CARROT': 18.8, 'COW': 7.4, 'GOOSE': 6.4, 'STRAWBERRY': 4.6, 'SHEEP': 3.7, 'EMPTY': 1.8, 'WEED': 0.4, 'PASTURE_EMPTY': 0.4}}
+money_by_day_mean: {0: 29, 1: 248, 2: 11, 3: 21, 5: 35, 7: 55, 10: 8729, 15: 31861, 20: 61002, 25: 78816, 28: 91881}
+end_shed_mean: {}
+unit_actions_per_game: {'WEST': 1051, 'WATER': 1050, 'NORTH': 891, 'EAST': 571, 'SOUTH': 559, 'HARVEST': 524, 'COLLECT_FERTILIZER': 444, 'FEED': 384, 'CARE': 383, 'PLANT': 276, 'FERTILIZE': 208, 'PASS': 194, 'PICKUP': 181, 'DROP': 116, 'PLACE': 71, 'DIG': 31, 'BUILD_PASTURE': 14, 'BUILD_COOP': 7}
+wheat_bought_units: 3494
+fert_bought_units: 765.6
+t0: [('[[0, "BUY_PRODUCT", 3, 79], [1, "BUY_PRODUCT", 2, 56], [1, "SELL", 2, 56], [1, "SELL", 1, 28], [1, "BUY_PRODUCT", 1, 28]]', 1), ('[[0, "BUY_PRODUCT", 3, 79], [1, "SELL", 2, 56], [1, "SELL", 1, 27]]', 1), ('[[0, "BUY_PRODUCT", 3, 79], [1, "SELL", 1, 28], [1, "SELL", 2, 55]]', 1)]
+day0_market_first6: [("[['BUY_PRODUCT', 'WHEAT', 3], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_SEED', 'WHEAT', 3], ['NOOP'], ['BUY_SEED', 'WHEAT', 4], ['BUY_ANIMAL', 'SHEEP', 1]] | [['BUY_PRODUCT', 'WHEAT', 2], ['SELL', 'WHEAT', 2], ['NOOP'], ['NOOP'], ['SELL', 'WHEAT', 1], ['BUY_SEED', 'WHEAT', 1], ['BUY_SEED', 'MELON', 1], ['BUY_PRODUCT', 'WHEAT', 1], ['NOOP'], ['BUY_ANIMAL', 'SHEEP', 1]] | [['NOOP'], ['BUY_SEED', 'MELON', 1], ['BUY_PRODUCT', 'WHEAT', 3], ['BUY_SEED', 'MELON', 1], ['BUY_SEED', 'MELON', 1], ['BUY_SEED', 'MELON', 1], ['NOOP'], ['BUY_SEED', 'MELON', 1], ['BUY_ANIMAL', 'COW', 1], ['SELL', 'WHEAT', 3]]", 1), ("[['BUY_PRODUCT', 'WHEAT', 3], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_SEED', 'WHEAT', 3], ['NOOP'], ['BUY_SEED', 'WHEAT', 4], ['BUY_ANIMAL', 'SHEEP', 1]] | [['SELL', 'WHEAT', 2], ['SELL', 'WHEAT', 1], ['BUY_SEED', 'MELON', 1], ['NOOP'], ['BUY_SEED', 'WHEAT', 2], ['BUY_PRODUCT', 'FERTILIZER', 1], ['BUY_SEED', 'WHEAT', 1], ['BUY_SEED', 'MELON', 1], ['BUY_PRODUCT', 'FERTILIZER', 1], ['BUY_ANIMAL', 'SHEEP', 1]] | [['BUY_SEED', 'WHEAT', 1], ['NOOP'], ['SELL', 'FERTILIZER', 1], ['BUY_ANIMAL', 'COW', 1], ['BUY_PRODUCT', 'FERTILIZER', 1], ['SELL', 'FERTILIZER', 1], ['BUY_ANIMAL', 'COW', 1], ['BUY_ANIMAL', 'COW', 1], ['BUY_PRODUCT', 'WHEAT', 15]]", 1), ("[['BUY_PRODUCT', 'WHEAT', 3], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_SEED', 'WHEAT', 3], ['NOOP'], ['BUY_SEED', 'WHEAT', 4], ['BUY_ANIMAL', 'SHEEP', 1]] | [['NOOP'], ['BUY_SEED', 'WHEAT', 1], ['SELL', 'WHEAT', 1], ['SELL', 'WHEAT', 2], ['BUY_SEED', 'MELON', 1], ['NOOP'], ['NOOP'], ['NOOP'], ['NOOP'], ['BUY_ANIMAL', 'SHEEP', 1]] | [['BUY_PRODUCT', 'WHEAT', 1], ['BUY_SEED', 'MELON', 1], ['BUY_SEED', 'WHEAT', 1], ['BUY_PRODUCT', 'FERTILIZER', 2], ['BUY_PRODUCT', 'WHEAT', 2], ['BUY_ANIMAL', 'COW', 1], ['BUY_SEED', 'WHEAT', 1], ['BUY_SEED', 'MELON', 1], ['NOOP'], ['BUY_ANIMAL', 'COW', 1]]", 1)]
+####################################################################################################
+team: DECEM
+n: 8
+wins: 4
+final_mean: 101618.1
+margin_mean: 2362.2
+margin_pct: 2.6
+opps: Counter({'Fourth Quadrant': 2, 'Unknown Mother-Goose': 1, 'Anton Tikhonov': 1, 'Azat Akhtyamov': 1, 'Boey': 1, 'Majkel1337': 1, 'Vadim Vasilenko': 1})
+buys_per_game: {'WHEAT': 298.2, 'CARROT': 44.5, 'STRAWBERRY': 26.6, 'MELON': 11.6, 'SHEEP': 8.4, 'COW': 6.9, 'GOOSE': 6.4, 'TOMATO': 0.9}
+first_buy_day_min: {'COW': 0, 'SHEEP': 0, 'WHEAT': 0, 'MELON': 0, 'STRAWBERRY': 2, 'GOOSE': 6, 'CARROT': 10, 'TOMATO': 16}
+buys_by_window_per_game: {'d0': {'WHEAT': 21.2, 'MELON': 6.0, 'SHEEP': 3.0, 'COW': 2.0}, 'd1-2': {'WHEAT': 10.5, 'MELON': 2.4, 'STRAWBERRY': 1.6, 'COW': 1.0}, 'd3-5': {'STRAWBERRY': 7.0, 'WHEAT': 4.8, 'COW': 1.9, 'SHEEP': 0.6}, 'd6-10': {'WHEAT': 121.5, 'STRAWBERRY': 13.6, 'GOOSE': 6.4, 'MELON': 3.2, 'SHEEP': 3.2, 'COW': 2.0, 'CARROT': 0.4}, 'd11-20': {'WHEAT': 82.5, 'CARROT': 15.8, 'STRAWBERRY': 4.4, 'SHEEP': 1.5, 'TOMATO': 0.9}, 'd21+': {'WHEAT': 57.8, 'CARROT': 28.4}}
+land: [(((6, 1000), (8, 2000)), 7), (((6, 1000), (9, 2000)), 1)]
+land_day_by_price: {1000: 6.1, 2000: 8.4, 4000: None}
+n_quadrants_mean: 3
+hires_by_day_mean: [5, 3.5, 5, 5, 6, 5.5, 9, 7.4, 10, 10.1, 11.2, 10.6, 11, 10.1, 10.4, 11.4, 11.8, 11, 11.6, 11.4, 11, 11, 11.1, 10.8, 11, 11, 10.8, 10.2, 9.8, 9]
+hire_cost_mean: 5056.4
+revenue_per_game: {'STRAWBERRY': 25906, 'WOOL': 25347, 'WHEAT': 16269, 'MILK': 14997, 'MELON': 13978, 'FERTILIZER': 12639, 'EGG': 10207, 'CARROT': 5538, 'TOMATO': 1050}
+units_per_game: {'WHEAT': 564, 'FERTILIZER': 245, 'EGG': 227, 'STRAWBERRY': 199, 'WOOL': 188, 'MILK': 158, 'CARROT': 147, 'MELON': 69, 'TOMATO': 6}
+avg_price: {'WHEAT': 28.8, 'FERTILIZER': 51.7, 'WOOL': 134.5, 'MILK': 94.9, 'MELON': 203.7, 'EGG': 44.9, 'STRAWBERRY': 130.0, 'CARROT': 37.7, 'TOMATO': 164.7}
+price_vs_base: {'WHEAT': 1.15, 'FERTILIZER': 0.52, 'WOOL': 0.67, 'MILK': 0.59, 'MELON': 0.81, 'EGG': 0.9, 'STRAWBERRY': 1.08, 'CARROT': 1.08, 'TOMATO': 2.74}
+spend_per_game: {'BUY_ANIMAL:SHEEP': 4188, 'BUY_PRODUCT:WHEAT': 4086, 'BUY_ANIMAL:COW': 2750, 'BUY_SEED:STRAWBERRY': 2662, 'BUY_ANIMAL:GOOSE': 1912, 'BUY_SEED:WHEAT': 1795, 'BUY_SEED:MELON': 930, 'BUY_SEED:CARROT': 890, 'BUY_SEED:TOMATO': 44}
+sell_sizes: {'CARROT:1': 61, 'CARROT:10+': 38, 'CARROT:2-3': 40, 'CARROT:4-9': 79, 'EGG:1': 126, 'EGG:10+': 12, 'EGG:2-3': 133, 'EGG:4-9': 189, 'FERTILIZER:1': 327, 'FERTILIZER:10+': 35, 'FERTILIZER:2-3': 309, 'FERTILIZER:4-9': 90, 'MELON:1': 12, 'MELON:10+': 11, 'MELON:2-3': 7, 'MELON:4-9': 59, 'MILK:1': 113, 'MILK:10+': 1, 'MILK:2-3': 172, 'MILK:4-9': 138, 'STRAWBERRY:1': 151, 'STRAWBERRY:10+': 24, 'STRAWBERRY:2-3': 196, 'STRAWBERRY:4-9': 133, 'TOMATO:1': 15, 'TOMATO:2-3': 8, 'TOMATO:4-9': 4, 'WHEAT:1': 249, 'WHEAT:10+': 174, 'WHEAT:2-3': 125, 'WHEAT:4-9': 251, 'WOOL:1': 140, 'WOOL:10+': 12, 'WOOL:2-3': 197, 'WOOL:4-9': 168}
+sell_orders_per_game: 474.9
+sells_near_opp_frac: 0.6
+premium_units_by_hour: [364, 607, 166, 174, 179, 345, 239, 43, 34, 579, 106, 89, 48, 561, 88, 97, 66, 525, 39, 32, 4, 401, 46, 83]
+final_tiles_mean: {'EMPTY': 50.6, 'LOCKED': 25.0, 'PASTURE_EMPTY': 6.6, 'GOOSE': 6.1, 'COW': 4.4, 'WEED': 3.2, 'STRAWBERRY': 2.5, 'SHEEP': 0.8, 'COOP_EMPTY': 0.2, 'TOMATO': 0.2, 'MELON': 0.1, 'WHEAT': 0.1}
+tiles_by_day_mean: {0: {'WHEAT': 12.0, 'MELON': 6.0, 'SHEEP': 3.0, 'COW': 2.0, 'EMPTY': 2.0}, 1: {'WHEAT': 12.0, 'MELON': 8.0, 'SHEEP': 3.0, 'COW': 2.0}, 2: {'WHEAT': 9.0, 'MELON': 8.4, 'COW': 3.0, 'SHEEP': 3.0, 'STRAWBERRY': 1.6}, 3: {'MELON': 8.4, 'WHEAT': 4.6, 'STRAWBERRY': 4.6, 'COW': 3.8, 'SHEEP': 3.2, 'EMPTY': 0.4}, 5: {'MELON': 8.4, 'STRAWBERRY': 8.2, 'COW': 4.8, 'SHEEP': 3.5, 'WHEAT': 0.1}, 7: {'STRAWBERRY': 20.5, 'MELON': 11.5, 'COW': 6.1, 'SHEEP': 5.2, 'WHEAT': 4.1, 'GOOSE': 2.0, 'EMPTY': 0.5}, 10: {'WHEAT': 26.9, 'STRAWBERRY': 22.2, 'COW': 6.9, 'SHEEP': 6.9, 'GOOSE': 6.4, 'MELON': 5.5, 'EMPTY': 0.2}, 15: {'STRAWBERRY': 26.5, 'WHEAT': 21.9, 'SHEEP': 8.4, 'COW': 6.8, 'GOOSE': 6.4, 'MELON': 3.1, 'CARROT': 1.2, 'EMPTY': 0.5, 'WEED': 0.2}, 20: {'WHEAT': 27.0, 'STRAWBERRY': 17.9, 'SHEEP': 8.1, 'CARROT': 7.8, 'GOOSE': 6.4, 'COW': 6.1, 'TOMATO': 0.9, 'EMPTY': 0.5, 'WEED': 0.2, 'PASTURE_EMPTY': 0.1}, 25: {'WHEAT': 32.5, 'CARROT': 15.9, 'GOOSE': 6.4, 'SHEEP': 6.1, 'COW': 5.4, 'STRAWBERRY': 4.2, 'EMPTY': 2.0, 'PASTURE_EMPTY': 1.1, 'TOMATO': 0.9, 'WEED': 0.4, 'MELON': 0.1}}
+money_by_day_mean: {0: 4, 1: 83, 2: 41, 3: 66, 5: 442, 7: 260, 10: 7987, 15: 34859, 20: 65882, 25: 81422, 28: 96246}
+end_shed_mean: {}
+unit_actions_per_game: {'WATER': 1079, 'NORTH': 923, 'WEST': 901, 'EAST': 596, 'SOUTH': 594, 'HARVEST': 503, 'COLLECT_FERTILIZER': 468, 'CARE': 395, 'FEED': 394, 'PASS': 392, 'PLANT': 263, 'FERTILIZE': 222, 'PICKUP': 192, 'DROP': 133, 'PLACE': 55, 'DIG': 28, 'BUILD_PASTURE': 16, 'BUILD_COOP': 6}
+wheat_bought_units: 118.8
+fert_bought_units: 0
+t0: [('[[0, "BUY_PRODUCT", 5, 139], [1, "SELL", 1, 28]]', 4), ('[[0, "BUY_PRODUCT", 5, 133], [1, "SELL", 1, 27]]', 2), ('[[0, "BUY_PRODUCT", 5, 137], [1, "SELL", 1, 28]]', 1)]
+day0_market_first6: [("[['BUY_ANIMAL', 'COW', 1], ['BUY_ANIMAL', 'SHEEP', 3], ['BUY_PRODUCT', 'WHEAT', 5]] | [['SELL', 'WHEAT', 1], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'COW', 1]] | [['SELL', 'WHEAT', 1]]", 8)]
+####################################################################################################
+team: M & M & P & Q
+n: 8
+wins: 3
+final_mean: 103657.2
+margin_mean: -455.0
+margin_pct: -0.6
+opps: Counter({'KawattaTaido': 2, 'Vadim Vasilenko': 2, 'Unknown Mother-Goose': 1, 'DSM': 1, 'Boey': 1, 'Russell Kirk': 1})
+buys_per_game: {'WHEAT': 293.9, 'CARROT': 49.2, 'STRAWBERRY': 29.6, 'MELON': 11.5, 'COW': 8.0, 'SHEEP': 6.9, 'GOOSE': 6.9}
+first_buy_day_min: {'COW': 0, 'WHEAT': 0, 'SHEEP': 0, 'MELON': 0, 'STRAWBERRY': 2, 'GOOSE': 6, 'CARROT': 12}
+buys_by_window_per_game: {'d0': {'WHEAT': 20.1, 'MELON': 6.0, 'SHEEP': 3.0, 'COW': 2.0}, 'd1-2': {'WHEAT': 7.6, 'MELON': 3.0, 'COW': 1.0, 'STRAWBERRY': 1.0}, 'd3-5': {'STRAWBERRY': 6.8, 'WHEAT': 3.6, 'COW': 2.4, 'SHEEP': 0.4, 'MELON': 0.1}, 'd6-10': {'WHEAT': 114.0, 'STRAWBERRY': 16.4, 'GOOSE': 6.9, 'SHEEP': 2.6, 'MELON': 2.4, 'COW': 2.2}, 'd11-20': {'WHEAT': 86.4, 'CARROT': 19.2, 'STRAWBERRY': 5.5, 'SHEEP': 0.9, 'COW': 0.4}, 'd21+': {'WHEAT': 62.1, 'CARROT': 30.0}}
+land: [(((6, 1000), (8, 2000)), 8)]
+land_day_by_price: {1000: 6.1, 2000: 8.2, 4000: None}
+n_quadrants_mean: 3
+hires_by_day_mean: [5, 3, 5.5, 5, 6, 5.5, 9.1, 7.2, 9.8, 9.9, 11.4, 10.4, 10.5, 10.1, 10.4, 11.4, 11.6, 10.9, 11.4, 11.1, 11, 10.8, 11.4, 10.9, 11.1, 11, 10.9, 10.8, 9.6, 9.4]
+hire_cost_mean: 4945.1
+revenue_per_game: {'STRAWBERRY': 29710, 'WOOL': 19390, 'WHEAT': 17786, 'MILK': 17289, 'MELON': 14216, 'FERTILIZER': 12739, 'EGG': 9790, 'CARROT': 7111}
+units_per_game: {'WHEAT': 583, 'FERTILIZER': 242, 'EGG': 223, 'STRAWBERRY': 201, 'MILK': 188, 'CARROT': 171, 'WOOL': 142, 'MELON': 69}
+avg_price: {'WHEAT': 30.5, 'FERTILIZER': 52.7, 'WOOL': 136.9, 'MILK': 92.2, 'MELON': 206.4, 'EGG': 44.0, 'STRAWBERRY': 148.1, 'CARROT': 41.6}
+price_vs_base: {'WHEAT': 1.22, 'FERTILIZER': 0.53, 'WOOL': 0.68, 'MILK': 0.58, 'MELON': 0.83, 'EGG': 0.88, 'STRAWBERRY': 1.23, 'CARROT': 1.19}
+spend_per_game: {'BUY_PRODUCT:WHEAT': 4070, 'BUY_ANIMAL:SHEEP': 3438, 'BUY_ANIMAL:COW': 3200, 'BUY_SEED:STRAWBERRY': 2962, 'BUY_ANIMAL:GOOSE': 2062, 'BUY_SEED:WHEAT': 1791, 'BUY_SEED:CARROT': 985, 'BUY_SEED:MELON': 920}
+sell_sizes: {'CARROT:1': 2, 'CARROT:10+': 62, 'CARROT:2-3': 13, 'CARROT:4-9': 75, 'EGG:1': 2, 'EGG:10+': 3, 'EGG:2-3': 29, 'EGG:4-9': 255, 'FERTILIZER:1': 315, 'FERTILIZER:10+': 38, 'FERTILIZER:2-3': 310, 'FERTILIZER:4-9': 77, 'MELON:10+': 2, 'MELON:4-9': 88, 'MILK:1': 33, 'MILK:2-3': 216, 'MILK:4-9': 186, 'STRAWBERRY:1': 9, 'STRAWBERRY:10+': 12, 'STRAWBERRY:2-3': 219, 'STRAWBERRY:4-9': 193, 'WHEAT:1': 72, 'WHEAT:10+': 274, 'WHEAT:2-3': 17, 'WHEAT:4-9': 145, 'WOOL:1': 78, 'WOOL:10+': 4, 'WOOL:2-3': 167, 'WOOL:4-9': 127}
+sell_orders_per_game: 377.9
+sells_near_opp_frac: 0.7
+premium_units_by_hour: [379, 594, 146, 156, 155, 298, 218, 71, 2, 481, 92, 80, 76, 547, 34, 72, 46, 583, 123, 23, 30, 502, 48, 33]
+final_tiles_mean: {'EMPTY': 52.8, 'LOCKED': 25.0, 'GOOSE': 6.6, 'COW': 5.9, 'PASTURE_EMPTY': 4.5, 'STRAWBERRY': 3.1, 'WEED': 0.8, 'SHEEP': 0.6, 'WHEAT': 0.6, 'COOP_EMPTY': 0.1}
+tiles_by_day_mean: {0: {'WHEAT': 12.0, 'MELON': 6.0, 'SHEEP': 3.0, 'EMPTY': 2.0, 'COW': 2.0}, 1: {'WHEAT': 12.0, 'MELON': 8.0, 'SHEEP': 3.0, 'COW': 2.0}, 2: {'MELON': 9.0, 'WHEAT': 8.5, 'COW': 3.0, 'SHEEP': 3.0, 'STRAWBERRY': 1.0, 'EMPTY': 0.5}, 3: {'MELON': 9.0, 'WHEAT': 4.9, 'COW': 4.1, 'STRAWBERRY': 3.5, 'SHEEP': 3.1, 'EMPTY': 0.4}, 5: {'MELON': 9.1, 'STRAWBERRY': 6.9, 'COW': 5.4, 'SHEEP': 3.4, 'WHEAT': 0.2}, 7: {'STRAWBERRY': 21.9, 'MELON': 11.5, 'COW': 6.6, 'SHEEP': 4.9, 'WHEAT': 2.9, 'GOOSE': 2.1, 'EMPTY': 0.1}, 10: {'WHEAT': 24.4, 'STRAWBERRY': 24.1, 'COW': 7.6, 'GOOSE': 6.9, 'SHEEP': 6.0, 'MELON': 5.5, 'EMPTY': 0.4, 'WEED': 0.1}, 15: {'STRAWBERRY': 27.6, 'WHEAT': 20.5, 'COW': 8.0, 'SHEEP': 6.8, 'GOOSE': 6.8, 'MELON': 2.4, 'CARROT': 2.4, 'EMPTY': 0.5, 'COOP_EMPTY': 0.1}, 20: {'WHEAT': 27.0, 'STRAWBERRY': 19.4, 'COW': 7.8, 'CARROT': 7.1, 'GOOSE': 6.8, 'SHEEP': 6.4, 'EMPTY': 0.5, 'PASTURE_EMPTY': 0.1}, 25: {'WHEAT': 34.2, 'CARROT': 16.6, 'COW': 7.1, 'GOOSE': 6.8, 'SHEEP': 4.4, 'STRAWBERRY': 3.8, 'EMPTY': 1.6, 'PASTURE_EMPTY': 0.5}}
+money_by_day_mean: {0: 8, 1: 117, 2: 61, 3: 42, 5: 400, 7: 296, 10: 8626, 15: 33036, 20: 63524, 25: 82344, 28: 97632}
+end_shed_mean: {'MILK': 0.4, 'EGG': 9.4, 'FERTILIZER': 0.4, 'WHEAT': 0.8, 'WOOL': 0.5}
+unit_actions_per_game: {'WATER': 1094, 'NORTH': 972, 'WEST': 924, 'SOUTH': 617, 'EAST': 552, 'HARVEST': 517, 'COLLECT_FERTILIZER': 477, 'CARE': 381, 'FEED': 378, 'PASS': 301, 'PLANT': 277, 'FERTILIZE': 228, 'PICKUP': 191, 'DROP': 130, 'PLACE': 51, 'DIG': 29, 'BUILD_PASTURE': 16, 'BUILD_COOP': 7}
+wheat_bought_units: 114.8
+fert_bought_units: 0
+t0: [('[[0, "BUY_PRODUCT", 5, 136], [1, "SELL", 1, 28]]', 5), ('[[0, "BUY_PRODUCT", 5, 139], [1, "SELL", 1, 28]]', 2), ('[[0, "BUY_PRODUCT", 5, 137], [1, "SELL", 1, 28]]', 1)]
+day0_market_first6: [("[['BUY_ANIMAL', 'COW', 1], ['BUY_PRODUCT', 'WHEAT', 5], ['BUY_ANIMAL', 'SHEEP', 1], ['BUY_ANIMAL', 'SHEEP', 1], ['BUY_ANIMAL', 'SHEEP', 1]] | [['SELL', 'WHEAT', 1], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'COW', 1], ['HIRE']] | [['SELL', 'WHEAT', 1]]", 4), ("[['BUY_ANIMAL', 'COW', 1], ['BUY_PRODUCT', 'WHEAT', 5], ['BUY_ANIMAL', 'SHEEP', 1], ['BUY_ANIMAL', 'SHEEP', 1], ['BUY_ANIMAL', 'SHEEP', 1]] | [['SELL', 'WHEAT', 1], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'COW', 1]] | [['SELL', 'WHEAT', 1], ['HIRE']]", 4)]
+####################################################################################################
+team: Azat Akhtyamov
+n: 8
+wins: 4
+final_mean: 103322.5
+margin_mean: -1005.0
+margin_pct: -0.6
+opps: Counter({'Vadim Vasilenko': 2, 'Anton Tikhonov': 2, 'Just A game on your lips': 1, 'DECEM': 1, 'KawattaTaido': 1, 'We wanna be tomatos': 1})
+buys_per_game: {'WHEAT': 345.4, 'CARROT': 63.5, 'STRAWBERRY': 23.6, 'TOMATO': 12.5, 'SHEEP': 10.0, 'MELON': 10.0, 'COW': 7.6, 'GOOSE': 4.9}
+first_buy_day_min: {'COW': 0, 'WHEAT': 0, 'SHEEP': 0, 'MELON': 0, 'STRAWBERRY': 2, 'GOOSE': 6, 'TOMATO': 9, 'CARROT': 9}
+buys_by_window_per_game: {'d0': {'WHEAT': 19.0, 'MELON': 6.0, 'SHEEP': 3.0, 'COW': 2.0}, 'd1-2': {'WHEAT': 8.4, 'MELON': 4.0, 'STRAWBERRY': 4.0}, 'd3-5': {'STRAWBERRY': 6.4, 'WHEAT': 1.8}, 'd6-10': {'WHEAT': 151.0, 'STRAWBERRY': 8.4, 'SHEEP': 6.0, 'COW': 5.5, 'CARROT': 4.2, 'GOOSE': 4.1, 'TOMATO': 2.0}, 'd11-20': {'WHEAT': 97.9, 'CARROT': 27.8, 'TOMATO': 10.5, 'STRAWBERRY': 4.9, 'SHEEP': 1.0, 'GOOSE': 0.8, 'COW': 0.1}, 'd21+': {'WHEAT': 67.4, 'CARROT': 31.5}}
+land: [(((6, 1000), (9, 2000), (10, 4000)), 4), (((6, 1000), (9, 2000)), 2), (((6, 1000), (9, 2000), (11, 4000)), 2)]
+land_day_by_price: {1000: 6.2, 2000: 9.2, 4000: 10.8}
+n_quadrants_mean: 3.8
+hires_by_day_mean: [4, 3.6, 6, 6, 5.1, 6, 8, 8.9, 8.9, 10.1, 11.6, 11.1, 11.4, 11.1, 11.5, 11.6, 11.5, 11.5, 11.6, 11.6, 11.4, 11.4, 11.4, 11.2, 11.2, 11, 11, 11, 10, 10]
+hire_cost_mean: 5831.9
+revenue_per_game: {'WOOL': 30410, 'STRAWBERRY': 24364, 'WHEAT': 18602, 'MILK': 15715, 'MELON': 13190, 'FERTILIZER': 12104, 'EGG': 6932, 'CARROT': 6855, 'TOMATO': 5912}
+units_per_game: {'WHEAT': 606, 'FERTILIZER': 234, 'WOOL': 213, 'CARROT': 196, 'STRAWBERRY': 172, 'MILK': 152, 'EGG': 149, 'TOMATO': 84, 'MELON': 60}
+avg_price: {'WHEAT': 30.7, 'FERTILIZER': 51.7, 'WOOL': 142.9, 'MILK': 103.0, 'MELON': 219.8, 'STRAWBERRY': 141.7, 'EGG': 46.6, 'CARROT': 35.1, 'TOMATO': 70.6}
+price_vs_base: {'WHEAT': 1.23, 'FERTILIZER': 0.52, 'WOOL': 0.71, 'MILK': 0.64, 'MELON': 0.88, 'STRAWBERRY': 1.18, 'EGG': 0.93, 'CARROT': 1.0, 'TOMATO': 1.18}
+spend_per_game: {'BUY_PRODUCT:WHEAT': 5408, 'BUY_ANIMAL:SHEEP': 5000, 'BUY_ANIMAL:COW': 3050, 'BUY_SEED:STRAWBERRY': 2362, 'BUY_SEED:WHEAT': 1952, 'BUY_ANIMAL:GOOSE': 1462, 'BUY_SEED:CARROT': 1270, 'BUY_SEED:MELON': 800, 'BUY_SEED:TOMATO': 625}
+sell_sizes: {'CARROT:1': 13, 'CARROT:10+': 78, 'CARROT:2-3': 16, 'CARROT:4-9': 71, 'EGG:1': 15, 'EGG:10+': 26, 'EGG:2-3': 55, 'EGG:4-9': 115, 'FERTILIZER:1': 301, 'FERTILIZER:10+': 57, 'FERTILIZER:2-3': 186, 'FERTILIZER:4-9': 72, 'MELON:10+': 7, 'MELON:4-9': 66, 'MILK:1': 104, 'MILK:2-3': 167, 'MILK:4-9': 114, 'STRAWBERRY:1': 123, 'STRAWBERRY:10+': 16, 'STRAWBERRY:2-3': 306, 'STRAWBERRY:4-9': 79, 'TOMATO:1': 9, 'TOMATO:10+': 31, 'TOMATO:2-3': 24, 'TOMATO:4-9': 51, 'WHEAT:1': 141, 'WHEAT:10+': 256, 'WHEAT:2-3': 115, 'WHEAT:4-9': 207, 'WOOL:1': 174, 'WOOL:2-3': 210, 'WOOL:4-9': 206}
+sell_orders_per_game: 426.4
+sells_near_opp_frac: 0.6
+premium_units_by_hour: [475, 596, 178, 165, 161, 291, 148, 137, 38, 400, 120, 122, 82, 433, 114, 48, 33, 426, 90, 30, 24, 511, 70, 86]
+final_tiles_mean: {'EMPTY': 65.5, 'WEED': 7.2, 'LOCKED': 6.2, 'PASTURE_EMPTY': 5.6, 'COW': 4.2, 'GOOSE': 3.9, 'TOMATO': 2.5, 'SHEEP': 1.9, 'STRAWBERRY': 1.4, 'WHEAT': 0.8, 'COOP_EMPTY': 0.6, 'CARROT': 0.1}
+tiles_by_day_mean: {0: {'WHEAT': 9.1, 'MELON': 6.0, 'EMPTY': 4.8, 'SHEEP': 3.0, 'COW': 2.0, 'WEED': 0.1}, 1: {'WHEAT': 10.0, 'MELON': 10.0, 'SHEEP': 3.0, 'COW': 2.0}, 2: {'MELON': 10.0, 'STRAWBERRY': 4.0, 'WHEAT': 4.0, 'SHEEP': 3.0, 'EMPTY': 2.0, 'COW': 2.0}, 3: {'MELON': 10.0, 'STRAWBERRY': 9.8, 'SHEEP': 3.0, 'COW': 2.0, 'EMPTY': 0.2}, 5: {'STRAWBERRY': 10.0, 'MELON': 10.0, 'SHEEP': 3.0, 'COW': 2.0}, 7: {'STRAWBERRY': 15.5, 'MELON': 10.0, 'WHEAT': 9.8, 'COW': 6.0, 'SHEEP': 5.8, 'GOOSE': 1.6, 'EMPTY': 1.1, 'PASTURE_EMPTY': 0.2}, 10: {'WHEAT': 27.9, 'STRAWBERRY': 18.4, 'EMPTY': 12.5, 'SHEEP': 9.0, 'COW': 7.5, 'GOOSE': 4.1, 'MELON': 4.0, 'CARROT': 2.9, 'TOMATO': 1.2}, 15: {'WHEAT': 23.6, 'STRAWBERRY': 23.0, 'SHEEP': 10.0, 'TOMATO': 8.5, 'EMPTY': 8.0, 'COW': 7.6, 'CARROT': 7.1, 'GOOSE': 4.9, 'WEED': 1.0}, 20: {'WHEAT': 29.0, 'STRAWBERRY': 13.6, 'TOMATO': 10.9, 'CARROT': 10.1, 'SHEEP': 9.9, 'COW': 7.0, 'EMPTY': 7.0, 'GOOSE': 4.9, 'WEED': 1.1, 'PASTURE_EMPTY': 0.2}, 25: {'WHEAT': 36.1, 'CARROT': 16.9, 'EMPTY': 9.4, 'SHEEP': 7.0, 'STRAWBERRY': 6.2, 'COW': 5.1, 'TOMATO': 4.8, 'GOOSE': 4.5, 'WEED': 2.0, 'PASTURE_EMPTY': 1.8}}
+money_by_day_mean: {0: 5, 1: 19, 2: 5, 3: 29, 5: 816, 7: 99, 10: 3546, 15: 34043, 20: 61747, 25: 82033, 28: 97144}
+end_shed_mean: {'EGG': 0.2, 'WHEAT': 0.6, 'WOOL': 0.1, 'FERTILIZER': 0.6, 'MILK': 2.0}
+unit_actions_per_game: {'WATER': 1265, 'NORTH': 866, 'WEST': 809, 'SOUTH': 727, 'EAST': 638, 'HARVEST': 559, 'COLLECT_FERTILIZER': 466, 'CARE': 381, 'FEED': 376, 'PLANT': 305, 'PASS': 278, 'FERTILIZE': 228, 'PICKUP': 192, 'PLACE': 90, 'DROP': 74, 'DIG': 38, 'BUILD_PASTURE': 18, 'BUILD_COOP': 5}
+wheat_bought_units: 150.1
+fert_bought_units: 0
+t0: [('[[0, "BUY_PRODUCT", 5, 136], [1, "SELL", 1, 28]]', 3), ('[[0, "BUY_PRODUCT", 5, 139], [1, "SELL", 1, 28]]', 3), ('[[0, "BUY_PRODUCT", 5, 133], [1, "SELL", 1, 28]]', 2)]
+day0_market_first6: [("[['BUY_ANIMAL', 'COW', 1], ['BUY_PRODUCT', 'WHEAT', 5]] | [['SELL', 'WHEAT', 1], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'COW', 1], ['BUY_ANIMAL', 'SHEEP', 3]] | [['SELL', 'WHEAT', 1]]", 7), ("[['BUY_ANIMAL', 'COW', 1], ['BUY_PRODUCT', 'WHEAT', 5]] | [['SELL', 'WHEAT', 1], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'COW', 1], ['BUY_ANIMAL', 'SHEEP', 3], ['SELL', 'STRAWBERRY', 3], ['SELL', 'MELON', 3], ['SELL', 'MILK', 3]] | [['SELL', 'WHEAT', 1]]", 1)]
+####################################################################################################
+team: Unknown Mother-Goose
+n: 7
+wins: 0
+final_mean: 105453.1
+margin_mean: -2942.0
+margin_pct: -2.8
+opps: Counter({'Vadim Vasilenko': 3, 'Majkel1337': 2, 'DECEM': 1, 'M & M & P & Q': 1})
+buys_per_game: {'WHEAT': 301.4, 'CARROT': 49.0, 'STRAWBERRY': 33.4, 'TOMATO': 12.1, 'MELON': 11.3, 'COW': 6.9, 'SHEEP': 6.3, 'GOOSE': 6.3}
+first_buy_day_min: {'COW': 0, 'WHEAT': 0, 'SHEEP': 0, 'MELON': 0, 'STRAWBERRY': 2, 'GOOSE': 6, 'TOMATO': 8, 'CARROT': 11}
+buys_by_window_per_game: {'d0': {'WHEAT': 20.4, 'MELON': 6.0, 'SHEEP': 3.0, 'COW': 2.0}, 'd1-2': {'WHEAT': 9.4, 'MELON': 2.1, 'STRAWBERRY': 1.9, 'COW': 1.0}, 'd3-5': {'WHEAT': 7.0, 'STRAWBERRY': 4.4, 'MELON': 3.0, 'COW': 2.3}, 'd6-10': {'WHEAT': 93.9, 'STRAWBERRY': 24.6, 'GOOSE': 6.3, 'COW': 1.6, 'SHEEP': 0.9, 'TOMATO': 0.6, 'MELON': 0.1}, 'd11-20': {'WHEAT': 86.0, 'TOMATO': 11.4, 'CARROT': 9.0, 'STRAWBERRY': 2.6, 'SHEEP': 2.4}, 'd21+': {'WHEAT': 84.7, 'CARROT': 40.0, 'TOMATO': 0.1}}
+land: [(((6, 1000), (8, 2000)), 7)]
+land_day_by_price: {1000: 6.1, 2000: 8.2, 4000: None}
+n_quadrants_mean: 3
+hires_by_day_mean: [5, 3, 5, 5, 6, 5, 9, 6.7, 9, 9.1, 11, 10.6, 10.6, 10.1, 10.3, 11.3, 11.4, 11, 11.6, 11, 10.7, 11.1, 11.3, 11.1, 11.1, 11.1, 11.1, 10.7, 9.9, 9.4]
+hire_cost_mean: 4866.3
+revenue_per_game: {'STRAWBERRY': 31441, 'WOOL': 20529, 'WHEAT': 15952, 'MELON': 14175, 'MILK': 14038, 'FERTILIZER': 11491, 'EGG': 9536, 'CARROT': 7019, 'TOMATO': 6942}
+units_per_game: {'WHEAT': 438, 'STRAWBERRY': 239, 'EGG': 217, 'FERTILIZER': 209, 'MILK': 155, 'CARROT': 147, 'WOOL': 140, 'TOMATO': 85, 'MELON': 68}
+avg_price: {'WHEAT': 36.4, 'FERTILIZER': 55.1, 'WOOL': 147.1, 'MILK': 90.8, 'MELON': 209.3, 'EGG': 43.9, 'STRAWBERRY': 131.5, 'TOMATO': 81.5, 'CARROT': 47.8}
+price_vs_base: {'WHEAT': 1.46, 'FERTILIZER': 0.55, 'WOOL': 0.74, 'MILK': 0.57, 'MELON': 0.84, 'EGG': 0.88, 'STRAWBERRY': 1.1, 'TOMATO': 1.36, 'CARROT': 1.37}
+spend_per_game: {'BUY_PRODUCT:WHEAT': 5787, 'BUY_SEED:STRAWBERRY': 3343, 'BUY_ANIMAL:SHEEP': 3143, 'BUY_ANIMAL:COW': 2743, 'BUY_ANIMAL:GOOSE': 1886, 'BUY_SEED:WHEAT': 1411, 'BUY_SEED:CARROT': 980, 'BUY_SEED:MELON': 903, 'BUY_SEED:TOMATO': 607}
+sell_sizes: {'CARROT:1': 5, 'CARROT:10+': 37, 'CARROT:2-3': 17, 'CARROT:4-9': 65, 'EGG:1': 9, 'EGG:10+': 14, 'EGG:2-3': 31, 'EGG:4-9': 187, 'FERTILIZER:1': 235, 'FERTILIZER:10+': 33, 'FERTILIZER:2-3': 182, 'FERTILIZER:4-9': 59, 'MELON:10+': 7, 'MELON:2-3': 2, 'MELON:4-9': 64, 'MILK:1': 22, 'MILK:2-3': 158, 'MILK:4-9': 115, 'STRAWBERRY:1': 35, 'STRAWBERRY:10+': 19, 'STRAWBERRY:2-3': 235, 'STRAWBERRY:4-9': 149, 'TOMATO:1': 22, 'TOMATO:10+': 15, 'TOMATO:2-3': 35, 'TOMATO:4-9': 56, 'WHEAT:1': 52, 'WHEAT:10+': 152, 'WHEAT:2-3': 30, 'WHEAT:4-9': 120, 'WOOL:1': 51, 'WOOL:2-3': 140, 'WOOL:4-9': 127}
+sell_orders_per_game: 354.3
+sells_near_opp_frac: 0.7
+premium_units_by_hour: [438, 371, 84, 149, 117, 233, 216, 12, 12, 388, 126, 49, 63, 460, 83, 95, 90, 467, 56, 37, 37, 505, 32, 87]
+final_tiles_mean: {'EMPTY': 48.1, 'LOCKED': 25.0, 'GOOSE': 5.9, 'COW': 4.7, 'PASTURE_EMPTY': 4.7, 'TOMATO': 3.9, 'WEED': 3.4, 'CARROT': 1.3, 'STRAWBERRY': 1.1, 'SHEEP': 0.9, 'WHEAT': 0.7, 'COOP_EMPTY': 0.3}
+tiles_by_day_mean: {0: {'WHEAT': 12.0, 'MELON': 6.0, 'SHEEP': 3.0, 'COW': 2.0, 'EMPTY': 2.0}, 1: {'WHEAT': 12.0, 'MELON': 8.0, 'SHEEP': 3.0, 'COW': 2.0}, 2: {'WHEAT': 8.9, 'MELON': 8.1, 'COW': 3.0, 'SHEEP': 3.0, 'STRAWBERRY': 1.9, 'EMPTY': 0.1}, 3: {'MELON': 8.9, 'STRAWBERRY': 4.6, 'WHEAT': 4.1, 'COW': 4.0, 'SHEEP': 3.0, 'EMPTY': 0.4}, 5: {'MELON': 10.6, 'STRAWBERRY': 6.0, 'COW': 5.3, 'SHEEP': 3.0, 'WHEAT': 0.1}, 7: {'STRAWBERRY': 24.9, 'MELON': 11.1, 'COW': 6.1, 'SHEEP': 3.6, 'GOOSE': 2.3, 'WHEAT': 1.3, 'EMPTY': 0.6, 'PASTURE_EMPTY': 0.1}, 10: {'STRAWBERRY': 30.7, 'WHEAT': 20.9, 'COW': 6.9, 'GOOSE': 6.3, 'MELON': 5.3, 'SHEEP': 3.9, 'EMPTY': 0.4, 'WEED': 0.4, 'TOMATO': 0.3}, 15: {'STRAWBERRY': 33.1, 'WHEAT': 16.1, 'COW': 6.7, 'GOOSE': 6.3, 'SHEEP': 5.9, 'TOMATO': 4.6, 'CARROT': 1.3, 'MELON': 0.7, 'PASTURE_EMPTY': 0.1, 'WEED': 0.1}, 20: {'STRAWBERRY': 26.0, 'WHEAT': 15.6, 'TOMATO': 11.4, 'SHEEP': 6.3, 'GOOSE': 6.1, 'COW': 6.0, 'CARROT': 3.4, 'EMPTY': 0.1}, 25: {'WHEAT': 26.7, 'CARROT': 16.4, 'TOMATO': 8.7, 'GOOSE': 6.1, 'COW': 5.0, 'SHEEP': 5.0, 'STRAWBERRY': 3.1, 'PASTURE_EMPTY': 1.7, 'EMPTY': 1.6, 'WEED': 0.6}}
+money_by_day_mean: {0: 6, 1: 114, 2: 16, 3: 14, 5: 480, 7: 487, 10: 9023, 15: 28461, 20: 62912, 25: 81435, 28: 98075}
+end_shed_mean: {'CARROT': 1.4, 'FERTILIZER': 3.6, 'EGG': 0.1, 'STRAWBERRY': 0.3, 'MILK': 0.6}
+unit_actions_per_game: {'WATER': 1094, 'NORTH': 954, 'WEST': 925, 'SOUTH': 639, 'EAST': 536, 'HARVEST': 518, 'COLLECT_FERTILIZER': 424, 'PASS': 399, 'CARE': 351, 'FEED': 348, 'PLANT': 246, 'FERTILIZE': 211, 'PICKUP': 196, 'DROP': 143, 'PLACE': 44, 'DIG': 43, 'BUILD_PASTURE': 14, 'BUILD_COOP': 7}
+wheat_bought_units: 160.3
+fert_bought_units: 0
+t0: [('[[0, "BUY_PRODUCT", 5, 136], [1, "SELL", 1, 28]]', 4), ('[[0, "BUY_PRODUCT", 5, 133], [1, "SELL", 1, 29]]', 2), ('[[0, "BUY_PRODUCT", 5, 133], [1, "SELL", 1, 28]]', 1)]
+day0_market_first6: [("[['BUY_ANIMAL', 'COW', 1], ['BUY_PRODUCT', 'WHEAT', 5], ['BUY_ANIMAL', 'SHEEP', 1], ['BUY_ANIMAL', 'SHEEP', 1], ['BUY_ANIMAL', 'SHEEP', 1]] | [['SELL', 'WHEAT', 1], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'COW', 1], ['HIRE']] | [['SELL', 'WHEAT', 1]]", 7)]
+####################################################################################################
+team: Just A game on your lips
+n: 5
+wins: 0
+final_mean: 94758.8
+margin_mean: -2214.4
+margin_pct: -2.4
+opps: Counter({'Azat Akhtyamov': 1, 'Fourth Quadrant': 1, 'Majkel1337': 1, 'KawattaTaido': 1, 'Anton Tikhonov': 1})
+buys_per_game: {'WHEAT': 329.4, 'CARROT': 50.6, 'STRAWBERRY': 33.8, 'TOMATO': 21.6, 'MELON': 10.8, 'COW': 7.8, 'SHEEP': 7.0, 'GOOSE': 6.2, 'FERTILIZER': 0.4}
+first_buy_day_min: {'COW': 0, 'WHEAT': 0, 'SHEEP': 0, 'MELON': 0, 'STRAWBERRY': 2, 'TOMATO': 9, 'GOOSE': 6, 'CARROT': 11, 'FERTILIZER': 12}
+buys_by_window_per_game: {'d0': {'WHEAT': 15.8, 'MELON': 6.4, 'SHEEP': 3.0, 'COW': 2.0}, 'd1-2': {'WHEAT': 10.6, 'MELON': 4.4, 'STRAWBERRY': 3.4}, 'd3-5': {'STRAWBERRY': 6.6, 'WHEAT': 4.8, 'COW': 0.2}, 'd6-10': {'WHEAT': 141.2, 'STRAWBERRY': 10.6, 'COW': 5.4, 'GOOSE': 5.4, 'TOMATO': 4.4, 'SHEEP': 3.6}, 'd11-20': {'WHEAT': 94.0, 'CARROT': 17.6, 'TOMATO': 17.2, 'STRAWBERRY': 13.2, 'GOOSE': 0.8, 'FERTILIZER': 0.4, 'SHEEP': 0.4, 'COW': 0.2}, 'd21+': {'WHEAT': 63.0, 'CARROT': 33.0}}
+land: [(((6, 1000), (9, 2000), (10, 4000)), 5)]
+land_day_by_price: {1000: 6.2, 2000: 9.1, 4000: 10.6}
+n_quadrants_mean: 4
+hires_by_day_mean: [4, 3.6, 5.4, 5, 6, 6, 8, 9, 9.2, 10, 12, 12, 11.4, 11.2, 11.8, 12, 11.6, 11.6, 12, 11.4, 11.6, 11.8, 11.6, 11.4, 11.4, 11.2, 11.2, 11, 10.8, 10]
+hire_cost_mean: 6552.0
+revenue_per_game: {'STRAWBERRY': 28279, 'WOOL': 18679, 'WHEAT': 16823, 'MELON': 14053, 'MILK': 13526, 'FERTILIZER': 12100, 'TOMATO': 9947, 'EGG': 8855, 'CARROT': 4931}
+units_per_game: {'WHEAT': 540, 'STRAWBERRY': 230, 'FERTILIZER': 211, 'EGG': 177, 'MILK': 159, 'CARROT': 146, 'WOOL': 141, 'TOMATO': 140, 'MELON': 64}
+avg_price: {'WHEAT': 31.2, 'FERTILIZER': 57.2, 'WOOL': 132.5, 'MILK': 84.9, 'MELON': 218.2, 'STRAWBERRY': 122.7, 'CARROT': 33.7, 'EGG': 50.0, 'TOMATO': 71.3}
+price_vs_base: {'WHEAT': 1.25, 'FERTILIZER': 0.57, 'WOOL': 0.66, 'MILK': 0.53, 'MELON': 0.87, 'STRAWBERRY': 1.02, 'CARROT': 0.96, 'EGG': 1.0, 'TOMATO': 1.19}
+spend_per_game: {'BUY_PRODUCT:WHEAT': 5191, 'BUY_ANIMAL:SHEEP': 3500, 'BUY_SEED:STRAWBERRY': 3380, 'BUY_ANIMAL:COW': 3120, 'BUY_ANIMAL:GOOSE': 1860, 'BUY_SEED:WHEAT': 1852, 'BUY_SEED:TOMATO': 1080, 'BUY_SEED:CARROT': 1012, 'BUY_SEED:MELON': 864, 'BUY_PRODUCT:FERTILIZER': 22}
+sell_sizes: {'CARROT:1': 25, 'CARROT:10+': 31, 'CARROT:2-3': 26, 'CARROT:4-9': 39, 'EGG:1': 48, 'EGG:10+': 21, 'EGG:2-3': 39, 'EGG:4-9': 78, 'FERTILIZER:1': 188, 'FERTILIZER:10+': 26, 'FERTILIZER:2-3': 122, 'FERTILIZER:4-9': 47, 'MELON:1': 4, 'MELON:10+': 6, 'MELON:2-3': 1, 'MELON:4-9': 41, 'MILK:1': 111, 'MILK:10+': 4, 'MILK:2-3': 97, 'MILK:4-9': 72, 'STRAWBERRY:1': 112, 'STRAWBERRY:10+': 12, 'STRAWBERRY:2-3': 217, 'STRAWBERRY:4-9': 75, 'TOMATO:1': 44, 'TOMATO:10+': 19, 'TOMATO:2-3': 33, 'TOMATO:4-9': 58, 'WHEAT:1': 118, 'WHEAT:10+': 102, 'WHEAT:2-3': 87, 'WHEAT:4-9': 168, 'WOOL:1': 133, 'WOOL:2-3': 81, 'WOOL:4-9': 71}
+sell_orders_per_game: 471.2
+sells_near_opp_frac: 0.6
+premium_units_by_hour: [340, 399, 92, 79, 105, 185, 96, 68, 12, 264, 47, 81, 50, 223, 87, 33, 59, 278, 32, 12, 23, 312, 34, 65]
+final_tiles_mean: {'EMPTY': 56.0, 'WEED': 13.2, 'STRAWBERRY': 5.8, 'PASTURE_EMPTY': 5.4, 'COW': 5.0, 'TOMATO': 4.6, 'GOOSE': 4.6, 'WHEAT': 2.4, 'SHEEP': 1.2, 'CARROT': 1.0, 'COOP_EMPTY': 0.8}
+tiles_by_day_mean: {0: {'EMPTY': 7.4, 'MELON': 6.4, 'WHEAT': 6.2, 'SHEEP': 3.0, 'COW': 2.0}, 1: {'MELON': 10.4, 'WHEAT': 8.0, 'SHEEP': 3.0, 'COW': 2.0, 'EMPTY': 1.4, 'WEED': 0.2}, 2: {'MELON': 10.8, 'WHEAT': 3.8, 'STRAWBERRY': 3.4, 'SHEEP': 3.0, 'EMPTY': 2.0, 'COW': 2.0}, 3: {'MELON': 10.8, 'STRAWBERRY': 7.2, 'SHEEP': 3.0, 'COW': 2.0, 'WHEAT': 1.2, 'EMPTY': 0.8}, 5: {'MELON': 10.8, 'STRAWBERRY': 8.8, 'SHEEP': 3.0, 'COW': 2.2, 'EMPTY': 0.2}, 7: {'STRAWBERRY': 16.8, 'MELON': 10.8, 'WHEAT': 8.4, 'COW': 6.2, 'SHEEP': 4.4, 'GOOSE': 1.8, 'EMPTY': 1.6}, 10: {'WHEAT': 31.0, 'EMPTY': 21.8, 'STRAWBERRY': 19.8, 'COW': 7.6, 'SHEEP': 6.6, 'GOOSE': 5.2, 'MELON': 4.4, 'TOMATO': 3.4, 'WEED': 0.2}, 15: {'STRAWBERRY': 33.0, 'WHEAT': 21.8, 'TOMATO': 14.0, 'COW': 7.6, 'SHEEP': 7.0, 'EMPTY': 6.4, 'GOOSE': 5.8, 'CARROT': 3.4, 'WEED': 0.8, 'PASTURE_EMPTY': 0.2}, 20: {'STRAWBERRY': 25.2, 'WHEAT': 23.6, 'TOMATO': 18.8, 'COW': 7.4, 'SHEEP': 6.8, 'CARROT': 6.0, 'GOOSE': 5.6, 'EMPTY': 4.6, 'WEED': 1.4, 'COOP_EMPTY': 0.4, 'PASTURE_EMPTY': 0.2}, 25: {'WHEAT': 30.2, 'CARROT': 19.4, 'STRAWBERRY': 15.4, 'TOMATO': 8.0, 'COW': 6.4, 'EMPTY': 6.0, 'GOOSE': 5.6, 'SHEEP': 5.4, 'WEED': 3.2, 'PASTURE_EMPTY': 0.4}}
+money_by_day_mean: {0: 5, 1: 12, 2: 12, 3: 30, 5: 617, 7: 56, 10: 1979, 15: 28097, 20: 54708, 25: 74477, 28: 89132}
+end_shed_mean: {'WOOL': 1.2}
+unit_actions_per_game: {'WATER': 1346, 'NORTH': 883, 'WEST': 799, 'SOUTH': 748, 'EAST': 670, 'HARVEST': 584, 'COLLECT_FERTILIZER': 436, 'FEED': 340, 'CARE': 338, 'PASS': 335, 'PLANT': 301, 'FERTILIZE': 223, 'PICKUP': 178, 'PLACE': 86, 'DROP': 73, 'DIG': 45, 'BUILD_PASTURE': 16, 'BUILD_COOP': 6}
+wheat_bought_units: 144.2
+fert_bought_units: 0.4
+t0: [('[[0, "BUY_PRODUCT", 5, 139], [1, "SELL", 1, 28]]', 2), ('[[0, "BUY_PRODUCT", 5, 136], [1, "SELL", 1, 28]]', 1), ('[[0, "BUY_PRODUCT", 5, 133], [1, "SELL", 1, 27]]', 1)]
+day0_market_first6: [("[['BUY_ANIMAL', 'COW', 1], ['BUY_PRODUCT', 'WHEAT', 5], ['SELL', 'WHEAT', 0], ['SELL', 'WHEAT', 0], ['SELL', 'WHEAT', 0], ['SELL', 'WHEAT', 0], ['SELL', 'WHEAT', 0], ['SELL', 'WHEAT', 0], ['SELL', 'WHEAT', 0], ['SELL', 'WHEAT', 0]] | [['SELL', 'WHEAT', 1], ['HIRE'], ['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'COW', 1], ['BUY_ANIMAL', 'SHEEP', 3], ['SELL', 'WHEAT', 0], ['SELL', 'WHEAT', 0], ['SELL', 'WHEAT', 0]] | [['SELL', 'WHEAT', 1], ['SELL', 'WHEAT', 0], ['SELL', 'WHEAT', 0], ['SELL', 'WHEAT', 0], ['SELL', 'WHEAT', 0], ['SELL', 'WHEAT', 0], ['SELL', 'WHEAT', 0], ['SELL', 'WHEAT', 0], ['SELL', 'WHEAT', 0], ['SELL', 'WHEAT', 0]]", 5)]
+####################################################################################################
+team: We wanna be tomatos
+n: 3
+wins: 0
+final_mean: 88381.7
+margin_mean: -3962.7
+margin_pct: -4.4
+opps: Counter({'KawattaTaido': 1, 'Fourth Quadrant': 1, 'Azat Akhtyamov': 1})
+buys_per_game: {'WHEAT': 258.3, 'FERTILIZER': 46.7, 'CARROT': 45.3, 'STRAWBERRY': 31.0, 'MELON': 15.3, 'TOMATO': 11.3, 'COW': 8.3, 'SHEEP': 5.0, 'GOOSE': 3.3}
+first_buy_day_min: {'SHEEP': 0, 'WHEAT': 0, 'COW': 0, 'MELON': 0, 'CARROT': 2, 'STRAWBERRY': 2, 'TOMATO': 7, 'GOOSE': 7, 'FERTILIZER': 11}
+buys_by_window_per_game: {'d0': {'WHEAT': 16.0, 'SHEEP': 3.0, 'MELON': 3.0, 'COW': 2.0}, 'd1-2': {'WHEAT': 10.0, 'MELON': 5.0, 'STRAWBERRY': 2.0, 'CARROT': 1.0}, 'd3-5': {'WHEAT': 13.0, 'STRAWBERRY': 7.7, 'MELON': 1.3, 'COW': 1.0}, 'd6-10': {'WHEAT': 72.3, 'STRAWBERRY': 15.0, 'COW': 5.3, 'MELON': 5.0, 'TOMATO': 3.3, 'GOOSE': 3.3, 'SHEEP': 1.3}, 'd11-20': {'WHEAT': 89.3, 'FERTILIZER': 16.3, 'CARROT': 9.7, 'TOMATO': 8.0, 'STRAWBERRY': 6.3, 'MELON': 1.0, 'SHEEP': 0.7}, 'd21+': {'WHEAT': 57.7, 'CARROT': 34.7, 'FERTILIZER': 30.3}}
+land: [(((6, 1000), (8, 2000)), 3)]
+land_day_by_price: {1000: 6.0, 2000: 8.4, 4000: None}
+n_quadrants_mean: 3
+hires_by_day_mean: [3, 3, 3, 4, 3, 3, 7, 5, 6.7, 9, 7.3, 8, 9.7, 8, 8.7, 10.7, 11, 8.3, 10, 9.7, 9.3, 9.7, 10, 10.3, 11, 10, 10.3, 11.3, 10.7, 9]
+hire_cost_mean: 3166.3
+revenue_per_game: {'STRAWBERRY': 23084, 'MILK': 18271, 'MELON': 15120, 'WHEAT': 14542, 'FERTILIZER': 13278, 'WOOL': 8816, 'EGG': 6714, 'TOMATO': 6145, 'CARROT': 5799}
+units_per_game: {'WHEAT': 473, 'FERTILIZER': 244, 'STRAWBERRY': 221, 'MILK': 208, 'CARROT': 149, 'EGG': 123, 'WOOL': 98, 'MELON': 91, 'TOMATO': 91}
+avg_price: {'FERTILIZER': 54.4, 'WHEAT': 30.7, 'CARROT': 39.0, 'WOOL': 90.0, 'MILK': 87.7, 'MELON': 166.8, 'STRAWBERRY': 104.3, 'EGG': 54.6, 'TOMATO': 67.8}
+price_vs_base: {'FERTILIZER': 0.54, 'WHEAT': 1.23, 'CARROT': 1.11, 'WOOL': 0.45, 'MILK': 0.55, 'MELON': 0.67, 'STRAWBERRY': 0.87, 'EGG': 1.09, 'TOMATO': 1.13}
+spend_per_game: {'BUY_PRODUCT:WHEAT': 4446, 'BUY_ANIMAL:COW': 3333, 'BUY_SEED:STRAWBERRY': 3100, 'BUY_ANIMAL:SHEEP': 2500, 'BUY_PRODUCT:FERTILIZER': 1807, 'BUY_SEED:WHEAT': 1333, 'BUY_SEED:MELON': 1227, 'BUY_ANIMAL:GOOSE': 1000, 'BUY_SEED:CARROT': 907, 'BUY_SEED:TOMATO': 567}
+sell_sizes: {'CARROT:1': 23, 'CARROT:10+': 14, 'CARROT:2-3': 23, 'CARROT:4-9': 26, 'EGG:1': 10, 'EGG:10+': 3, 'EGG:2-3': 44, 'EGG:4-9': 41, 'FERTILIZER:1': 220, 'FERTILIZER:10+': 5, 'FERTILIZER:2-3': 113, 'FERTILIZER:4-9': 40, 'MELON:1': 3, 'MELON:10+': 10, 'MELON:2-3': 2, 'MELON:4-9': 17, 'MILK:1': 17, 'MILK:10+': 20, 'MILK:2-3': 68, 'MILK:4-9': 31, 'STRAWBERRY:1': 15, 'STRAWBERRY:10+': 27, 'STRAWBERRY:2-3': 33, 'STRAWBERRY:4-9': 20, 'TOMATO:1': 48, 'TOMATO:2-3': 39, 'TOMATO:4-9': 26, 'WHEAT:1': 216, 'WHEAT:10+': 36, 'WHEAT:2-3': 78, 'WHEAT:4-9': 46, 'WOOL:1': 30, 'WOOL:10+': 4, 'WOOL:2-3': 23, 'WOOL:4-9': 29}
+sell_orders_per_game: 466.7
+sells_near_opp_frac: 0.4
+premium_units_by_hour: [11, 520, 107, 51, 14, 138, 41, 11, 22, 54, 29, 0, 8, 81, 4, 7, 9, 153, 5, 2, 9, 255, 77, 247]
+final_tiles_mean: {'EMPTY': 46.3, 'LOCKED': 25.0, 'COW': 8.3, 'SHEEP': 5.0, 'WEED': 4.7, 'TOMATO': 4.0, 'GOOSE': 3.3, 'STRAWBERRY': 3.3}
+tiles_by_day_mean: {0: {'WHEAT': 11.0, 'EMPTY': 6.0, 'MELON': 3.0, 'SHEEP': 3.0, 'COW': 2.0}, 1: {'WHEAT': 13.0, 'MELON': 7.0, 'SHEEP': 3.0, 'COW': 2.0}, 2: {'WHEAT': 9.0, 'MELON': 8.0, 'SHEEP': 3.0, 'STRAWBERRY': 2.0, 'COW': 2.0, 'CARROT': 1.0}, 3: {'MELON': 8.3, 'STRAWBERRY': 5.7, 'WHEAT': 3.0, 'COW': 3.0, 'SHEEP': 3.0, 'PASTURE_EMPTY': 1.0, 'CARROT': 1.0}, 5: {'STRAWBERRY': 9.7, 'MELON': 9.3, 'COW': 3.0, 'SHEEP': 3.0}, 7: {'STRAWBERRY': 24.3, 'MELON': 13.3, 'COW': 7.7, 'SHEEP': 3.0, 'TOMATO': 1.0, 'PASTURE_EMPTY': 0.3, 'GOOSE': 0.3}, 10: {'STRAWBERRY': 24.3, 'WHEAT': 20.0, 'MELON': 11.3, 'COW': 8.3, 'SHEEP': 4.3, 'TOMATO': 3.3, 'GOOSE': 3.3}, 15: {'STRAWBERRY': 30.7, 'WHEAT': 13.3, 'COW': 8.3, 'TOMATO': 6.0, 'MELON': 6.0, 'SHEEP': 5.0, 'GOOSE': 3.3, 'CARROT': 2.3}, 20: {'STRAWBERRY': 23.0, 'WHEAT': 20.0, 'TOMATO': 9.0, 'COW': 8.3, 'CARROT': 5.3, 'SHEEP': 5.0, 'GOOSE': 3.3, 'MELON': 1.0}, 25: {'WHEAT': 32.0, 'CARROT': 14.0, 'COW': 8.3, 'STRAWBERRY': 6.3, 'TOMATO': 6.0, 'SHEEP': 5.0, 'GOOSE': 3.3}}
+money_by_day_mean: {0: 209, 1: 217, 2: 543, 3: 189, 5: 1184, 7: 338, 10: 2226, 15: 27395, 20: 58689, 25: 71577, 28: 81882}
+end_shed_mean: {}
+unit_actions_per_game: {'WATER': 1075, 'WEST': 821, 'NORTH': 768, 'EAST': 552, 'HARVEST': 525, 'SOUTH': 516, 'COLLECT_FERTILIZER': 398, 'FEED': 317, 'CARE': 288, 'PICKUP': 256, 'PLANT': 236, 'FERTILIZE': 201, 'PASS': 87, 'DROP': 83, 'PLACE': 41, 'DIG': 33, 'BUILD_PASTURE': 15, 'BUILD_COOP': 4}
+wheat_bought_units: 125
+fert_bought_units: 46.7
+t0: [('[[0, "BUY_PRODUCT", 5, 139]]', 2), ('[[0, "BUY_PRODUCT", 5, 133]]', 1)]
+day0_market_first6: [("[['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'SHEEP', 3], ['BUY_PRODUCT', 'WHEAT', 5], ['BUY_SEED', 'MELON', 3], ['BUY_SEED', 'WHEAT', 11], ['BUY_ANIMAL', 'COW', 2]] | [] | []", 2), ("[['HIRE'], ['HIRE'], ['HIRE'], ['BUY_ANIMAL', 'SHEEP', 3], ['BUY_PRODUCT', 'WHEAT', 5], ['BUY_ANIMAL', 'COW', 2], ['BUY_SEED', 'MELON', 3], ['BUY_SEED', 'WHEAT', 11]] | [] | []", 1)]

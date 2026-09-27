@@ -1,0 +1,10 @@
+episode-113975639-replay.json: dauriel=129828 vs Fried Chicken Lovers=121717 shops=['FARMERS_MARKET', 'BRUNCH_SPOT', 'YARN_STORE', 'FARMERS_MARKET', 'BRUNCH_SPOT', 'YARN_STORE', 'BAKERY', 'BRUNCH_SPOT'] mism=0
+episode-113976876-replay.json: Fried Chicken Lovers=123056 vs Liyi xin jie=122896 shops=['YARN_STORE', 'YARN_STORE', 'FARMERS_MARKET', 'YARN_STORE', 'FARMERS_MARKET', 'PET_CAFE', 'BAKERY', 'BRUNCH_SPOT'] mism=0
+episode-113978185-replay.json: Humanitis=139822 vs Fried Chicken Lovers=107934 shops=['SMOOTHIE_SHOP', 'YARN_STORE', 'PIZZA_SHOP', 'ICE_CREAM_SHOP', 'ICE_CREAM_SHOP', 'BRUNCH_SPOT', 'PET_CAFE', 'FARMERS_MARKET'] mism=0
+episode-113981679-replay.json: Fried Chicken Lovers=99924 vs KKY=100912 shops=['PIZZA_SHOP', 'SMOOTHIE_SHOP', 'BRUNCH_SPOT', 'BAKERY', 'ICE_CREAM_SHOP', 'PET_CAFE', 'PIZZA_SHOP', 'FARMERS_MARKET'] mism=0
+episode-113982698-replay.json: Fried Chicken Lovers=94554 vs Hamna Kaleem=97644 shops=['SMOOTHIE_SHOP', 'PET_CAFE', 'PIZZA_SHOP', 'YARN_STORE', 'FARMERS_MARKET', 'PIZZA_SHOP', 'PIZZA_SHOP', 'YARN_STORE'] mism=0
+episode-113983534-replay.json: Fried Chicken Lovers=57881 vs WUZB=58274 shops=['BAKERY', 'PIZZA_SHOP', 'BRUNCH_SPOT', 'BAKERY', 'PET_CAFE', 'SMOOTHIE_SHOP', 'FARMERS_MARKET', 'BAKERY'] mism=0
+episode-113983835-replay.json: maoxin123=113484 vs Fried Chicken Lovers=112096 shops=['PET_CAFE', 'ICE_CREAM_SHOP', 'ICE_CREAM_SHOP', 'BRUNCH_SPOT', 'ICE_CREAM_SHOP', 'YARN_STORE', 'BRUNCH_SPOT', 'YARN_STORE'] mism=0
+episode-113984717-replay.json: Fried Chicken Lovers=80585 vs Chahat Mehra=80117 shops=['BRUNCH_SPOT', 'BAKERY', 'PIZZA_SHOP', 'ICE_CREAM_SHOP', 'FARMERS_MARKET', 'PET_CAFE', 'PIZZA_SHOP', 'PIZZA_SHOP'] mism=0
+episode-113991460-replay.json: Márcio Santos=153605 vs Fried Chicken Lovers=151326 shops=['ICE_CREAM_SHOP', 'SMOOTHIE_SHOP', 'YARN_STORE', 'BRUNCH_SPOT', 'SMOOTHIE_SHOP', 'ICE_CREAM_SHOP', 'BAKERY', 'YARN_STORE'] mism=0
+episode-113992580-replay.json: Fried Chicken Lovers=108274 vs MCZK=108591 shops=['YARN_STORE', 'ICE_CREAM_SHOP', 'PET_CAFE', 'PIZZA_SHOP', 'ICE_CREAM_SHOP', 'SMOOTHIE_SHOP', 'FARMERS_MARKET', 'SMOOTHIE_SHOP'] mism=0
