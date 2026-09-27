@@ -4,3 +4,5 @@ research/forum_raw/
 __pycache__/
 *.tar.gz
 tapes/
+agents/tapeplay/raw_*/
+agents/tapeplay/1*/
