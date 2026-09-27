@@ -129,3 +129,16 @@ Reproduce S2: `python scripts/blend_v2.py --ref vera.csv --groups test_groups.np
 | **d5 S5** | **PA 2.0 + clip smoothing 0.8 (was 0.6)** | **0.31995 (rank 5, 0.001 behind 4th)** |
 
 Reproduce: `blend_v2.py ... --w 0.56 0.27 1.0 --clip-mt 4 --pa-offset 2.0 --alpha 0.8`. Next: alpha 1.0 (full clip median).
+
+## Day 6 (2026-09-27)
+| Shot | Change vs d5 S5 | Public LB |
+|---|---|---|
+| **d6 S1** | clip smoothing alpha 1.0 (full 5-frame median) | **0.31903** (−0.0009; stronger smoothing keeps paying) |
+| d6 S2 | S1 + FL weight 0.35 on cine-clip rows only (`--w-clip`) | 0.31904 (flat: FL weight curve on clip rows is flat 0.27–0.35) |
+| d6 S3 | S1 + MT clip 6 (was 4) | 0.32119 (one row moved 2 mm → +0.0022 ⇒ public split ≈ 103 rows; that row's truth sits on the ref side) |
+| **d6 S4** | **S1 + MT clip 3** | **0.31795 (best; exactly the 1 mm gained on that row)** |
+| d6 S5 | S4 + PA weight 0.5 | 0.31957 (PA weight optimum ≥ 0.56 at offset 2.0) |
+
+Reproduce best: `blend_v2.py ... --w 0.56 0.27 1.0 --clip-mt 3 --pa-offset 2.0 --alpha 1.0`. Leaderboard moved overnight:
+0.31795 is rank 6 (3rd 0.29358, 5th 0.30537). Next: PA weight 0.62; MT clip 2.5/2 changes only 2–3 rows (public-probe, low
+private value); a larger step needs a better pipeline FL (FL carries most of the remaining error).
