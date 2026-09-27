@@ -120,3 +120,46 @@ python agents/edge/summary.py abhinav0370__cha22-agent v_arm2      # table above
 ```
 Raw results are in `runs/edge_mirror.jsonl`, `runs/edge_field2.jsonl`, `runs/edge_fresh.jsonl`,
 `runs/edge_fresh3.jsonl`, `runs/edge_tet.jsonl` and `runs/edge_broad.jsonl`.
+
+---
+
+# Market-only edges on the replay-tape base (`agents/tapeplay/raw_113970425_0`)
+
+The layer is `agents/edge/tape_edge_layer.py`, built with
+`agents/edge/build_tape.py NAME TAPE 'dict(...)'`. It is standalone and needs nothing from cha22. It
+wraps `tapeplay_agent`, and the last callable is `tape_edge_agent`. It never changes unit actions or
+the tape's BUY/HIRE/BUY_LAND orders. New SELLs only take free slots or empty `[]` slots within the
+10-order cap.
+
+**Candidate:** `agents/edge/tape_edge_l2/main.py` (= `t_l2`, `dict(l2=True, liq=True)`).
+- **Robust L2:** permutes the tape's own SELL orders over their slots with the exact lockstep
+  simulator. It keeps the order with the best worst-case margin against two rival models: the
+  unmodified tape orders and our own final orders.
+- **End-game liquidation:** from step 717, sells any projected shed stock the tape leaves unsold. At
+  717 it keeps back items the tape picks up at 718.
+
+| variant | vs unmodified tape, seeds 3000-3011, both seats (24 games) | vs field_top 2000-2003, both seats (72) | vs field_top 900-902, both seats (54) |
+|---|---|---|---|
+| raw tape | – | 22/72 = 30.6% (margin -5445) | 53/54 = 98.1% (+12025) |
+| **`t_l2`** (L2 + liquidation) | **23/24** (+154 average; better than the tape on 12/12 seeds) | 22/72 = 30.6% (margin -5374, +71 on the tape) | 53/54 = 98.1% (+12058) |
+| `t_liq` (liquidation only) | 20/24 (+21 average; 3 seeds tied exactly) | – | – |
+
+Tape against itself is not an exact tie: on seed 3006, seat 0 loses by -598 from farm randomness.
+`t_l2` cuts that loss to -434, and that is its only loss.
+
+Tried and rejected on the tape (vs the unmodified tape; seed 900 and 2000 smoke tests):
+- **Sells to the front (before BUY/HIRE):** a no-op. The tape never puts a SELL after a purchase in
+  the same turn; its sells already sit at index 0-2.
+- **$1-floor guard (hold SELL units that would fill at <= $1-3 before day 29):** harmful. With a
+  90-unit shed allowance it scored -9376, because held milk fills the shed, then tape wheat
+  BUY_PRODUCTs and DROPs fail and the animals go unfed. With a 40-unit cap it scored -561 and +391.
+  The tape sells milk at $1 because both players flood milk; holding it only postpones the $1 sale.
+- **Sell-ahead by 1 unit per turn (as on cha22):** -706 and -645 against the tape. The tape's
+  recorded, well-timed batches beat early drip sales.
+
+**Caveat for the coordinator:** the tape's strength depends heavily on the seed. On seeds 900-902 it
+wins 53/54 against the top field. On seeds 2000-2003 (both seats), the same tape wins only 22/72
+(30.6%): 2/8 against cha22, tetsutani, v55, v57, dmitrii and both thomastschinkel agents, and 4/8
+against haideptry and evgendvorkin. On seed 2002 it loses to cha22 by about 7.9k because of
+production and market misfit, which no market-only tweak can fix. The market layer adds a
+consistent +70 to +250 per game but does not change which seeds the tape wins.
