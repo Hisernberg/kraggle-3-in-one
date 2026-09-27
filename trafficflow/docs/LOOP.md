@@ -153,32 +153,32 @@ the maximum score; H6 was below the +0.0001 adoption bar, so the base for single
 | 09-25 | G3: G2 + ongoing v9 stage-2 stacking (217 ongoing cells, 139 in validation) | 0.86361 (−0.00350) | CV +0.0065 ± 0.0009 (7 SE) but **March ongoing −0.023**. Not adopted, and not on the robust list. The stack extends queues (D7_I10_E +22 to +27 cells per window) and reshuffles small ones (D7_I10_W, D12_I5_N). Train-month growth patterns don't hold in the shifted months. **Lesson: plain CV cannot gate Task 2 ongoing changes; build a shift-weighted CV first** |
 
 ## Robust list (final-selection pool)
-Empty so far.
+- **v11 ongoing (G8, 27 Sep):** passed the full Task 2 gate, with private-weighted CV +0.0052 ± 0.0006; March −0.0027 ongoing.
+  Candidate for the second final if April is expected to behave like the CV rather than like March.
 
-## Backlog (ordered by expected gain per effort)
-1. **Shift-weighted CV for Task 2** (the gate for every future Task 2 change).
-   - Importance weights make train CV windows resemble the validation or the private windows. They come from a classifier on window-level features known at T.
-   - It must reproduce today's LB directions before it is trusted: F1 −, F2 −, G2 +, G3 −.
-   - Use it for all Task 2 candidates, with a separate April (private) weighting for final selection.
-2. Task 1/3 per-cell accuracy. Isolated target cells carry 46–48% of the LWR loss and short runs (2–3 cells) 36–38% (T3_SMOOTHING.md):
-   - seed/bagging ensemble of the six Task 1 models (hold fit for the J gate, then a full fit);
-   - flow-model capacity, since flow error dominates free-flow density error.
-3. Robustness to incidents and non-recurrent queues (private has 7 incidents), for onset and ongoing:
-   - incident-signature features: a sudden drop in downstream capacity, or a speed drop that time
-     of day doesn't explain;
-   - upweighting non-recurrent windows;
+## Backlog (ordered by expected gain per effort; refreshed 27 Sep)
+1. **Boosted regular Task 1 members.** H7 (hold9): one boosted model beats the 4-seed ensemble; ΔJ +0.00053.
+   - More boosted seeds (hold10 running, `boost_member.sh`).
+   - More rounds for the density model, which is still at the 6000 cap.
+   - Later: rebuild the older members at the boosted settings and drop the weak ones.
+   - Regular-cell changes transfer exactly, so this is the reliable lever.
+2. **Why do ongoing CV gains fail on March?** Four of the last five failed (G3, H1b, G7, G8).
+   - Until this is explained, ongoing edits have no local gate.
+   - Ideas: per-family probes to locate the loss; compare the March window population against CV draws with
+     post-blackout diagnostics (analysis only).
+3. **Robustness to incidents and non-recurrent queues** (private has 7 incidents), for onset and ongoing:
+   - incident-signature features;
    - recent-month features for private built from March's masked view (all ≤ T).
-4. Ongoing capacity: all candidate windows, bigger trees.
+4. **Blackout-cell models:** widen the holdout to all holdout-period origins before any more blackout work,
+   because the dark ΔJ estimate currently rests on 10 blackouts per panel.
 5. Task 1 transductive fine-tuning on observed cells of the validation/private months.
-6. Ongoing label fix v7 as an LB test (low priority: its non-recurrent slice got worse).
 
 Closed:
-- Ongoing stage-2 stacking v9 (G3): failed transfer (−0.00350). Revisit only through the shift-weighted CV.
-- Onset stacking and seeds: adopted in G2. Seed means saturate at 3; dropping on_v2 (v3x6) is exploratory only.
-- Task 3 TV smoothing: adopted in G1 (+0.00060). Gate 0.7 adds only +0.00004 locally (noise); a = 1.0 fails the gate.
-- decoder calibration (F1/F2 above);
-- ongoing logit bias: CV optimum at b = 0 (0.8833). Only the official train windows prefer larger
-  sets, which did not transfer for onset.
+- Ongoing stage-2 stacking v9 (G3), cell removal (H1b), hybrid labels (G7) and capacity p3 (G8): all lost on March.
+- Onset stacking and seeds: adopted in G2. Onset decoding (F1/F2) and extent are calibrated.
+- Task 3 TV smoothing: adopted in G1. Its strength is re-checked on the 4-member ensemble and stays at 1.0.
+- Dark booster (H6): +0.00001.
+- The ideas closed on 27 Sep (Candidate queue above).
 
 ## Final selection (5–6 Nov)
 - Recommend 2 finals: the best public score, and the most robust (best local validation and
@@ -197,6 +197,12 @@ dataset `kragglenote2forwork/tfb-work`, replacing the old one. The first version
   `work/t2h/model_v6_*`;
 - `work/t4/t4_l2proj.csv`;
 - `research/lb/lb_with_era.csv`.
+
+## Container restart (same disk)
+A restart kills every background job, but `/home/user/work`, the caches and the repo survive (27 Sep, about 13:00–14:30).
+Resume a pipeline from its last finished stage: the logs under `/home/user/work/*.log` show the stage, and each
+stage writes its own file (model dir, `state_<tag>.parquet`, zip). Re-run only the missing stages, then re-arm
+the waiters.
 
 ## Recovery (fresh container)
 1. **Credentials.** If `~/.kaggle/kaggle.json` is missing, use env `KAGGLE_USERNAME`/`KAGGLE_KEY`,
