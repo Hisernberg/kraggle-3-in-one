@@ -104,29 +104,23 @@ ongoing 0.843).
 - a blind resubmission after an ERROR.
 
 ## Candidate queue
-**Chain for 2026-09-27** (the user asked for 5 submissions, one at a time, each analysed before the next).
-Adoption rules are fixed before submitting:
+**Chain for 2026-09-28.** Base = H5w (0.86838). The loop's `status` shows H6 (0.86839) as best because it takes
+the maximum score; H6 was below the +0.0001 adoption bar, so the base for single-factor steps stays H5w.
 
-1. **H3** (H2 with a third Task 1 seed, `ens345`).
-   - Local J +0.00023, 4/4 panels.
-   - Adopt if Δ ≥ +0.0001.
-2. **G7** (best with ongoing = v7, the v5 ongoing recipe retrained on hybrid labels, `lgb_v8og7.csv`).
-   - **Done: 0.86779 (−0.00020). Not adopted; ongoing label work is closed.**
-3. **H5w** (Task 1 ramp-feature member full7; regular rows = mean of full3/4/5/7, blackout rows = full7 alone).
-   - The equal-weight gate passed (+0.00039, 4/4). The per-kind weighting gives +0.00081 on 4/4 (EXPERIMENTS.md).
-   - Adopt if Δ ≥ +0.0001 and it matches the local ΔJ (+0.0008) within 0.0002.
-4. **H6** (dark-only booster member hold8/full8, `dark_member.sh`).
-   - The hold7 blackout models all stopped at the 3000-round cap (under-fitted).
-   - Blackout cells are about 2% of test targets but carry 20–55% of the speed SSE.
-   - Settings: ramp features, 127 leaves, lr 0.1, up to 4000 rounds, 250k rows per panel.
-   - J gate vs H5w's dark rows (3/4 panels + mean). Adopt if Δ ≥ +0.0001.
-5. **G8 = H5w with ongoing v11** (og_v3 / og_v3_noloc at `p3`, 255 leaves, 900 rounds, in the v5 blend; TASK2_ANALYSIS §20).
-   - CV passes: blend +0.0053 ± 0.0005 paired; shift-weighted +0.0050 (validation) and +0.0052 (private); all slices up.
-   - Expected LB about +0.0007 (ongoing +0.005).
-   - Pre-registered rule: adopt if Δ ≥ +0.0001, since the full gate passed on both months' weightings.
-     If Δ < 0, don't adopt; keep it on the robust list for the final pick.
+1. **H7** (regular-only booster member `hold9/full9`, `reg_member.sh`; seed 6, 300k rows per panel, lr 0.05, up to
+   6000 rounds, no ramp features). Training since 27 Sep 11:14.
+   - The gate uses holdout J with blackout rows fixed, i.e. the regular-cell change alone, which transfers exactly.
+   - Adopt if Δ ≥ +0.0001 and within 0.0002 of the local ΔJ.
+2. **Remaining slots:** only probes that answer an open question, or a second regular seed if H7 lands as predicted.
 
-**Checked and closed today (no submission needed):**
+**Paused lines (27 Sep evidence):**
+- **Ongoing:** 4 of the last 5 changes lost on March despite passing every local test (G8 passed the full gate).
+- **Blackout-cell models:** noisy transfer (H5w's blackout part ~50%, H6 ~5%).
+- **Onset decoding / extent:** calibrated from both sides (F1, F2; head-only would score 0.43 vs 0.86 on CV).
+
+**Robust list (for the final pick):** v11 ongoing (G8; private-weighted CV +0.0052 ± 0.0006, March −0.0027).
+
+**Checked and closed on 27 Sep (no submission needed):**
 - Task 2 onset with ramp-flow features (+0.15% log-loss only).
 - Characteristic (kinematic-wave) features for blackout cells: corr(ch − li, y − li) = −0.07. Congested waves travel 20+ km over a 90-min blackout.
 - Off-ramp share as a mainline-flow meter: ramps carry only 1–2.5% of mainline flow; the implied flow error (67–130 veh/h per lane) is worse than the model's.
@@ -134,15 +128,9 @@ Adoption rules are fixed before submitting:
 - Scenario shift train → March/April: none (capacity q99.9, peak flow and median speed match; only per-panel queue shares move).
 - March onset site check (TASK2_ANALYSIS §19): site hits 0.775 vs 0.824 on train, so the loss is mostly extent.
 - March ongoing size check: predicted size is flat, 35% of queues gone by T+19 (train 28%); no bias to correct.
-
-**New data source (27 Sep): on/off-ramp flows.** Neither task used them.
-- They are released even inside the mainline blackouts (80% valid, the same as normal rows).
-- Task 1 is offline, so it may use them at any time. Task 2 may use ramp values ≤ T only.
-
-**Closed today:**
-- **Eligibility-aware decoding** (`t2/elig.py`). Plain top-m is already optimal.
-- **Importance-weighted onset training** (section 18). It lost beyond seed noise.
-- **Diverse-hyperparameter member (H4).** Cancelled in favour of the ramp member. The knobs `TFB_LEAVES/FF/MINDATA/L2/EXTRA` remain available.
+- `pct_observed` at target cells (released, unused): no residual difference between pct 100 and 75–90.
+- Low-rank (soft-impute) completion of each day's field: best linear blend −1.4% speed RMSE on D7_I405_S, −0.3% on D7_I10_W (≈ +0.0001 J).
+- Train/test mismatch at the origin slot T: none (both use the masked view).
 
 ## Decision log
 | Date | Submission | Public (Δ vs best) | Decision / lesson |
