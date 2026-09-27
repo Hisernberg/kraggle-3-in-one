@@ -1874,3 +1874,33 @@ again from T+19. The queued links at T+19..T+21 show where an onset queue sits a
 - The F1/F2 probes already showed that bigger and smaller sets both lose on March.
 
 **Verdict.** There is no decoding or site fix to make. The onset line stays closed until a new model idea comes up.
+
+## 20. Ongoing capacity p3 (255 leaves, 900 rounds): `lgb_v11` ongoing (2026-09-27)
+
+`CFG["p3"]` = P_HUGE with 255 leaves, 900 rounds. Everything else is the v5 recipe: window weights, half of the extra
+candidate windows, `feat_v3`, original windows, old truth. Four-fold CV
+(`python -m trafficflow.t2.robust cv og_v3|og_v3_noloc p3 --weighted`, 56 and 45 min):
+
+| model | sim | off | rec < 0.05 | rec < 0.2 | paired Δ sim vs p2 (windows better / worse) |
+|---|---|---|---|---|---|
+| og_v3 p2 | 0.8796 | 0.8873 | 0.5808 | 0.7731 | – |
+| og_v3 p3 | 0.8842 | 0.8905 | 0.5844 | 0.7779 | +0.0055 ± 0.0007 (1277 / 739) |
+| og_v3_noloc p2 | 0.8792 | 0.8869 | 0.5967 | 0.7719 | – |
+| og_v3_noloc p3 | 0.8857 | 0.8811 | 0.6031 | 0.7812 | +0.0072 ± 0.0006 (1380 / 663) |
+| v5 blend | 0.8833 | 0.8906 | 0.5994 | 0.7809 | – |
+| **v11 blend** (p3 for both main components) | **0.8881** | **0.8930** | **0.6030** | **0.7851** | **+0.0053 ± 0.0005 (1167 / 565)** |
+
+**Task 2 gate:**
+1. Plain CV passes: +0.0048 official aggregation, with every slice improving.
+2. Shift-weighted CV (`shift_cv.score`, v11 − v5) passes:
+
+   | weighting | Δ, old truth | Δ, hybrid truth |
+   |---|---|---|
+   | plain | +0.0048 ± 0.0005 | +0.0043 ± 0.0005 |
+   | validation | +0.0050 ± 0.0011 | +0.0041 ± 0.0011 |
+   | private | +0.0052 ± 0.0006 | +0.0047 ± 0.0006 |
+
+   P(Δ ≤ 0) = 0 in every case.
+3. Footprint check: after the build (below).
+
+Capacity keeps paying on ongoing: 31 → 63 → 127 → 255 leaves gives 0.852 → 0.867 → 0.877 → 0.882 (single model, sim).

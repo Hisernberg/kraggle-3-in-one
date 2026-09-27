@@ -120,9 +120,11 @@ Adoption rules are fixed before submitting:
    - Blackout cells are about 2% of test targets but carry 20–55% of the speed SSE.
    - Settings: ramp features, 127 leaves, lr 0.1, up to 4000 rounds, 250k rows per panel.
    - J gate vs H5w's dark rows (3/4 panels + mean). Adopt if Δ ≥ +0.0001.
-5. **Ongoing capacity probe (v11)**, if its CV passes: og_v3 / og_v3_noloc at `p3` (255 leaves, 900 rounds) in the v5 blend.
-   - Past capacity steps (31→63→127 leaves) each gave about +0.01 CV, and the v5 capacity gain transferred to March.
-   - Gate: sim ≥ +0.005 over p2 and no worse on the recurrence < 0.05 slice. LB probe; adopt if Δ ≥ +0.0005.
+5. **G8 = H5w with ongoing v11** (og_v3 / og_v3_noloc at `p3`, 255 leaves, 900 rounds, in the v5 blend; TASK2_ANALYSIS §20).
+   - CV passes: blend +0.0053 ± 0.0005 paired; shift-weighted +0.0050 (validation) and +0.0052 (private); all slices up.
+   - Expected LB about +0.0007 (ongoing +0.005).
+   - Pre-registered rule: adopt if Δ ≥ +0.0001, since the full gate passed on both months' weightings.
+     If Δ < 0, don't adopt; keep it on the robust list for the final pick.
 
 **Checked and closed today (no submission needed):**
 - Task 2 onset with ramp-flow features (+0.15% log-loss only).
