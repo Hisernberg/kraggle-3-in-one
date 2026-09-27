@@ -180,15 +180,23 @@ def lgb_seeds(seed: int) -> dict:
                 bagging_seed=100 * seed + 3)
 
 
-PARAMS = dict(objective="regression", learning_rate=float(os.environ.get("TFB_LR", 0.1)), num_leaves=255,
-              min_data_in_leaf=100, feature_fraction=0.5, bagging_fraction=0.7, bagging_freq=1, lambda_l2=2.0, max_bin=63,
+# diversity knobs for ensemble members (defaults = the original models bit-for-bit):
+# TFB_LEAVES, TFB_FF (feature_fraction), TFB_MINDATA, TFB_L2, TFB_EXTRA (extra_trees 0/1), TFB_DARK_LEAVES
+PARAMS = dict(objective="regression", learning_rate=float(os.environ.get("TFB_LR", 0.1)),
+              num_leaves=int(os.environ.get("TFB_LEAVES", 255)),
+              min_data_in_leaf=int(os.environ.get("TFB_MINDATA", 100)),
+              feature_fraction=float(os.environ.get("TFB_FF", 0.5)), bagging_fraction=0.7, bagging_freq=1,
+              lambda_l2=float(os.environ.get("TFB_L2", 2.0)), max_bin=63,
               num_threads=int(os.environ.get("TFB_THREADS", "3")), verbose=-1, **lgb_seeds(SEED))
+if os.environ.get("TFB_EXTRA", "0") == "1":
+    PARAMS["extra_trees"] = True
 
 
 def train(panels, holdout: bool, tag: str, rounds: dict | None = None):
     mdir = WORK / "models" / tag; mdir.mkdir(parents=True, exist_ok=True)
     if SEED:  # the hold_*.npy rows follow load_train(..., seed=SEED); t1_holdout.score reads this
         json.dump({"seed": SEED}, open(mdir / "seed.json", "w"))
+    json.dump({k: v for k, v in PARAMS.items() if k != "num_threads"}, open(mdir / "params.json", "w"), indent=1)
     report = {}
     print(f"train {tag}: seed {SEED}, lgb seeds {lgb_seeds(SEED) or 'default'}", flush=True)
     for kind, targets in (("reg", ("speed", "flow", "dens")), ("dark", ("speed", "flow", "dens"))):
@@ -211,7 +219,7 @@ def train(panels, holdout: bool, tag: str, rounds: dict | None = None):
                 p.update(objective="huber", alpha=float(os.environ.get("TFB_HUBER", 1.0)),
                          num_leaves=int(os.environ.get("TFB_DENS_LEAVES", p["num_leaves"])))
             if kind == "dark":
-                p.update(num_leaves=63, min_data_in_leaf=200,
+                p.update(num_leaves=int(os.environ.get("TFB_DARK_LEAVES", 63)), min_data_in_leaf=200,
                          learning_rate=float(os.environ.get("TFB_DARK_LR", 0.05)))
             t0 = time.time()
             if holdout:
