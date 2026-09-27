@@ -23,16 +23,15 @@ for r in recs:
     a, b = _name(r['a']), _name(r['b'])
     for who, opp, sc, k in ((a, b, s, 0), (b, a, 1 - s, 1)):
         t = tab[(who, opp)]; t[0] += sc; t[1] += 1; t[2] += r['money'][k] - r['money'][1 - k]
-heroes = sorted({w for w, _ in tab if w.startswith('e_') or 'cha22' in w or w.startswith('x_')})
-opps = sorted({o for _, o in tab})
-print(f"{'hero':22s} {'total':>12s} " + ' '.join(f"{o[:10]:>12s}" for o in opps))
+heroes = sorted({w for w, _ in tab if w[:2] in ('e_','x_','y_','z_','w_','v_') or 'cha22' in w})
+opps = sorted({o for _, o in tab if o[:2] not in ('e_','x_','y_','z_','w_','v_')})
+short = {o: (o.split("__")[0][:5] + ":" + o.split("__")[-1][:7]) if "__" in o else o[:13] for o in opps}
+print(f"{'hero':24s} {'total':>13s} " + ' '.join(f"{short[o]:>13s}" for o in opps))
 for h in heroes:
     row = []; W = G = 0; M = 0.0
     for o in opps:
-        if o == h or (o.startswith('e_') and 'cha22' not in h): row.append(f"{'':>12s}"); continue
         t = tab.get((h, o))
-        if not t: row.append(f"{'':>12s}"); continue
-        if not (o.startswith('e_')):
-            W += t[0]; G += t[1]; M += t[2]
+        if o == h or not t: row.append(f"{'-':>13s}"); continue
+        W += t[0]; G += t[1]; M += t[2]
         row.append(f"{t[0]:4.1f}/{t[1]:<2d}{t[2]/t[1]:+6.0f}")
-    print(f"{h[:22]:22s} {W:5.1f}/{G:<3d}{(M/G if G else 0):+5.0f} " + ' '.join(row))
+    print(f"{h[:24]:24s} {W:5.1f}/{G:<3d}{(M/G if G else 0):+5.0f} " + ' '.join(row))

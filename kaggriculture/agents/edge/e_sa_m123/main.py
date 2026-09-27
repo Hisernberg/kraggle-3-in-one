@@ -7608,15 +7608,18 @@ def _edge_sell_ahead(obs, action, st):
                 o[2] = int(o[2]) + q
                 break
         else:
+            # Never push a base order out of the 10 processed slots.
+            if len(market) >= 10:
+                holes = [i for i, o in enumerate(market) if not o]
+                if not holes:
+                    continue
+                del market[holes[-1]]
             if cfg['sa_front']:
                 market.insert(0, ['SELL', item, q])
             else:
                 market.append(['SELL', item, q])
         _EDGE_REPORT['edge_sa_units'] += q
     _EDGE_REPORT['edge_sa_turns'] += 1
-    # Keep within 10 orders: drop trailing empty placeholders first.
-    while len(market) > 10 and [] in market:
-        market.remove([])
     return dict(action, market=market[:10])
 
 
