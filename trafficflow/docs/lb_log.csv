@@ -9,3 +9,4 @@ utc,file,kind,status,public,best_before,delta,message
 2026-09-26 00:17,P5_smooth_f3.zip,probe,COMPLETE,0.86736,0.86777,-0.00041,"S3/P5 probe: H2 with TV smoothing x3 (local dJ -0.00062, LWR -0.0051); tests whether the official Task 3 truth is smoother than train"
 2026-09-26 00:22,P6_H2_queue_zeroed.zip,probe,COMPLETE,0.63144,0.86777,-0.23633,S4/P6 probe: H2 with the queue zeroed -> exact S_queue(H2) = (H2 - P6)/0.30 and exact March ongoing = 2*S_queue - onset(0.732)
 2026-09-27 06:21,H3_t1ens345.zip,candidate,COMPLETE,0.86799,0.86777,0.00022,"S1/H3: H2 with Task 1 state = mean of full3, full4, full5 (third seed; local J +0.00023 on 4/4 panels); state rows only"
+2026-09-27 06:55,G7_ongoing_v7.zip,candidate,COMPLETE,0.86779,0.86799,-0.0002,"S2/G7: H3 with ongoing = v7 (v5 recipe retrained on hybrid labels; +100/-45 cells in 30/40 validation windows; CV +0.0032 hybrid truth, +0.0006 old truth); onset and state unchanged"

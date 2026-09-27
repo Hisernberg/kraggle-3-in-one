@@ -110,8 +110,8 @@ Adoption rules are fixed before submitting:
 1. **H3** (H2 with a third Task 1 seed, `ens345`).
    - Local J +0.00023, 4/4 panels.
    - Adopt if Δ ≥ +0.0001.
-2. **G7** (best with ongoing = v7, the v5 ongoing recipe retrained on hybrid labels, `lgb_v8og7.csv`). Building now.
-   - LB probe: adopt if Δ ≥ +0.0005. If it loses, ongoing label work is closed.
+2. **G7** (best with ongoing = v7, the v5 ongoing recipe retrained on hybrid labels, `lgb_v8og7.csv`).
+   - **Done: 0.86779 (−0.00020). Not adopted; ongoing label work is closed.**
 3. **H5w** (Task 1 ramp-feature member full7; regular rows = mean of full3/4/5/7, blackout rows = full7 alone).
    - The equal-weight gate passed (+0.00039, 4/4). The per-kind weighting gives +0.00081 on 4/4 (EXPERIMENTS.md).
    - Adopt if Δ ≥ +0.0001 and it matches the local ΔJ (+0.0008) within 0.0002.
@@ -141,6 +141,7 @@ Task 2 onset with ramp-flow features is closed (+0.15% log-loss only).
 | 09-25 | **G1: E1 + TV density smoothing inside target runs** (state rows only) | **0.86651 (+0.00060)** | Local J predicted +0.00062. **Adopted: new best.** The Task 3 proxy predicts the LB to within 0.00002 |
 | 09-25 | **G2: G1 + onset v8** (stacking 0.3 + 9-seed mix; 15 cells, 11 in 4 validation windows) | **0.86711 (+0.00060)** | CV onset +0.0035 hybrid / +0.0024 old, i.e. about +0.0005 total. **Adopted: new best.** Shape-aware hedges from stage 2 help on March, where F1's blanket bias hurt |
 | 09-27 | **H3: H2 + third Task 1 seed** (state rows only) | **0.86799 (+0.00022)** | local J +0.00023. **Adopted: new best.** The Task 1/3 proxy matches the LB on five changes in a row |
+| 09-27 | G7: H3 with ongoing v7 (hybrid labels) | 0.86779 (−0.00020) | March ongoing −0.0013 against CV +0.0032 (hybrid) / +0.0006 (old). The official ongoing truth does not reward the hybrid edge cells. **Ongoing label work closed** |
 | 09-26 | **H2: G2 + Task 1 seed ensemble** (state rows only) | **0.86777 (+0.00066)** | local J +0.00077. **Adopted: new best** |
 | 09-26 | H1b: H2 + ongoing v10 (stage 2 may only remove cells, recurrence ≥ 0.05) | 0.86629 (−0.00148) | Passed the new Task 2 gate and still failed (ongoing −0.010). **Ongoing stacking line dropped, final pick included.** Ongoing changes are LB probes first from now on |
 | 09-26 | P5 probe: H2 + TV smoothing ×3 | 0.86736 (−0.00041) | local −0.00062. The official Task 3 truth behaves like the train truth, and the smoothing strength is at or near its optimum |
