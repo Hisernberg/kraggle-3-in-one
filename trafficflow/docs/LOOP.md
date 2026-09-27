@@ -55,20 +55,20 @@ Background agents and jobs wake the session when they finish, so work continues 
    (**Backup** below).
 
 ## Current best
-**`H2_t1ens34.zip` = 0.86777** (2026-09-26). Post-rebuild rank 10 of 151; #1 KTK 0.90033 (gap 0.0326).
+**`H3_t1ens345.zip` = 0.86799** (2026-09-27). #1 KTK 0.90038.
 
 Build:
 ```
-python3 -m trafficflow.make_submission --state-tag ens34 --recon-a 0.75 --gate 0.6 \
+python3 -m trafficflow.make_submission --state-tag ens345 --recon-a 0.75 --gate 0.6 \
   --smooth "free=0.0075,free_a=0.001,gate=0.02,gate_a=0.005,dark=0.05" \
   --queue /home/user/work/t2/lgb_v8_seeds9_stack03.csv --odme /home/user/work/t4/t4_l2proj.csv \
   --out /home/user/work/subs/<ID>.csv --note "<ID>: ..."
 python3 -m trafficflow.loop pack /home/user/work/subs/<ID>.csv
 ```
 
-- **Task 1:** mean of the `full3` and `full4` LightGBM model sets.
-  - FD features; `TFB_SEED` 0 / 1.
-  - `state_ens34.parquet` comes from `t1_pipeline ens --tag ens34 --members full3 full4`.
+- **Task 1:** mean of the `full3`, `full4` and `full5` LightGBM model sets.
+  - FD features; `TFB_SEED` 0 / 1 / 2.
+  - `state_ens345.parquet` comes from `t1_pipeline ens --tag ens345 --members full3 full4 full5`.
   - Density reconciliation where v < 0.6·v_f (a = 0.75), then TV smoothing.
 - **Task 2:** `lgb_v8_seeds9_stack03`.
   - Onset v8: stacking + 9 seeds on hybrid labels.
@@ -133,6 +133,7 @@ Adoption rules are fixed before submitting:
 | 09-25 | F2: onset site-commit decoder `site2_lo.05_r.5` (−11 hedge cells) | 0.86418 (−0.00173) | Fewer hedges hurt too (onset −0.012). Top-m at b = 0 is optimal on March from both sides; onset gains must come from better probabilities, not decoding |
 | 09-25 | **G1: E1 + TV density smoothing inside target runs** (state rows only) | **0.86651 (+0.00060)** | Local J predicted +0.00062. **Adopted: new best.** The Task 3 proxy predicts the LB to within 0.00002 |
 | 09-25 | **G2: G1 + onset v8** (stacking 0.3 + 9-seed mix; 15 cells, 11 in 4 validation windows) | **0.86711 (+0.00060)** | CV onset +0.0035 hybrid / +0.0024 old, i.e. about +0.0005 total. **Adopted: new best.** Shape-aware hedges from stage 2 help on March, where F1's blanket bias hurt |
+| 09-27 | **H3: H2 + third Task 1 seed** (state rows only) | **0.86799 (+0.00022)** | local J +0.00023. **Adopted: new best.** The Task 1/3 proxy matches the LB on five changes in a row |
 | 09-26 | **H2: G2 + Task 1 seed ensemble** (state rows only) | **0.86777 (+0.00066)** | local J +0.00077. **Adopted: new best** |
 | 09-26 | H1b: H2 + ongoing v10 (stage 2 may only remove cells, recurrence ≥ 0.05) | 0.86629 (−0.00148) | Passed the new Task 2 gate and still failed (ongoing −0.010). **Ongoing stacking line dropped, final pick included.** Ongoing changes are LB probes first from now on |
 | 09-26 | P5 probe: H2 + TV smoothing ×3 | 0.86736 (−0.00041) | local −0.00062. The official Task 3 truth behaves like the train truth, and the smoothing strength is at or near its optimum |

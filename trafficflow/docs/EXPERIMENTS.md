@@ -81,6 +81,7 @@ That compares with the best post-rebuild public score of 0.879. Our previous bes
 | 2026-09-26 00:11 | H1b `H1b_og_shrink_on_ens34.zip` | H2 with ongoing v10 (stage 2 may only remove v5 cells where recurrence ≥ 0.05; 77 cells) | 0.86629 | – | **−0.00148** → March ongoing −0.010. It passed the new Task 2 gate (plain +0.0029, both weighted CVs +, footprint clean) and still failed. **Ongoing stacking line dropped** |
 | 2026-09-26 00:16 | P5 probe `P5_smooth_f3.zip` | H2 with TV smoothing ×3 | 0.86736 | – | −0.00041 (local −0.00062) → the official Task 3 truth behaves like the train truth; the smoothing strength is at or near its optimum |
 | 2026-09-26 00:20 | P6 probe `P6_H2_queue_zeroed.zip` | H2 with the queue zeroed | 0.63144 | – | **S_queue(H2) = 0.7878** exactly: onset 0.732, ongoing 0.843. Task 1+3 = 0.43268 |
+| 2026-09-27 06:22 | **H3** `H3_t1ens345.zip` | H2 with Task 1 state = mean of full3, full4, full5 (third seed; state rows only) | **0.86799** | – | **+0.00022, local J +0.00023**: exact. Base → H3 |
 
 ### Decomposition of A (0.85204), exact from the probes
 | Task | Weighted | Task score | Local estimate |
