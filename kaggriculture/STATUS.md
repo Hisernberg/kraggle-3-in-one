@@ -73,12 +73,25 @@ Each slot is a scheduled wake-up of this session and runs the **slot procedure**
 rating within ~±50. So every slot measures one candidate while the previous one keeps playing. On 09-30, S4 = the
 second-best measured agent and S5 = the best (the final active pair).
 
+**Turn-0 duel, measured locally (09-27 evening)**: prices are quoted per unit in lockstep, and BUY is quoted at
+price(inv-1). So [BUY a, SELL b, BUY c] only gains when the rival buys more at the same index, and against our
+[BUY 5, SEED] it changes nothing. It does cash-starve the v54-v57 lineage ([B20,S15]): about 24/24 wins, +15k.
+The real gain came from "always armed" selling (sell everything priced below 1.3x base, first in the order list,
+from step 150). It wins the early milk/strawberry sale races against near-mirrors.
+
+| candidate | vs v_sa2 | vs P03 | vs tetsutani | vs cha22 | field |
+|---|---|---|---|---|---|
+| **d_sb_s150a0** (cha22 + SB18 opener + armed sa, `submissions/p05_d_sb_s150a0`) | 45/48 +496 · my check 14/16 | 47/48 · 16/16 | 13/24 · 12/16 | 24/24 · 16/16 | 88% (v_sa2 82%) |
+| t_sb_s150 (tetsutani base, `submissions/cand_t_sb_s150`) | 38/48 · my check 10/16 −5 | 38/48 · 10/16 | 24/24 · 14/16 | 20/24 · 10/16 | 91% |
+
+Agents are built from `agents/edge/bases/base_sb.py` / `base_tsb.py` with the v_sa2 config plus sa_from=150, arm_k=0.
+
 **Queue for 09-28** (re-ordered at every slot by evidence):
-- S1: **P05 = v_sa2** (P03 + sell-ahead-2; 18/20 vs P03, equal vs field). It replaces P04 (1291) as the pair partner of SB18.
-- S2: the better of v_sa2 / P03 plus an answer to the turn-0 wheat duel (duel openers are our most common loss class),
-  if the overnight local test is positive; else re-submit P03 exactly (known ~2370) as the anchor.
-- S3-S5: best of the overnight candidates (cha22 edge + duel opening, edge layer on the tetsutani base, sa2 on the
-  duel base), in order of local win rate against a mirror set of (P03, v_sa2, SB18-class, field_top).
+- S1 00:05: **P05 = d_sb_s150a0**. It passed 2 official games (DONE, won both; worst turn 0.07 s).
+- S2 04:50: if P05 is ≥ 2400 with ≥ 40 games, submit **t_sb_s150** (a different base, as a diversity probe; worst
+  turn about 0.5 s, within the 1 s limit). If P05 is under 2300, re-submit P03 as the anchor and study P05's losses.
+- S3-S5: small deltas on the best measured agent (arm threshold 1.2/1.4, sa_from 100/200), each local-tested vs
+  (P05, v_sa2, P03, tetsutani, cha22, metav4) on fresh seeds before submission.
 
 **Checkpoints**: CP1 ≥ 2600 → keep that agent as the anchor and test only small deltas on it. Below 2400 after
 09-29 S3 → stop exploring and spend 09-30 on the best measured pair.
