@@ -36,7 +36,8 @@ def train_variant(variant: str, cfg: str, weighted: bool, cond="queue_ongoing", 
     """``gw_weight`` (optional, indexed by gw): importance weight of each window, multiplied into the
     weights of all its rows (``onset_iw``); None keeps the plain behaviour."""
     params, rounds = CFG[cfg]
-    R, M = gather(cond, cand_frac=0.5 if cond == "queue_ongoing" else 1.0, drop=VARIANTS[variant])
+    from .robust import CAND_FRAC
+    R, M = gather(cond, cand_frac=CAND_FRAC if cond == "queue_ongoing" else 1.0, drop=VARIANTS[variant])
     if oprior:
         from .core import PANELS8
         from .oprior import add_to_rows
