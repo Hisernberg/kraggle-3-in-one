@@ -388,6 +388,32 @@ def ensemble(tag: str, members) -> None:
     print(f"state_{tag}: mean of {list(members)}, {base.num_rows} rows, NaN in members {nan}", flush=True)
 
 
+def ensemble_weighted(tag: str, new: str, others, w_reg: float, w_dark: float) -> None:
+    """WORK/pred/state_<tag>.parquet: member `new` weighted w_reg on regular rows and w_dark on blackout
+    ("dark") rows; the `others` share the remaining weight equally (trafficflow/t1_weighted_eval.py)."""
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+    out = WORK / "pred"
+    vals = ("speed", "flow_lane", "dens_lane")
+    base = pq.read_table(out / f"state_{new}.parquet")
+    kind = base.column("kind").to_numpy(zero_copy_only=False)
+    w = np.where(kind == "dark", w_dark, w_reg)
+    rest = {c: np.zeros(base.num_rows) for c in vals}
+    for m in others:
+        t = pq.read_table(out / f"state_{m}.parquet")
+        for c in base.column_names:
+            if c not in vals:
+                assert t.column(c).equals(base.column(c)), f"{m}: column {c} differs from {new}"
+        for c in vals:
+            rest[c] += t.column(c).to_numpy() / len(others)
+        del t
+    for c in vals:
+        v = w * base.column(c).to_numpy() + (1 - w) * rest[c]
+        base = base.set_column(base.column_names.index(c), c, pa.array(v))
+    pq.write_table(base, out / f"state_{tag}.parquet")
+    print(f"state_{tag}: {new} x (reg {w_reg}, dark {w_dark}) + {list(others)}; dark rows {int((kind == 'dark').sum())}", flush=True)
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("stage")
@@ -396,6 +422,9 @@ if __name__ == "__main__":
     ap.add_argument("--holdout", action="store_true")
     ap.add_argument("--rounds", default="{}", help='JSON {"reg_speed": 950, ...} for full fits')
     ap.add_argument("--members", nargs="*", help="ens: state tags to average into state_<tag>")
+    ap.add_argument("--new", help="ensw: member weighted per kind")
+    ap.add_argument("--w-reg", type=float, default=0.25)
+    ap.add_argument("--w-dark", type=float, default=0.25)
     a = ap.parse_args()
     if a.stage == "feat":
         for p in a.panels:
@@ -409,3 +438,5 @@ if __name__ == "__main__":
         print(json.dumps(full_rounds(json.load(open(WORK / "models" / a.tag / "report.json")))))
     elif a.stage == "ens":
         ensemble(a.tag, a.members)
+    elif a.stage == "ensw":
+        ensemble_weighted(a.tag, a.new, a.members, a.w_reg, a.w_dark)
