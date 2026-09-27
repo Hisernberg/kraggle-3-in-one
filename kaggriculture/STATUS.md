@@ -11,8 +11,8 @@ submission, read the ladder, learn, then submit the next.
 | P01 | 09-27 05:20 | tetsutani demand-preserving (public) | probe of the strongest current public agent | 2093 (07:49, then retired) |
 | P02 | 09-27 06:05 | DSM tape 113970425_0 | replay a top player's recorded game + land catch-up | 1123 after 45 games (09:37) |
 | P03 | 09-27 06:26 | cha22_edge_arm | cha22 + market layer (sell-ahead-1, order search, on-sight switch) | 2377 after 48 games (09:37); 2372 after 78 (11:46) |
-| P04 | 09-27 11:50 | router r3_cg | tape router (280 tapes, day-start switching) + cash guard (fixes P02) + lazy per-tape decode (load 8 s → 0.1 s) | 1291 after 54 games (17:05) — **failed** |
-| (ext) | 09-27 13:50 | SB18 Macro-1 (not from this session) | tetsutani + turn-0 wheat duel | 1860 after 54 games (17:05), 34/40 wins, still climbing |
+| P04 | 09-27 11:50 | router r3_cg | tape router (280 tapes, day-start switching) + cash guard (fixes P02) + lazy per-tape decode (load 8 s → 0.1 s) | 1291 after 54 games (17:05); 1309 after 64 (23:00) — **failed** |
+| (ext) | 09-27 13:50 | SB18 Macro-1 (not from this session) | tetsutani + turn-0 wheat duel | 1860 after 54 games (17:05), 34/40 wins; 1947 after 93 (23:00) |
 
 ## What the ladder taught us
 
