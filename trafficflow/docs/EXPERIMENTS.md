@@ -407,3 +407,21 @@ We are 15th post-rebuild with H5w = 0.86838 (the raw best, H6 = 0.86839, is the 
 teams are KTK 0.90085, gichang 0.89628, George Daniel Gherasim 0.89145 (new), Inocchi 0.88697 and Giorgio Ottoboni 0.88548;
 the gap to #1 is 0.03246. Two container restarts today (about 13:00 and 17:40–21:14) cost the hold10 run; it
 restarted at 21:15.
+
+## Second boosted regular seed hold10 (2026-09-27 23:19; H8 for 28 Sep)
+Seed 7 with the hold9 settings, except that the density model may run to 10000 rounds. Single-model holdout RMSE: speed 1.4412
+(hold9 1.4388), flow 29.32 (29.37), density **0.5047** (0.5167; best iteration 9989, still near the cap).
+
+Holdout J, blackout rows fixed (= hold7), reference = the H7 scheme:
+
+| regular rows | D12_I405_N | D12_I5_S | D7_I10_W | D7_I405_S | mean J | ΔJ | panels up |
+|---|---|---|---|---|---|---|---|
+| H7: 0.5·hold9 + 0.5·mean(hold3, 4, 5, 7) | 0.39526 | 0.39081 | 0.39174 | 0.38579 | 0.39090 | – | – |
+| 0.25·hold9 + 0.25·hold10 + 0.5·old | 0.39535 | 0.39093 | 0.39181 | 0.38591 | 0.39100 | +0.00010 | 4 |
+| 0.35·hold9 + 0.35·hold10 + 0.3·old | 0.39551 | 0.39112 | 0.39186 | 0.38601 | 0.39112 | +0.00022 | 4 |
+| **0.5·hold9 + 0.5·hold10 (old members dropped)** | **0.39556** | **0.39124** | **0.39181** | **0.38602** | **0.39116** | **+0.00026** | **4** |
+
+- Regular speed RMSE (same panel order): 1.218 / 1.692 / 1.301 / 2.002 → 1.203 / 1.660 / 1.301 / 1.982.
+- The old 150k-row members no longer add anything once there are two boosted seeds.
+- Next: a third boosted seed, and the density model beyond 10000 rounds.
+- H8 = H5w with regular rows = 0.5·full9 + 0.5·full10 (blackout rows full7). Local ΔJ vs H7 +0.00026; vs H5w about +0.0008.

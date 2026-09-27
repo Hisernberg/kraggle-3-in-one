@@ -116,7 +116,8 @@ the maximum score; H6 was below the +0.0001 adoption bar, so the base for single
    - Adopt if Δ ≥ +0.0001 and within 0.0002 of the local ΔJ (+0.00053).
 2. **H8** (second boosted seed `hold10/full10`, seed 7, `boost_member.sh`, density model up to 10000 rounds).
    - Restarted 27 Sep 21:15 after the container restart; log `/home/user/work/H8_reg10.log`; ETA about 03:30.
-   - Gated against the H7 scheme (b2half / b2heavy / b2only).
+   - Gated against the H7 scheme (b2half / b2heavy / b2only). **Gate passed 23:19: b2only (0.5·hold9 + 0.5·hold10) +0.00026 on 4/4.**
+     full10 is training; `H8_reg10.zip` should be ready around 03:00. Adopt if Δ vs H7 ≥ +0.0001 and within 0.0002 of +0.00026.
    - Submit only after H7 has scored and landed within 0.0002 of its local ΔJ (the H7 → H8 step is regular rows only).
    - If the container restarts, re-run the same command: training skips models already saved.
 3. **Remaining slots:** only probes that answer an open question.
