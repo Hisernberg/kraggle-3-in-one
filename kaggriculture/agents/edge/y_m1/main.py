@@ -7491,7 +7491,7 @@ import math as _edge_math
 import itertools as _edge_it
 
 _EDGE_BASE = [v for v in list(globals().values()) if callable(v)][-1]
-_EDGE_CFG = dict({'sa': True, 'sa_from': 216, 'sa_to': 718, 'sa_mod4': (0, 1, 2, 3), 'sa_items': ('STRAWBERRY', 'MELON', 'MILK', 'WOOL', 'EGG', 'TOMATO', 'CARROT'), 'sa_held_only': False, 'sa_max': 1, 'sa_min_ratio': 0.0, 'sa_min_abs': 1, 'sa_front': True, 'sells_first': False, 'l2': True, 'l2_from': 0, 'sa_pos': None, 'l2_model': 'self', 'sa_gate': None, 'gate_win': 24, 'gate_frac': 0.5, 'sa_max_item': None, 'sa_ratio_item': None, 'fh': False, 'fh_px': 3, 'fh_until': 696, 'fh_items': ('MILK', 'WOOL', 'STRAWBERRY', 'EGG', 'CARROT', 'TOMATO', 'MELON'), 'fh_shed': 70, 'agg': False, 'agg_k': 3, 'agg_max': 100, 'agg_per_item': True})
+_EDGE_CFG = dict({'sa': True, 'sa_from': 216, 'sa_to': 718, 'sa_mod4': (0, 1, 2, 3), 'sa_items': ('STRAWBERRY', 'MELON', 'MILK', 'WOOL', 'EGG', 'TOMATO', 'CARROT'), 'sa_held_only': False, 'sa_max': 1, 'sa_min_ratio': 0.0, 'sa_min_abs': 1, 'sa_front': True, 'sells_first': False, 'l2': True, 'l2_from': 0, 'sa_pos': None, 'l2_model': 'self', 'sa_gate': None, 'gate_win': 24, 'gate_frac': 0.5, 'sa_max_item': None, 'sa_ratio_item': None, 'fh': False, 'fh_px': 3, 'fh_until': 696, 'fh_items': ('MILK', 'WOOL', 'STRAWBERRY', 'EGG', 'CARROT', 'TOMATO', 'MELON'), 'fh_shed': 70, 'agg': False, 'agg_k': 3, 'agg_max': 100, 'agg_per_item': True, 'sa_full_below': None, 'sa_full_max': 100, 'crash_ratio': 1.3, 'crash_k': None})
 
 _EDGE_P = {'WHEAT': {'base': 25, 'I0': 10000, 'T': 400, 'below_func': 'sqrt', 'below_target': 0.8, 'above_func': 'log', 'above_target': 0.2}, 'CARROT': {'base': 35, 'I0': 10000, 'T': 450, 'below_func': 'hinge', 'below_target': 1.0, 'above_func': 'sqrt', 'above_target': 0.7}, 'TOMATO': {'base': 60, 'I0': 10000, 'T': 200, 'below_func': 'hinge', 'below_target': 0.4, 'above_func': 'sqrt', 'above_target': 0.6}, 'STRAWBERRY': {'base': 120, 'I0': 10000, 'T': 100, 'below_func': 'sqrt', 'below_target': 0.7, 'above_func': 'linear', 'above_target': 1.6}, 'MELON': {'base': 250, 'I0': 10000, 'T': 300, 'below_func': 'log', 'below_target': 0.2, 'above_func': 'sq', 'above_target': 3.6}, 'EGG': {'base': 50, 'I0': 10000, 'T': 332, 'below_func': 'hinge', 'below_target': 0.4, 'above_func': 'log', 'above_target': 0.2}, 'MILK': {'base': 160, 'I0': 10000, 'T': 122, 'below_func': 'sqrt', 'below_target': 0.6, 'above_func': 'linear', 'above_target': 1.6}, 'WOOL': {'base': 200, 'I0': 10000, 'T': 105, 'below_func': 'log', 'below_target': 0.2, 'above_func': 'sq', 'above_target': 3.2}, 'FERTILIZER': {'base': 100, 'I0': 10000, 'T': 200, 'below_func': 'linear', 'below_target': 0.4, 'above_func': 'linear', 'above_target': 0.4}}
 _EDGE_ANIMAL = {"COW": 400, "SHEEP": 500, "GOOSE": 300}
@@ -7585,6 +7585,9 @@ def _edge_track(obs, st):
             st.setdefault('opp_units', {})[item] = st.get('opp_units', {}).get(item, 0) + opp
             if prev['held'].get(item, 0) > 0 and item not in prev['base_sells']:
                 pre[item] = pre.get(item, 0) + 1
+                if prev.get('prices', {}).get(item, 10 ** 9) < _EDGE_CFG.get('crash_ratio', 1.3) * _EDGE_P[item]['base']:
+                    st['crash_pre'] = st.get('crash_pre', 0) + 1
+                    st.setdefault('crash_pre_steps', []).append(prev['step'])
                 _EDGE_REPORT['edge_pre_events'] = _EDGE_REPORT.get('edge_pre_events', 0) + 1
 
 
@@ -7604,7 +7607,10 @@ def _edge_remember(obs, st, base_market, out):
                     inv[item] += 1
                     added[item] = added.get(item, 0) + 1
             left[item] = left.get(item, 0) - n
-    st['prev'] = dict(step=int(obs['step']), inv={k: int(v) for k, v in obs['market']['inventory'].items()},
+    mu = st.setdefault('my_units', {})
+    for k, v in added.items():
+        mu[k] = mu.get(k, 0) + v
+    st['prev'] = dict(step=int(obs['step']), prices={k: int(v) for k, v in obs['market']['prices'].items()}, inv={k: int(v) for k, v in obs['market']['inventory'].items()},
                       shops=list((obs.get('town') or {}).get('unlocked_shops') or []), added=added,
                       held={k: v for k, v in left.items() if v > 0},
                       base_sells={o[1] for o in base_market if o and len(o) >= 3 and o[0] == 'SELL' and int(o[2]) > 0})
@@ -7636,12 +7642,17 @@ def _edge_sell_ahead(obs, action, st):
         pb = params[item]['base']
         q = 0
         cur = int(inv[item]) + sold.get(item, 0)
+        fb = cfg.get('sa_full_below')
+        full_below = fb.get(item) if isinstance(fb, dict) else fb
         qmax = (cfg.get('sa_max_item') or {}).get(item, cfg['sa_max'])
         if cfg.get('agg') and st.get('pre', {}).get(item if cfg.get('agg_per_item', True) else '', 0) >= cfg['agg_k']:
             qmax = cfg['agg_max']
         elif cfg.get('agg') and not cfg.get('agg_per_item', True) and sum(st.get('pre', {}).values()) >= cfg['agg_k']:
             qmax = cfg['agg_max']
         ratio = (cfg.get('sa_ratio_item') or {}).get(item, cfg['sa_min_ratio'])
+        armed = cfg.get('crash_k') is None or st.get('crash_pre', 0) >= cfg['crash_k']
+        if armed and full_below is not None and _edge_price(item, int(inv[item]), params) < full_below * pb:
+            qmax = cfg.get('sa_full_max', 100)
         while q < rem and q < qmax:
             pr = _edge_price(item, cur + q, params)
             if pr < ratio * pb or pr <= cfg['sa_min_abs']:

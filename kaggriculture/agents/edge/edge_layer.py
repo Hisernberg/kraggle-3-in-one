@@ -103,6 +103,10 @@ def _edge_track(obs, st):
             st.setdefault('opp_units', {})[item] = st.get('opp_units', {}).get(item, 0) + opp
             if prev['held'].get(item, 0) > 0 and item not in prev['base_sells']:
                 pre[item] = pre.get(item, 0) + 1
+                st.setdefault('pre_steps', []).append((prev['step'], item, opp))
+                if prev.get('prices', {}).get(item, 10 ** 9) < _EDGE_CFG.get('crash_ratio', 1.3) * _EDGE_P[item]['base']:
+                    st['crash_pre'] = st.get('crash_pre', 0) + 1
+                    st.setdefault('crash_pre_steps', []).append(prev['step'])
                 _EDGE_REPORT['edge_pre_events'] = _EDGE_REPORT.get('edge_pre_events', 0) + 1
 
 
@@ -122,7 +126,10 @@ def _edge_remember(obs, st, base_market, out):
                     inv[item] += 1
                     added[item] = added.get(item, 0) + 1
             left[item] = left.get(item, 0) - n
-    st['prev'] = dict(step=int(obs['step']), inv={k: int(v) for k, v in obs['market']['inventory'].items()},
+    mu = st.setdefault('my_units', {})
+    for k, v in added.items():
+        mu[k] = mu.get(k, 0) + v
+    st['prev'] = dict(step=int(obs['step']), prices={k: int(v) for k, v in obs['market']['prices'].items()}, inv={k: int(v) for k, v in obs['market']['inventory'].items()},
                       shops=list((obs.get('town') or {}).get('unlocked_shops') or []), added=added,
                       held={k: v for k, v in left.items() if v > 0},
                       base_sells={o[1] for o in base_market if o and len(o) >= 3 and o[0] == 'SELL' and int(o[2]) > 0})
@@ -154,12 +161,25 @@ def _edge_sell_ahead(obs, action, st):
         pb = params[item]['base']
         q = 0
         cur = int(inv[item]) + sold.get(item, 0)
+        fb = cfg.get('sa_full_below')
+        full_below = fb.get(item) if isinstance(fb, dict) else fb
         qmax = (cfg.get('sa_max_item') or {}).get(item, cfg['sa_max'])
         if cfg.get('agg') and st.get('pre', {}).get(item if cfg.get('agg_per_item', True) else '', 0) >= cfg['agg_k']:
             qmax = cfg['agg_max']
         elif cfg.get('agg') and not cfg.get('agg_per_item', True) and sum(st.get('pre', {}).values()) >= cfg['agg_k']:
             qmax = cfg['agg_max']
         ratio = (cfg.get('sa_ratio_item') or {}).get(item, cfg['sa_min_ratio'])
+        if cfg.get('arm_k') is not None:
+            if not st.get('armed'):
+                early = sum(1 for ps in st.get('pre_steps', []) if ps[0] < cfg['arm_before'])
+                if early >= cfg['arm_k']:
+                    st['armed'] = True
+                    _EDGE_REPORT['edge_armed_at'] = step
+            armed = bool(st.get('armed'))
+        else:
+            armed = cfg.get('crash_k') is None or st.get('crash_pre', 0) >= cfg['crash_k']
+        if armed and full_below is not None and _edge_price(item, int(inv[item]), params) < full_below * pb:
+            qmax = cfg.get('sa_full_max', 100)
         while q < rem and q < qmax:
             pr = _edge_price(item, cur + q, params)
             if pr < ratio * pb or pr <= cfg['sa_min_abs']:
@@ -245,22 +265,24 @@ def _edge_margin_fn(opp, inv0, stock, params):
     return _v44y_factor_margin(opp, inv0, stock, params)
 
 
-def _edge_level2(obs, action, model=None):
+def _edge_level2(obs, action, model=None, models=None):
     """Best response of our SELL ordering against a rival who submits `model` (default: our own final orders)."""
     market = [list(o) if isinstance(o, (list, tuple)) else o for o in (action.get('market') or [])]
-    sells = [(i, o) for i, o in enumerate(market) if o and o[0] == 'SELL']
-    if len(sells) < 2 or len(sells) > 6:
-        return action
     bought = {o[1] for o in market if o and len(o) > 1 and o[0] == 'BUY_PRODUCT'}
-    if any(o[1] in bought for _, o in sells):
+    sells = [(i, o) for i, o in enumerate(market) if o and o[0] == 'SELL' and o[1] not in bought]
+    if len(sells) < 2 or len(sells) > 6:
         return action
     slots = [i for i, _ in sells]
     orders = [o for _, o in sells]
     stock = _edge_proj(obs, action)
     params = _v44y_params(obs)
     inv0 = {k: int(v) for k, v in obs['market']['inventory'].items()}
-    opp = [list(o) if isinstance(o, (list, tuple)) else o for o in (model if model is not None else market)]
-    margin = _edge_margin_fn(opp, inv0, stock, params)
+    if not models:
+        models = [model if model is not None else market]
+    fns = [_edge_margin_fn([list(o) if isinstance(o, (list, tuple)) else o for o in (m if m is not None else market)], inv0, stock, params) for m in models]
+
+    def margin(cand):
+        return min(f(cand) for f in fns)
     base = best = margin(market)
     best_m = None
     for perm in _edge_it.permutations(range(len(orders))):
@@ -353,7 +375,13 @@ def edge_agent(observation, configuration=None):
         if _EDGE_CFG['sells_first']:
             out = _edge_sells_first(observation, out)
         if _EDGE_CFG['l2'] and step >= _EDGE_CFG['l2_from']:
-            out = _edge_level2(observation, out, base_market if _EDGE_CFG.get('l2_model') == 'base' else None)
+            lm = _EDGE_CFG.get('l2_model')
+            if lm == 'base':
+                out = _edge_level2(observation, out, base_market)
+            elif lm == 'robust':
+                out = _edge_level2(observation, out, models=[base_market, None])
+            else:
+                out = _edge_level2(observation, out)
         try:
             _edge_remember(observation, st, base_market, out)
         except Exception:
