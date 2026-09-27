@@ -319,3 +319,21 @@ since the blackout started). Seed 4, otherwise the full4 recipe.
 
 **Chosen for H5:** regular cells = equal mean of full3/4/5/7, dark cells = full7 alone (`t1_pipeline ensw --w-reg 0.25 --w-dark 1.0`).
 Expected LB +0.0008. Weighting regular cells towards the ramp member does not help, so its gain is in blackouts.
+
+## Task 1 dark-only booster hold8 (2026-09-27)
+Blackout models only (`TFB_KINDS=dark`), ramp features, 127 leaves, lr 0.1, up to 4000 rounds, 200k rows per panel,
+seed 5. The hold7 blackout models had all stopped at the 3000-round cap. hold8's dark_speed early-stopped at 2699
+rounds with RMSE 5.98, against 6.11 for hold7.
+
+Holdout J with regular cells = mean(hold3, 4, 5, 7) and the blackout rows below (`t1_weighted_eval kinds`):
+
+| blackout rows | D12_I405_N | D12_I5_S | D7_I10_W | D7_I405_S | mean J | ΔJ | dark speed RMSE (same panel order) |
+|---|---|---|---|---|---|---|---|
+| hold7 (= H5w) | 0.39474 | 0.39008 | 0.39140 | 0.38527 | 0.39037 | – | 5.94 / 6.58 / 6.12 / 8.01 |
+| hold8 | 0.39451 | 0.39055 | 0.39141 | 0.38539 | 0.39047 | +0.00009 | 5.80 / 6.19 / 6.22 / 7.91 |
+| **mean(hold7, hold8)** | 0.39471 | 0.39046 | 0.39147 | 0.38548 | 0.39053 | **+0.00016** | 5.78 / 6.27 / 6.08 / 7.81 |
+
+- Gate passed with mean(hold7, hold8), up on 3/4 panels.
+- The one loss is D12_I405_N (−0.00002), which has no blackouts in validation/private (no Task 2 there).
+  On the three panels with test blackouts the gain is about +0.0002.
+- H6 = H5w with blackout rows = mean(full7, full8).
