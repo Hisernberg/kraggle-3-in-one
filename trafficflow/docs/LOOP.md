@@ -108,17 +108,23 @@ ongoing 0.843).
 Adoption rules are fixed before submitting:
 
 1. **H3** (H2 with a third Task 1 seed, `ens345`).
-   - Local J +0.00023, 4/4 panels (log `/home/user/work/H3_t1ens345.log`).
-   - Adopt if Δ ≥ +0.0001 (matches the local prediction within 0.0002).
-2. **G7** (best with ongoing = v7: the v5 ongoing recipe retrained on hybrid labels; built by `trafficflow/t2/ongoing_v7.py` and spliced onto the v8 onset rows as `lgb_v8og7.csv`).
-   - Evidence: CV +0.0006 old / +0.0032 hybrid, non-recurrent slice −0.005. The onset label fix transferred at 3× its CV.
-   - LB probe: adopt if Δ ≥ +0.0005.
-   - If it loses, ongoing label work is closed.
-3. **Onset importance-weighted** (agent), if it passes the Task 2 gate for both months; adopt if Δ ≥ +0.0005.
-4. **Slots 4–5**: decided from 1–3. If no candidate is ready, use them only on probes that answer an open question, for example per-family queue probes that locate the March Task 2 loss.
+   - Local J +0.00023, 4/4 panels.
+   - Adopt if Δ ≥ +0.0001.
+2. **G7** (best with ongoing = v7, the v5 ongoing recipe retrained on hybrid labels, `lgb_v8og7.csv`). Building now.
+   - LB probe: adopt if Δ ≥ +0.0005. If it loses, ongoing label work is closed.
+3. **H5** (Task 1 ensemble plus a ramp-feature member, `ens3457`). Training now; `seed_member.sh` applies the J gate automatically.
+   - Adopt if Δ ≥ +0.0001 and it matches the local ΔJ within 0.0002.
+4. **Task 2 onset with ramp-flow features** (agent), if it passes the Task 2 gate. Adopt if Δ ≥ +0.0005.
+5. **Remaining slots:** only probes that answer an open question.
 
-Closed today:
-- **Eligibility-aware Task 2 decoding.** The official IoU counts only eligible cells, but plain top-m already matches or beats every eligibility-aware decoder, including an oracle with an explicit empty option (onset 0.8874 vs 0.8853; ongoing 0.8963 vs 0.8969). See `trafficflow/t2/elig.py`.
+**New data source (27 Sep): on/off-ramp flows.** Neither task used them.
+- They are released even inside the mainline blackouts (80% valid, the same as normal rows).
+- Task 1 is offline, so it may use them at any time. Task 2 may use ramp values ≤ T only.
+
+**Closed today:**
+- **Eligibility-aware decoding** (`t2/elig.py`). Plain top-m is already optimal.
+- **Importance-weighted onset training** (section 18). It lost beyond seed noise.
+- **Diverse-hyperparameter member (H4).** Cancelled in favour of the ramp member. The knobs `TFB_LEAVES/FF/MINDATA/L2/EXTRA` remain available.
 
 ## Decision log
 | Date | Submission | Public (Δ vs best) | Decision / lesson |
