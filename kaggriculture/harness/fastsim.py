@@ -59,8 +59,49 @@ def _call(fn, obs, cfg):
     return fn(*([obs, cfg][:max(1, n)])) if n else fn()
 
 
-def play(paths_or_fns, seed=0, cfg=None, record=False, verbose=False):
-    """Play one game. Returns dict(rewards, status, times, [trace])."""
+def _forced_end_of_day(forced):
+    """Replacement for K._end_of_day that forces recorded shop unlocks and, for one seat, recorded weeds."""
+    import random as _r
+
+    def eod(state, env, day):
+        obs0 = state[0].observation
+        cfg = env.configuration
+        board_size = int(K.get(cfg, "boardSize", 10))
+        turns_per_day = max(1, int(K.get(cfg, "turnsPerDay", 24)))
+        weed_chance = float(K.get(cfg, "weedSpawnChance", 0.005))
+        shed_cap = int(K.get(cfg, "shedCapacity", 100))
+        rng = _r.Random((env.info.get("seed", 0) * 7919) ^ (day + 17))
+        for pid, farm in enumerate(obs0.farms):
+            private = state[pid].observation.private
+            K._daily_refresh_plants(farm, day, turns_per_day)
+            K._daily_refresh_animals(farm, day)
+            if pid == forced["seat"]:
+                for (x, y) in forced["weeds"].get(str(day), forced["weeds"].get(day, [])):
+                    if farm["tiles"][y][x] is None:
+                        farm["tiles"][y][x] = {"kind": "WEED"}
+            else:
+                K._spawn_weeds(farm, board_size, weed_chance, rng)
+            K._drop_inventories_to_shed(private, shed_cap)
+            farm["farmer"] = list(K._default_spawn(board_size))
+            farm["hands"] = []
+            farm["hires_today"] = 0
+            private["inventories"] = [{}]
+        shops = forced["shops"].get(str(day), forced["shops"].get(day))
+        if shops is not None:
+            obs0.town["unlocked_shops"] = list(shops)
+    return eod
+
+
+def play(paths_or_fns, seed=0, cfg=None, record=False, verbose=False, forced=None):
+    """Play one game. Returns dict(rewards, status, times, [trace]).
+    forced = {"seat": i, "weeds": {day: [(x,y)]}, "shops": {day: [..]}} replays recorded world events."""
+    if forced is not None:
+        orig_eod = K._end_of_day
+        K._end_of_day = _forced_end_of_day(forced)
+        try:
+            return play(paths_or_fns, seed, cfg, record, verbose, None)
+        finally:
+            K._end_of_day = orig_eod
     cfg = {**DEFAULT_CFG, **(cfg or {})}
     fns = [load_agent(p) if isinstance(p, str) else p for p in paths_or_fns]
     env = _Env(cfg, seed)

@@ -1,0 +1,10 @@
+Kaggriculture: A Smaller Market Shock, September 19, 2026.
+Modification by Dmitrii Gluzdov: a temporary opening wheat crop on a future
+pasture, with harvest, delivery and pasture restoration before the cow arrives.
+Based on Thomas Tschinkel's The 2945 Farm:
+https://www.kaggle.com/code/thomastschinkel/the-2945-farm-96-vs-the-top-10-public-bots
+The complete upstream source and its Apache-2.0 license/notices are preserved
+verbatim at the beginning of main.py. Upstream credits include Thomas
+Tschinkel, yhay81, Ahmed Berat Ozer, prvsiyan, aurax7, tetsutani, destbreso
+and Dmitrii Gluzdov. See the source for the complete notices and lineage.
+The added opening layer is distributed under Apache-2.0.

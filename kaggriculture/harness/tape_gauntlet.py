@@ -20,6 +20,9 @@ def _name(p):
     return os.path.basename(os.path.dirname(os.path.normpath(p)))
 
 
+FORCE = True
+
+
 def _job(args):
     hero, tdir = args
     t = json.load(open(os.path.join(tdir, "tape.json")))
@@ -28,7 +31,10 @@ def _job(args):
     seats[i] = os.path.join(tdir, "main.py")
     seats[1 - i] = hero
     try:
-        r = play(seats, seed=t["seed"])
+        forced = None
+        if FORCE and "shops_by_day" in t:
+            forced = {"seat": i, "weeds": t["weeds_by_day"], "shops": t["shops_by_day"]}
+        r = play(seats, seed=t["seed"], forced=forced)
     except Exception as e:
         return {"hero": hero, "tape": tdir, "crash": repr(e)}
     return {"hero": hero, "tape": tdir, "team": t["team"], "tape_seat": i, "hero_money": r["money"][1 - i],
@@ -42,7 +48,10 @@ def main():
     ap.add_argument("--tapes", default="tapes")
     ap.add_argument("--workers", type=int, default=3)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--no-force", action="store_true", help="do not force recorded shops/weeds")
     args = ap.parse_args()
+    global FORCE
+    FORCE = not args.no_force
     tdirs = sorted(d for d in glob.glob(os.path.join(args.tapes, "*")) if os.path.exists(os.path.join(d, "tape.json")))
     jobs = [(h, t) for h in args.heroes for t in tdirs]
     done = [json.loads(l) for l in open(args.out)] if os.path.exists(args.out) else []
