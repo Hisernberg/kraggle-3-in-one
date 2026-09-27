@@ -42,7 +42,7 @@ Background agents and jobs wake the session when they finish, so work continues 
    candidate on the new best if the best changed.
 5. After the firing's last submission, run `python3 -m trafficflow.loop rank`.
 6. Update `trafficflow/docs/EXPERIMENTS.md` (LB log rows and what was learned) and this file (best,
-   queue, decision log). Commit and push to `claude/focused-allen-uzq8gr`. Pushes update the open draft PR; merging is the user's call.
+   queue, decision log). Commit and push to `claude/focused-allen-uzq8gr`. Pushes update the open draft PR (#27 since 27 Sep; #18 was merged on 25 Sep). If the open PR has been merged, open a new draft PR for the branch. Merging is the user's call.
 7. Report in the chat:
    - a table of submission, change, public score, Δ and post-rebuild rank;
    - the best so far and the gap to #1;
