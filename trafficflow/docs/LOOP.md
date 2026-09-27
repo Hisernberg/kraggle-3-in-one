@@ -199,10 +199,11 @@ dataset `kragglenote2forwork/tfb-work`, replacing the old one. The first version
 - `research/lb/lb_with_era.csv`.
 
 ## Container restart (same disk)
-A restart kills every background job, but `/home/user/work`, the caches and the repo survive (27 Sep, about 13:00–14:30).
-Resume a pipeline from its last finished stage: the logs under `/home/user/work/*.log` show the stage, and each
-stage writes its own file (model dir, `state_<tag>.parquet`, zip). Re-run only the missing stages, then re-arm
-the waiters.
+A restart notice means the harness-tracked background tasks were stopped. `/home/user/work`, the caches and the repo survive.
+**First run `ps -eo pid,etime,args | grep -E "python|_member.sh"`.** On 27 Sep the nohup'd H7 pipeline survived; a
+duplicate "resume" ran the same full9 prediction in parallel and doubled its time (~3 h).
+Resume only stages that have no live process: the logs under `/home/user/work/*.log` show the stage, and each stage
+writes its own file (model dir, `state_<tag>.parquet`, zip). Then re-arm the waiters.
 
 ## Recovery (fresh container)
 1. **Credentials.** If `~/.kaggle/kaggle.json` is missing, use env `KAGGLE_USERNAME`/`KAGGLE_KEY`,

@@ -397,3 +397,7 @@ Holdout J, blackout rows fixed (= hold7) so only the regular change is measured 
 - More data plus a slower learning rate beats seed averaging: one boosted model is better than the 4-seed ensemble.
 - Next steps are more boosted seeds, and more rounds for the density model, which is still at the cap.
 - H7 = H5w with regular rows = 0.5·full9 + 0.5·mean(full3, 4, 5, 7). Expected LB about +0.0005, since regular-cell changes transfer exactly.
+
+H7 build (27 Sep 17:28): `H7_reg9.zip`, 65/65 checks. Against H5w, 6,613,327 regular state rows change (mean |Δv| 0.091 km/h,
+|Δq| 9.7 veh/h); blackout rows, queue and ODME are identical. Predicting with the boosted models is slow: about 3 h for
+the test rows when two predictions share the CPU.
