@@ -51,7 +51,8 @@ for tid, v in sigs.items():
     n = games.get(tid, 0)
     prior = (wins.get(tid, 0) + 1.0) / (n + 2.0)          # Laplace-smoothed win rate
     won_orig = 1.0 if v["orig"] >= max((t.get("rewards") or [0, 0])) else 0.0
-    data[tid] = {"a": acts, "l": {d: v["lay"][d] for d in v["lay"] if int(d) <= max_day},
+    za = base64.b64encode(gzip.compress(json.dumps(acts, separators=(",", ":")).encode(), 9)).decode()
+    data[tid] = {"z": za, "l": {d: v["lay"][d] for d in v["lay"] if int(d) <= max_day},
                  "sh": {d: v["shops"][d] for d in v["shops"] if int(d) <= max_day},
                  "p": round(prior, 3), "n": n, "w": won_orig}
 blob = base64.b64encode(gzip.compress(json.dumps(data, separators=(",", ":")).encode(), 9)).decode()

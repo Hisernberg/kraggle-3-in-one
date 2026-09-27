@@ -70,6 +70,14 @@ def _rt_default():
 
 
 _RT_STATE = {"tape": None, "step": -1, "log": [], "quads": {}}
+_RT_ACTS = {}
+
+
+def _rt_acts(tid):
+    a = _RT_ACTS.get(tid)
+    if a is None:
+        a = _RT_ACTS[tid] = _rt_json.loads(_rt_gz.decompress(_rt_b64.b64decode(_RT[tid]["z"])).decode())
+    return a
 
 
 def _rt_choose(day, farm, shops, current):
@@ -177,7 +185,7 @@ def router_agent(obs, config=None):
             if new != st["tape"]:
                 st["log"].append((step, st["tape"], new, nc))
                 st["tape"] = new
-        acts = _RT[st["tape"]]["a"]
+        acts = _rt_acts(st["tape"])
         if step >= len(acts):
             return {"farmer": ["PASS"], "hands": [["PASS"]] * n_h, "market": []}
         f, hands, market = acts[step]

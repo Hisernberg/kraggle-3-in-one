@@ -10,7 +10,8 @@ submission, read the ladder, learn, then submit the next.
 |---|---|---|---|---|
 | P01 | 09-27 05:20 | tetsutani demand-preserving (public) | probe of the strongest current public agent | 2093 (07:49, then retired) |
 | P02 | 09-27 06:05 | DSM tape 113970425_0 | replay a top player's recorded game + land catch-up | 1123 after 45 games (09:37) |
-| P03 | 09-27 06:26 | cha22_edge_arm | cha22 + market layer (sell-ahead-1, order search, on-sight switch) | 2377 after 48 games (09:37) |
+| P03 | 09-27 06:26 | cha22_edge_arm | cha22 + market layer (sell-ahead-1, order search, on-sight switch) | 2377 after 48 games (09:37); 2372 after 78 (11:46) |
+| P04 | 09-27 11:50 | router r3_cg | tape router (280 tapes, day-start switching) + cash guard (fixes P02) + lazy per-tape decode (load 8 s → 0.1 s) | pending |
 
 ## What the ladder taught us
 
@@ -34,4 +35,5 @@ productive than the public cluster (eggs/geese, wheat, wool pricing).
 
 ## Next
 
-11:45 review → P04 (router with cash guard, the fixed version of the P02 idea) unless the ladder says otherwise.
+11:45 review: P03 plateaued ~2375 (≈rank 250); P02 stuck ~1110 (cash bug). Submitted P04 = router + cash guard.
+17:30 review → P05 (last of 09-27).
