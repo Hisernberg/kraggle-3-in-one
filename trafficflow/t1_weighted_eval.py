@@ -36,7 +36,7 @@ def run(new_tag: str, other_tags: list[str], panels=HOLD_PANELS) -> pd.DataFrame
         H = Hold(p)
         new = load_preds(p, new_tag)
         others = [load_preds(p, t) for t in other_tags]
-        dark = np.asarray(H.dark_row, bool)
+        dark = np.asarray(H.dark_row, bool)[H.r]      # blackout flag per slot -> per cell
         for name, sc in SCHEMES.items():
             if sc is None:
                 w_reg = w_dark = 1.0 / n

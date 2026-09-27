@@ -296,3 +296,25 @@ Only the within-run transitions (about 29% of the loss) can be smoothed. **LB: G
 ## Leaderboard 2026-09-27 00:10 UTC
 We are 14th of 170 post-rebuild (20th overall) with H2 = 0.86777. The top post-rebuild teams are KTK 0.90038, gichang 0.89628, Inocchi 0.88635,
 Giorgio Ottoboni 0.88458 and Lukas 0.88382 (gap 0.0326). No new candidates were ready on 26 Sep, and the 26 Sep evening sweep ran in plan mode, so nothing ran.
+
+## Task 1 ramp-flow member hold7 (2026-09-27)
+On/off-ramp flows (`rflow`, `rvalid`) are released even inside mainline blackouts (80% valid). `TFB_RAMP=1` adds per-link
+ramp features (own link, ±3 links up/downstream, previous/next slot, net inflow, and on dark rows the change in net inflow
+since the blackout started). Seed 4, otherwise the full4 recipe.
+
+- **Equal-weight gate** (`seed_member.sh`, ens345 → ens3457): ΔJ +0.00012 / +0.00021 / +0.00053 / +0.00071, mean **+0.00039**, 4/4. PASS.
+- The member is much better on blackout cells (dark speed RMSE 6.11 vs 6.89), so an equal weight dilutes it. Per-kind weights
+  (`t1_weighted_eval.py`; the ramp member gets w_reg on regular cells, w_dark on dark cells, the others share the rest):
+
+| scheme | D12_I405_N | D12_I5_S | D7_I10_W | D7_I405_S | mean J | ΔJ vs ens345 | panels up |
+|---|---|---|---|---|---|---|---|
+| ens345 (base) | 0.39439 | 0.39001 | 0.39021 | 0.38364 | 0.38956 | – | – |
+| equal (0.25 each) | 0.39451 | 0.39022 | 0.39074 | 0.38435 | 0.38996 | +0.00039 | 4 |
+| dark 0.5 | 0.39463 | 0.39027 | 0.39109 | 0.38476 | 0.39019 | +0.00062 | 4 |
+| dark 0.75 | 0.39476 | 0.39026 | 0.39139 | 0.38498 | 0.39035 | +0.00078 | 4 |
+| **dark 1.0** | 0.39474 | 0.39008 | 0.39140 | 0.38527 | 0.39037 | **+0.00081** | 4 |
+| reg 0.5 / dark 0.75 | 0.39458 | 0.39007 | 0.39124 | 0.38482 | 0.39018 | +0.00061 | 4 |
+| reg 0.5 / dark 1.0 | 0.39455 | 0.38988 | 0.39125 | 0.38511 | 0.39020 | +0.00064 | 3 |
+
+**Chosen for H5:** regular cells = equal mean of full3/4/5/7, dark cells = full7 alone (`t1_pipeline ensw --w-reg 0.25 --w-dark 1.0`).
+Expected LB +0.0008. Weighting regular cells towards the ramp member does not help, so its gain is in blackouts.
