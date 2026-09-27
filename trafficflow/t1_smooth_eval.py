@@ -49,6 +49,11 @@ def hold_features(panel: str):
     tt, ll = np.nonzero(P.target[HOLD * SLOTS:ntr] > 0); tt = tt + HOLD * SLOTS
     X = P.features(tt, ll); X["panel_id"] = np.int16(PANELS.index(panel)); X["panel"] = panel; X["j"] = ll
     X = add_fd(X)
+    from .t1_pipeline import USE_RAMP, add_ramp
+    if USE_RAMP:  # ramp-flow features (TFB_RAMP=1); the cache itself is unchanged
+        if "t" not in X:
+            X["t"] = tt
+        X = add_ramp(X)
     return P, keep, tt, ll, X
 
 

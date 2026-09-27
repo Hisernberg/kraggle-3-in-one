@@ -136,6 +136,86 @@ def add_fd(d: pd.DataFrame) -> pd.DataFrame:
     return pd.concat([d, pd.DataFrame(new, index=d.index)], axis=1)
 
 
+USE_RAMP = os.environ.get("TFB_RAMP", "0") == "1"
+_RAMP_CACHE: dict = {}
+
+
+def ramp_arrays(panel: str):
+    """On- and off-ramp flow [T, L] per mainline link in milepost order (column j), valid released ramp
+    observations only (NaN where the link has no ramp or no valid value). Ramp flows are released even
+    inside the Task 2 blackout rows, where the mainline is blank; Task 1 may use them (offline task)."""
+    if panel not in _RAMP_CACHE:
+        from .data import load
+        from .t1 import mileposts
+        d = load(panel)
+        links = list(d["links"])
+        o = np.argsort(mileposts(panel, links))
+        j_of = {links[o[j]]: j for j in range(len(o))}
+        meta = d["net"]["ramps"].drop_duplicates("ramp_link_id").set_index("ramp_link_id")
+        rf = np.where(d["rvalid"], d["rflow"], np.nan).astype(np.float32)
+        T = rf.shape[0]
+        on = np.full((T, len(links)), np.nan, np.float32)
+        off = np.full((T, len(links)), np.nan, np.float32)
+        for ri, r in enumerate(d["ramps"]):
+            if r not in meta.index:
+                continue
+            m = meta.loc[r]
+            j = j_of.get(str(m.nearest_mainline_link_id))
+            kind = str(m.ramp_type).upper()
+            tgt = on if kind in ("OR", "ON") else off if kind in ("FR", "OFF") else None
+            if j is None or tgt is None:
+                continue
+            col = rf[:, ri]
+            tgt[:, j] = np.where(np.isnan(tgt[:, j]), col, tgt[:, j] + np.nan_to_num(col))
+        _RAMP_CACHE[panel] = (on, off)
+    return _RAMP_CACHE[panel]
+
+
+def _band_sum(a: np.ndarray, t: np.ndarray, j: np.ndarray, lo: int, hi: int) -> np.ndarray:
+    """nan-sum of a[t, j+lo .. j+hi] (links outside the corridor ignored); NaN if every value is NaN."""
+    L = a.shape[1]
+    acc = np.zeros(len(t), np.float32); n = np.zeros(len(t), np.int16)
+    for o in range(lo, hi + 1):
+        jj = j + o
+        ok = (jj >= 0) & (jj < L)
+        v = np.full(len(t), np.nan, np.float32)
+        v[ok] = a[t[ok], jj[ok]]
+        fin = np.isfinite(v)
+        acc[fin] += v[fin]; n += fin
+    return np.where(n > 0, acc, np.nan).astype(np.float32)
+
+
+def add_ramp(d: pd.DataFrame) -> pd.DataFrame:
+    """Ramp-flow features from the rows' panel, slot t and link j (TFB_RAMP=1): on/off-ramp flow at the
+    link, in the 3 links on either side (milepost order, so the tree learns the direction per panel),
+    at t-1 / t+1, and for blackout rows the change of the local net injection since the last visible slot."""
+    t_all = d["t"].to_numpy(np.int64); j_all = d["j"].to_numpy(np.int64)
+    cols = ["rp_on0", "rp_off0", "rp_on_lo3", "rp_on_hi3", "rp_off_lo3", "rp_off_hi3", "rp_on0_prev",
+            "rp_on0_next", "rp_off0_prev", "rp_off0_next", "rp_net3", "rp_net3_gap"]
+    new = {c: np.full(len(d), np.nan, np.float32) for c in cols}
+    dp = d["dark_pos"].to_numpy(np.float64) if "dark_pos" in d else np.zeros(len(d))
+    for p, idx in d.groupby("panel").indices.items():
+        on, off = ramp_arrays(p)
+        T = on.shape[0]
+        t = t_all[idx]; j = j_all[idx]
+        tp = np.clip(t - 1, 0, T - 1); tn = np.clip(t + 1, 0, T - 1)
+        new["rp_on0"][idx] = on[t, j]; new["rp_off0"][idx] = off[t, j]
+        new["rp_on0_prev"][idx] = on[tp, j]; new["rp_on0_next"][idx] = on[tn, j]
+        new["rp_off0_prev"][idx] = off[tp, j]; new["rp_off0_next"][idx] = off[tn, j]
+        new["rp_on_lo3"][idx] = _band_sum(on, t, j, -3, -1); new["rp_on_hi3"][idx] = _band_sum(on, t, j, 1, 3)
+        new["rp_off_lo3"][idx] = _band_sum(off, t, j, -3, -1); new["rp_off_hi3"][idx] = _band_sum(off, t, j, 1, 3)
+        net = _band_sum(on, t, j, -3, 3) - np.nan_to_num(_band_sum(off, t, j, -3, 3))
+        new["rp_net3"][idx] = net
+        pos = dp[idx]
+        g = np.isfinite(pos) & (pos > 0)
+        if g.any():
+            tr = np.clip(t[g] - pos[g].astype(np.int64), 0, T - 1)
+            ref = _band_sum(on, tr, j[g], -3, 3) - np.nan_to_num(_band_sum(off, tr, j[g], -3, 3))
+            v = np.full(len(idx), np.nan, np.float32); v[g] = net[g] - ref
+            new["rp_net3_gap"][idx] = v
+    return pd.concat([d, pd.DataFrame(new, index=d.index)], axis=1)
+
+
 CAP = {"reg": (int(os.environ.get("TFB_NREG", 150_000)), 100_000), "dark": (int(os.environ.get("TFB_NDARK", 150_000)), 60_000)}  # (train rows, holdout rows) per panel
 
 
@@ -158,6 +238,8 @@ def load_train(panels, kind, seed=0):
     d["y_dens"] = d.y_flow / np.maximum(d.y_speed, 1.0)
     if USE_FD:
         d = add_fd(d)
+    if USE_RAMP:
+        d = add_ramp(d)
     return d
 
 
@@ -252,6 +334,8 @@ def predict(panels, tag: str):
         d["panel_id"] = np.int16(PANELS.index(p))
         if USE_FD:
             d = add_fd(d)
+        if USE_RAMP:
+            d = add_ramp(d)
         feats = models["reg_speed"].feature_name()
         sp = np.empty(len(d)); fl = np.empty(len(d)); dn = np.empty(len(d))
         for kind in ("reg", "dark"):

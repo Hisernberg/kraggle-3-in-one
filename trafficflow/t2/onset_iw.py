@@ -301,10 +301,10 @@ def cheap(alphas=(0.5, 1.0)) -> pd.DataFrame:
     for s in range(1, 6):
         rows.append(compare_row(E, base[s], base[0], f"null: unweighted on_v3 s{s}"))
     T = pd.DataFrame(rows).set_index("variant")
-    num = [c for c in T.columns if not c.startswith("bw_")]
+    num = [c for c in T.columns if not c.startswith("bw_") and not c.endswith("_se")]
     null = T.loc[T.index.str.startswith("null"), num]
-    T.loc["seed-noise sd (5 null Δs)"] = null.std(ddof=1)
-    T.loc["mean of 6 unweighted seeds - s0"] = null.sum() / 6
+    T.loc["seed-noise sd (5 null Δs)", num] = null.std(ddof=1)
+    T.loc["mean of 6 unweighted seeds - s0", num] = null.sum() / 6        # seed 0 contributes Δ = 0
     return T
 
 

@@ -1675,3 +1675,174 @@ python -m trafficflow.t2.shift_cv build "w0.8 shrink-only rec05" og_shrink08_rec
 
 Every run stays under 1 GB RSS and 2 threads. Tables are in
 `/home/user/work/t2shift/`.
+
+## 18. Covariate-shift-adapted onset models (`onset_iw.py`): not adopted
+
+**Goal.** Train the v8 onset recipe with importance weights toward each target
+month, taken from the section 17 weight model. The validation-weighted models
+would predict the validation rows and the private-weighted models the private
+rows.
+* The motivation: March onset windows are harder than the CV windows (stage-1
+  surrogate −0.97 SD within panel), and the validation-weighted CV predicts the
+  March onset levels well.
+* The deliverable was a single-factor candidate on top of
+  `lgb_v8_seeds9_stack03.csv` if it passed the Task 2 gate.
+
+**Result: the weighting makes the onset model worse, so there is no
+candidate.** The cheap single-seed test lost under every weighting, beyond seed
+noise, and a stronger weighting lost more. The full recipe and the gate were
+therefore not run, per the plan's stop rule.
+
+### Importance weights for the training windows
+
+**Features.** The `shift_cv` onset window features (data <= T, v6 OOF
+confidence) are computed with the same functions for every onset training
+window: 2,462 cand + 2,081 sim + 40 off = 4,583. The sim and off rows equal
+`shift_cv`'s cached table exactly.
+
+**Classifier.** The fitted classifier of section 17 (full-data coefficients,
+λ chosen by CV): validation λ 10, AUC 0.70; private λ 30, AUC 0.54. Features
+are standardised with the sim windows' mean and SD. On the sim windows its log
+odds correlate 0.995 (validation) and 0.980 (private) with `shift_cv`'s
+cross-fitted log odds.
+
+**Weights.** `w = exp(α · x·β)`, tempered with α = 0.5. They are normalised to
+mean 1 within each panel over all training windows, capped at 10 × the panel
+mean, and renormalised (`clip_normalise`). Every row of a window (T+30 × every
+link) carries the window's weight, so each panel keeps its unweighted share of
+the training loss.
+
+ESS below is Kish's, summed over panels. The balance columns are within-panel
+SMDs of the training mix against the target month (target − training, in SD
+of the sim windows), unweighted → weighted.
+
+| target | α | ESS / n (4,583) | cand / sim / off | smallest panel ESS | clipped | w max / q99 / q01 | SMD sur | SMD orq7 | SMD lpsum |
+|---|---:|---:|---|---|---:|---|---|---|---|
+| validation | **0.5** | **0.81** | 0.77 / 0.88 / 0.93 | D7_I405_N 568 / 773 | 0 | 8.7 / 3.1 / 0.44 | −0.95 → −0.62 | −0.35 → −0.23 | −0.75 → −0.57 |
+| validation | 1 | 0.41 | 0.37 / 0.54 / 0.80 | D7_I10_E 178 / 569 | 0.7% | 10 / 7.8 / 0.16 | −0.95 → −0.22 | −0.35 → −0.13 | −0.75 → −0.32 |
+| private | **0.5** | **0.97** | 0.97 / 0.97 / 0.97 | D7_I10_W 263 / 273 | 0 | 1.7 / 1.5 / 0.52 | −0.36 → −0.27 | −0.40 → −0.28 | −0.02 → +0.01 |
+| private | 1 | 0.89 | 0.89 / 0.90 / 0.92 | D7_I10_W 229 / 273 | 0 | 2.7 / 2.0 / 0.26 | −0.36 → −0.17 | −0.40 → −0.17 | −0.02 → +0.04 |
+
+* At α = 0.5 the validation weights move the training mix about a third of
+  the way toward March on the confidence surrogate.
+* The private weights are nearly uniform, because April is only mildly shifted
+  (section 17).
+* The cand windows are slightly more March-like than the sim windows (mean
+  validation weight 1.035 vs 0.958).
+
+### Cheap test: one stage-1 component
+
+**Setup.** on_v3, seed 0, p1, location prior, hybrid labels, 4 week folds, OOF
+on all onset rows. Δ is against the unweighted seed-0 OOF (± paired SE) on the
+2,081 re-drawn sim windows. "val" and "priv" are the validation- and
+private-weighted CV (`shift_cv.score`). The null rows compare unweighted seeds
+1-5 with seed 0 on the same metrics.
+
+| model | plain hybrid | plain old | val hybrid / old | priv hybrid / old | rec<0.05 / rec<0.2 (hybrid) | off hybrid | better / worse |
+|---|---|---|---|---|---|---:|---|
+| validation-weighted, α 0.5 | −0.0033 ± 0.0019 | −0.0029 ± 0.0020 | **−0.0054 ± 0.0043** / −0.0047 | −0.0041 / −0.0035 | −0.011 / −0.003 | −0.003 | 62 / 81 |
+| private-weighted, α 0.5 | −0.0017 ± 0.0015 | −0.0013 ± 0.0015 | −0.0051 / −0.0069 | **−0.0027 ± 0.0019** / −0.0028 | −0.018 / −0.006 | −0.004 | 63 / 72 |
+| validation-weighted, α 1 (dose check) | −0.0047 ± 0.0020 | −0.0047 ± 0.0020 | **−0.0138 ± 0.0055** / −0.0139 | −0.0064 / −0.0065 | −0.030 / −0.008 | −0.011 | 61 / 91 |
+| null: unweighted seeds 1-5, range | −0.0017 … +0.0007 | −0.0012 … +0.0013 | −0.0038 … −0.0011 / −0.0044 … +0.0007 | −0.0019 … −0.0003 / −0.0014 … +0.0010 | −0.019 … −0.003 / −0.005 … +0.001 | −0.012 … −0.007 | |
+| null SD | 0.0008 | 0.0011 | 0.0012 / 0.0023 | 0.0007 / 0.0009 | 0.007 / 0.002 | 0.002 | |
+
+**Against the mean of the six unweighted seeds, in null SDs.** Seed 0 happens
+to be the best seed on both weighted CVs, so the seed mean is the fairer
+baseline.
+
+| model | plain hybrid | plain old | val hybrid | priv hybrid / old |
+|---|---|---|---|---|
+| validation-weighted, α 0.5 | −0.0028 (−3.4 SD) | −0.0031 (−2.9) | −0.0033 (−2.9) | −0.0029 (−4.3) |
+| private-weighted, α 0.5 | −0.0012 (−1.5) | −0.0014 (−1.4) | | −0.0015 (−2.2) / −0.0024 (−2.6) |
+| validation-weighted, α 1 | −0.0042 (−5.1) | −0.0049 (−4.6) | −0.0117 (−10) | |
+
+**Decision (pre-specified stop rule).** The test was "promising" only if all
+three held:
+* the validation model's validation-weighted hybrid Δ > max(null SD, 0.001);
+* its plain hybrid Δ ≥ −0.002;
+* the private model is not below −1 null SD on the private weighting.
+
+Both months fail. The α = 1 dose check is worse on every metric, so the loss
+grows with the weight strength. The full recipe (nine seeds + weighted stage 2
+per month), the footprint check and the candidate build were therefore not
+run.
+
+### Where the loss comes from
+
+Plain mean Δ hybrid of the sim windows by v6 stage-1 max p, against the mean
+of the six unweighted seeds:
+
+| v6 max p | windows | mean validation weight (evaluation) | seed-mean IoU | validation-weighted α 0.5 | private-weighted α 0.5 | null range (6 seeds) |
+|---|---:|---:|---:|---:|---:|---|
+| ≤ 0.5 | 64 | 4.10 | 0.249 | +0.001 | +0.004 | −0.016 … +0.031 |
+| 0.5-0.8 | 64 | 2.04 | 0.527 | +0.010 | +0.004 | −0.012 … +0.009 |
+| 0.8-0.95 | 195 | 1.37 | 0.746 | −0.001 | −0.000 | −0.008 … +0.007 |
+| > 0.95 | 1,758 | 0.81 | 0.914 | **−0.002** | **−0.002** | −0.0006 … +0.0004 |
+
+* **Low-confidence windows (the ones the weights target).** The weighted model
+  stays within seed noise there; the 0.5-0.8 bucket is at the edge.
+* **Confident windows.** It loses 0.002 on the confident majority, outside the
+  seed range. These windows still carry about 68% of the validation-weighted
+  mass.
+* **Likely reason.** Onset outcomes in low-confidence windows are close to
+  unpredictable at T; section 13 found the first-slot extent is set inside the
+  5-minute slot. Up-weighting them teaches nothing that transfers. It spends
+  capacity and effective sample size (ESS 0.81 at α 0.5, 0.41 at α 1) on
+  noise.
+* **Why no gain was expected in theory.** Covariate-shift weighting corrects a
+  misspecified model. A flexible model that already sees the shift covariates
+  pays variance for no bias reduction.
+* **Conclusion.** Weighting the CV evaluation toward a month (section 17)
+  remains useful; weighting the onset training does not.
+
+### Notes
+
+* **Second-order dependence in the weights.** The weights use the v6 OOF
+  confidence, which comes from models trained on the other folds. This is the
+  same path as OOF stacking. It carries no labels of the window itself, and it
+  only matters for a positive result.
+* **Eligibility.** The official scorer computes IoU only over cells with
+  `is_score_eligible = True` (`score_task2.score_window`), while our truth and
+  CV count all cells. This applies to every onset number in sections 13-18
+  alike. An eligibility-aware decoder is being evaluated separately, so
+  decoding was left unchanged here (top-m, bias 0).
+
+### Code
+
+* **`onset_iw.py` (new).** It contains:
+  * training-window features, weights and the ESS / balance report;
+  * weighted OOF, the cheap test and the stop rule;
+  * the full-recipe path, which was not run: weighted stage 2, table,
+    footprint, gate, and the candidate writer that keeps ongoing rows
+    byte-identical.
+
+  Self-tests of the unused path, which ran without training:
+  * decoding the v8 probabilities through the candidate writer reproduces
+    `lgb_v8_seeds9_stack03.csv` byte for byte;
+  * v8 against itself gives zero footprint edits.
+* **Optional arguments on existing functions, defaults unchanged.**
+  `cv.oof(..., sample_weight=None)`,
+  `robust_pipeline.train_variant(..., gw_weight=None)` and
+  `stack.cv(..., weight=None)`. The default paths are bit-for-bit identical:
+  * re-running unweighted on_v3 seed 0 reproduces the v6 OOF file with
+    max |Δp| = 0;
+  * stage 2 with seed 0 on v6's four OOF files reproduces
+    `stack8_oof_v6base.parquet` with max |Δp2| = 0 (1 thread);
+  * the default `train_variant` passes the same Dataset arguments as before.
+
+### Reproduce
+
+```
+export PYTHONPATH=/home/user/knee OMP_NUM_THREADS=2 T2_THREADS=2 T2_WORK=/home/user/work/t2h T2_FEAT=/home/user/work/t2h/feat
+python -m trafficflow.t2.onset_iw weights                             # ~20 s: winfeat_onset_train, iw_<target>_a05, weights_report.csv
+python -m trafficflow.t2.onset_iw cv on_v3 0 validation               # ~3-5 min, 1.3 GB RSS
+python -m trafficflow.t2.onset_iw cv on_v3 0 private
+python -m trafficflow.t2.onset_iw cv on_v3 0 validation --alpha 1.0   # dose check
+python -m trafficflow.t2.onset_iw cheap                               # cheap_table.csv + the stop-rule decision
+```
+
+**Where things are.**
+* Outputs and logs: `/home/user/work/t2iw/` (logs in `logs/`); the default-path
+  self-test is `selftest_defaults.py`.
+* The full recipe, not run, would be: `cv` for the other eight specs per
+  month, then `stack TARGET`, then `table`, then `build NAME`.
