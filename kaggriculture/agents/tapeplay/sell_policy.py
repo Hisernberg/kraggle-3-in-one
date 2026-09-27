@@ -133,6 +133,65 @@ def _tp_expected_quads(step):
 _TP_QUADS = {}
 
 
+
+def _cg_fib_sum(n):
+    a, b, s = 1, 1, 0
+    for _ in range(n):
+        s += a
+        a, b = b, a + b
+    return s
+
+
+_CG_COST = {"WHEAT": 10, "CARROT": 20, "TOMATO": 50, "STRAWBERRY": 100, "MELON": 80}
+
+
+def _cg_guard(obs, step, acts, market):
+    """Keep enough cash for the tape's next hour-0 hires (the opening leaves ~$5; a failed hire derails the tape)."""
+    try:
+        hour = step % 24
+        me = obs["player"]
+        money = float(obs["farms"][me]["money"])
+        shed = obs["private"]["shed"]
+        prices = obs["market"]["prices"]
+        if hour == 0:
+            need = _cg_fib_sum(sum(1 for o in market if o and o[0] == "HIRE"))
+            other = sum(1 for o in market if o and o[0] == "SELL")
+            if money < need and not other:
+                pre = []
+                for item in ("FERTILIZER", "WHEAT", "EGG", "MILK"):
+                    if money >= need:
+                        break
+                    k = 0
+                    while k < shed.get(item, 0) and money < need:
+                        k += 1
+                        money += max(1, prices.get(item, 1))
+                    if k:
+                        pre.append(["SELL", item, k])
+                return pre + list(market)
+            return market
+        if hour < 16:
+            return market
+        nxt = (step // 24 + 1) * 24
+        if nxt >= len(acts):
+            return market
+        need = _cg_fib_sum(sum(1 for o in acts[nxt][2] if o and o[0] == "HIRE")) + 2
+        spend = 0
+        for o in market:
+            if o and o[0] == "BUY_SEED":
+                spend += _CG_COST.get(o[1], 10) * int(o[2])
+        if money - spend >= need:
+            return market
+        out = []
+        for o in market:
+            if o and o[0] == "BUY_SEED" and money - spend < need:
+                spend -= _CG_COST.get(o[1], 10) * int(o[2])
+                continue
+            out.append(o)
+        return out
+    except Exception:
+        return market
+
+
 def tapeplay_agent(obs, config=None):
     step = obs["step"] if "step" in obs else obs["day"] * 24 + obs["hour"]
     me = obs["player"]
@@ -149,6 +208,7 @@ def tapeplay_agent(obs, config=None):
         _TP_QUADS[step] = _tp_expected_quads(step)
     if q_have < _TP_QUADS[step] and not any(o and o[0] == "BUY_LAND" for o in market):
         market = [["BUY_LAND"]] + market
+    market = _cg_guard(obs, step, _TP_ACTS, market)
     if day < _TP_SWITCH_DAY:
         return {"farmer": f, "hands": hands, "market": market[:10]}
     try:

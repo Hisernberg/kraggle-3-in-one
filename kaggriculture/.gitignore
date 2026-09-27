@@ -6,3 +6,4 @@ __pycache__/
 tapes/
 agents/tapeplay/raw_*/
 agents/tapeplay/1*/
+agents/router/*/
