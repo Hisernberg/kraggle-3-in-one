@@ -1901,6 +1901,12 @@ candidate windows, `feat_v3`, original windows, old truth. Four-fold CV
    | private | +0.0052 ± 0.0006 | +0.0047 ± 0.0006 |
 
    P(Δ ≤ 0) = 0 in every case.
-3. Footprint check: after the build (below).
+3. Footprint check passes, with no flag on either month. Percentiles: validation fp_any 0.87, add 0.75, rem 0.64;
+   private 0.71, 0.71, 0.58.
+
+**LB (G8 = H5w with ongoing v11): 0.86798, −0.00041, i.e. March ongoing −0.0027.** It passed every part of the gate
+and still lost. Four of the last five ongoing changes failed on March (G3, H1b, G7, G8) against positive CV; only
+v5 transferred. Ongoing work is paused until the transfer failure is understood. v11 stays on the robust list
+(its private-weighted CV is +0.0052 ± 0.0006).
 
 Capacity keeps paying on ongoing: 31 → 63 → 127 → 255 leaves gives 0.852 → 0.867 → 0.877 → 0.882 (single model, sim).

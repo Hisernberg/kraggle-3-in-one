@@ -85,6 +85,7 @@ That compares with the best post-rebuild public score of 0.879. Our previous bes
 | 2026-09-27 07:00 | G7 `G7_ongoing_v7.zip` | H3 with ongoing = v7 (the v5 recipe retrained on hybrid labels; +100/−45 cells in 30/40 validation windows) | 0.86779 | – | **−0.00020 → March ongoing −0.0013.** CV was +0.0032 (hybrid truth) / +0.0006 (old truth). The label fix that gave onset +0.030 does nothing for ongoing. **Ongoing label work closed.** Base stays H3 |
 | 2026-09-27 09:48 | **H5w** `H5w_t1ramp_dark.zip` | H3 with Task 1 regular rows = mean(full3, 4, 5, 7), blackout rows = full7 (ramp-flow member) | **0.86838** | – | **+0.00039** (local J +0.00081). Adopted, base → H5w. First Task 1 change where the proxy is off by more than 0.0002: the holdout gives blackouts to D12_I405_N, which has none in the test, and the blackout part of the gain transferred at about half |
 | 2026-09-27 09:58 | H6 `H6_dark8.zip` | H5w with blackout rows = mean(full7, full8) (dark-only booster) | 0.86839 | – | **+0.00001** (local +0.00016). Not adopted. Blackout-row gains transfer unreliably (below) |
+| 2026-09-27 11:10 | G8 `G8_ongoing_v11.zip` | H5w with ongoing = v11 (v5 blend, og_v3 / og_v3_noloc at capacity p3; +32/−45 cells in 28/40 validation windows) | 0.86798 | – | **−0.00041 → March ongoing −0.0027**, against CV +0.0053 ± 0.0005, shift-weighted +0.0050 (validation) / +0.0052 (private), footprint clean. Passed the full Task 2 gate and lost. Not adopted; robust list for the final pick |
 
 ### Decomposition of A (0.85204), exact from the probes
 | Task | Weighted | Task score | Local estimate |
@@ -353,3 +354,22 @@ Holdout J with regular cells = mean(hold3, 4, 5, 7) and the blackout rows below 
   Blackout ΔJ estimates therefore rest on a few events, while regular-cell estimates use hundreds of thousands of cells.
 - **Rule from now on:** discount blackout-only ΔJ to about 1/3 when predicting the LB. Before investing in blackout
   models again, widen the holdout to all holdout-period origins so the dark estimate is precise.
+
+## Day summary 2026-09-27: H2 0.86777 → H5w 0.86838 (+0.00061)
+
+| # | Submission | Public | Δ vs best | Decision |
+|---|---|---|---|---|
+| S1 | H3: third Task 1 seed | 0.86799 | +0.00022 (local +0.00023) | adopted |
+| S2 | G7: ongoing retrained on hybrid labels | 0.86779 | −0.00020 | rejected; ongoing label work closed |
+| S3 | **H5w: ramp-flow member, blackout-weighted** | **0.86838** | +0.00039 (local +0.00081) | **adopted (best)** |
+| S4 | H6: dark-only booster on blackout rows | 0.86839 | +0.00001 (local +0.00016) | rejected |
+| S5 | G8: ongoing capacity p3 (v11) | 0.86798 | −0.00041 (CV +0.005, full gate passed) | rejected; robust list |
+
+**Lessons**
+- **Regular-cell Task 1 changes transfer, blackout-cell changes do not reliably.** The holdout has only 10
+  blackouts per panel, so dark ΔJ is noisy: H5w transferred about 50% of its dark part, H6 about 5%.
+- **Ongoing CV improvements do not transfer to March.** Four of the last five ongoing changes lost on the LB
+  (G3 −0.023, H1b −0.010, G7 −0.0013, G8 −0.0027 in ongoing IoU): stacking, cell removal, labels and now capacity.
+  All passed plain CV, and H1b and G8 passed the shift-weighted and footprint checks too. Only v5 (+0.016) transferred.
+  The March ongoing windows reward something our CV does not measure. Until that is understood, ongoing edits
+  have no reliable local gate.
