@@ -27,6 +27,7 @@ if "--teams" in sys.argv:
         i += 1
 max_day = int(sys.argv[sys.argv.index("--max-switch-day") + 1]) if "--max-switch-day" in sys.argv else 8
 exclude_seeds = set()
+min_prior = float(sys.argv[sys.argv.index("--min-prior") + 1]) if "--min-prior" in sys.argv else 0.0
 
 sigs = json.load(open(os.path.join(ROOT, "runs/tape_sigs.json")))
 # robustness prior: win rate of raw_<tape> in every local screening file
@@ -50,6 +51,8 @@ for tid, v in sigs.items():
             for a in t["actions"]]
     n = games.get(tid, 0)
     prior = (wins.get(tid, 0) + 1.0) / (n + 2.0)          # Laplace-smoothed win rate
+    if n >= 6 and prior < min_prior:
+        continue
     won_orig = 1.0 if v["orig"] >= max((t.get("rewards") or [0, 0])) else 0.0
     za = base64.b64encode(gzip.compress(json.dumps(acts, separators=(",", ":")).encode(), 9)).decode()
     data[tid] = {"z": za, "l": {d: v["lay"][d] for d in v["lay"] if int(d) <= max_day},
