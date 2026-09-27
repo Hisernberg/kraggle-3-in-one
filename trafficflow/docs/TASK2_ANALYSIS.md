@@ -1846,3 +1846,31 @@ python -m trafficflow.t2.onset_iw cheap                               # cheap_ta
   self-test is `selftest_defaults.py`.
 * The full recipe, not run, would be: `cv` for the other eight specs per
   month, then `stack TARGET`, then `table`, then `build NAME`.
+
+## 19. Where the March onset loss sits: a post-blackout site check (2026-09-27, `onset_post.py`)
+
+**Question.** Onset CV is 0.90 (eligible cells, hybrid truth) but March onset is about 0.73–0.77 (P4 and G2; the
+zeroed-onset probe understates onset by the share of windows with no eligible true cell, 4.4% on train). Is the gap
+a wrong *site* or a wrong *extent*?
+
+**Method (diagnostic only, never a feature).** In validation/private the mainline is dark for T+1..T+18 and visible
+again from T+19. The queued links at T+19..T+21 show where an onset queue sits about 65 minutes after T+30.
+- Calibration on 2,081 train sim windows: the true T+30 site is still queued at T+19..21 in 83.7% of windows.
+  Our top-m set hits that proxy in 82.4% (IoU 0.892 when it hits, 0.746 when it misses).
+
+**Result.**
+
+| split | windows | predicted site hits the T+19..21 queue | post-queue empty |
+|---|---|---|---|
+| train sim | 2,081 | 0.824 | 0.119 |
+| validation (March) | 40 | 0.775 | 0.100 |
+| private (April) | 40 | 0.700 | 0.175 |
+
+- The March site-hit rate is 2 windows lower than train (about −0.04 onset). That explains only a small part of the
+  gap, so most of the March loss is extent/shape at T+30, which the proxy cannot see.
+- The misses cluster in early-morning windows (04:40–05:40: D7_I10_W 003/005, D7_I210_W 003/004, D7_I405_N 004)
+  with short-lived queues, and in windows where the queue formed at a secondary bottleneck (D7_I10_E 005 at 97–100;
+  D12_I5_N 004 at 94–123).
+- The F1/F2 probes already showed that bigger and smaller sets both lose on March.
+
+**Verdict.** There is no decoding or site fix to make. The onset line stays closed until a new model idea comes up.
