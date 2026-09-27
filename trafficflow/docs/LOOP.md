@@ -55,20 +55,20 @@ Background agents and jobs wake the session when they finish, so work continues 
    (**Backup** below).
 
 ## Current best
-**`H3_t1ens345.zip` = 0.86799** (2026-09-27). #1 KTK 0.90038.
+**`H5w_t1ramp_dark.zip` = 0.86838** (2026-09-27). #1 KTK 0.90038.
 
 Build:
 ```
-python3 -m trafficflow.make_submission --state-tag ens345 --recon-a 0.75 --gate 0.6 \
+python3 -m trafficflow.make_submission --state-tag ens345w7 --recon-a 0.75 --gate 0.6 \
   --smooth "free=0.0075,free_a=0.001,gate=0.02,gate_a=0.005,dark=0.05" \
   --queue /home/user/work/t2/lgb_v8_seeds9_stack03.csv --odme /home/user/work/t4/t4_l2proj.csv \
   --out /home/user/work/subs/<ID>.csv --note "<ID>: ..."
 python3 -m trafficflow.loop pack /home/user/work/subs/<ID>.csv
 ```
 
-- **Task 1:** mean of the `full3`, `full4` and `full5` LightGBM model sets.
-  - FD features; `TFB_SEED` 0 / 1 / 2.
-  - `state_ens345.parquet` comes from `t1_pipeline ens --tag ens345 --members full3 full4 full5`.
+- **Task 1:** regular rows = mean of `full3`, `full4`, `full5`, `full7`; blackout rows = `full7`.
+  - FD features; `TFB_SEED` 0 / 1 / 2 / 4. `full7` adds ramp-flow features (`TFB_RAMP=1`).
+  - `state_ens345w7.parquet` comes from `t1_pipeline ensw --tag ens345w7 --new full7 --members full3 full4 full5 --w-reg 0.25 --w-dark 1.0`.
   - Density reconciliation where v < 0.6·v_f (a = 0.75), then TV smoothing.
 - **Task 2:** `lgb_v8_seeds9_stack03`.
   - Onset v8: stacking + 9 seeds on hybrid labels.
@@ -151,6 +151,8 @@ Adoption rules are fixed before submitting:
 | 09-25 | **G2: G1 + onset v8** (stacking 0.3 + 9-seed mix; 15 cells, 11 in 4 validation windows) | **0.86711 (+0.00060)** | CV onset +0.0035 hybrid / +0.0024 old, i.e. about +0.0005 total. **Adopted: new best.** Shape-aware hedges from stage 2 help on March, where F1's blanket bias hurt |
 | 09-27 | **H3: H2 + third Task 1 seed** (state rows only) | **0.86799 (+0.00022)** | local J +0.00023. **Adopted: new best.** The Task 1/3 proxy matches the LB on five changes in a row |
 | 09-27 | G7: H3 with ongoing v7 (hybrid labels) | 0.86779 (−0.00020) | March ongoing −0.0013 against CV +0.0032 (hybrid) / +0.0006 (old). The official ongoing truth does not reward the hybrid edge cells. **Ongoing label work closed** |
+| 09-27 | **H5w: ramp member, blackout-weighted** (state rows only) | **0.86838 (+0.00039)** | Local J +0.00081, so the LB gave half. **Adopted: new best.** Blackout-only gains need a haircut: 2 of 10 panels (D12_I405) have no test blackouts, and the holdout overstates the rest |
+| 09-27 | H6: H5w with blackout rows = mean(full7, full8) | 0.86839 (+0.00001) | Local +0.00016. H5w's LB gain equals its local regular-row part (+0.00039), and its blackout part gave ~0. **Blackout-row changes do not move the LB.** Stop blackout-model work until the probe below explains why |
 | 09-26 | **H2: G2 + Task 1 seed ensemble** (state rows only) | **0.86777 (+0.00066)** | local J +0.00077. **Adopted: new best** |
 | 09-26 | H1b: H2 + ongoing v10 (stage 2 may only remove cells, recurrence ≥ 0.05) | 0.86629 (−0.00148) | Passed the new Task 2 gate and still failed (ongoing −0.010). **Ongoing stacking line dropped, final pick included.** Ongoing changes are LB probes first from now on |
 | 09-26 | P5 probe: H2 + TV smoothing ×3 | 0.86736 (−0.00041) | local −0.00062. The official Task 3 truth behaves like the train truth, and the smoothing strength is at or near its optimum |

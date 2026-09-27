@@ -83,6 +83,8 @@ That compares with the best post-rebuild public score of 0.879. Our previous bes
 | 2026-09-26 00:20 | P6 probe `P6_H2_queue_zeroed.zip` | H2 with the queue zeroed | 0.63144 | – | **S_queue(H2) = 0.7878** exactly: onset 0.732, ongoing 0.843. Task 1+3 = 0.43268 |
 | 2026-09-27 06:22 | **H3** `H3_t1ens345.zip` | H2 with Task 1 state = mean of full3, full4, full5 (third seed; state rows only) | **0.86799** | – | **+0.00022, local J +0.00023**: exact. Base → H3 |
 | 2026-09-27 07:00 | G7 `G7_ongoing_v7.zip` | H3 with ongoing = v7 (the v5 recipe retrained on hybrid labels; +100/−45 cells in 30/40 validation windows) | 0.86779 | – | **−0.00020 → March ongoing −0.0013.** CV was +0.0032 (hybrid truth) / +0.0006 (old truth). The label fix that gave onset +0.030 does nothing for ongoing. **Ongoing label work closed.** Base stays H3 |
+| 2026-09-27 09:48 | **H5w** `H5w_t1ramp_dark.zip` | H3 with Task 1 regular rows = mean(full3, 4, 5, 7), blackout rows = full7 (ramp-flow member) | **0.86838** | – | **+0.00039** (local J +0.00081). Adopted, base → H5w. First Task 1 change where the proxy is off by more than 0.0002: the holdout gives blackouts to D12_I405_N, which has none in the test, and the blackout part of the gain transferred at about half |
+| 2026-09-27 09:58 | H6 `H6_dark8.zip` | H5w with blackout rows = mean(full7, full8) (dark-only booster) | 0.86839 | – | **+0.00001** (local +0.00016). Not adopted. Together with H5w (LB +0.00039 = exactly its local regular-row part, +0.00039), **blackout-row gains do not reach the LB** |
 
 ### Decomposition of A (0.85204), exact from the probes
 | Task | Weighted | Task score | Local estimate |
