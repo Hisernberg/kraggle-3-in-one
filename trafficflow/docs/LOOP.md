@@ -104,10 +104,21 @@ ongoing 0.843).
 - a blind resubmission after an ERROR.
 
 ## Candidate queue
-| ID | Change vs best | Evidence | Status |
-|---|---|---|---|
-| H3 | H2 with a third Task 1 seed (`ens345` = full3 + full4 + full5) | projected J +0.00026 | `trafficflow/seed_member.sh` running (log `/home/user/work/H3_t1ens345.log`). It builds `H3_t1ens345.zip` only if the 3-member ensemble passes the J gate |
-| – | onset trained with importance weights (validation- and private-weighted) | agent running (27 Sep) | Task 2 gate, then an LB test |
+**Chain for 2026-09-27** (the user asked for 5 submissions, one at a time, each analysed before the next).
+Adoption rules are fixed before submitting:
+
+1. **H3** (H2 with a third Task 1 seed, `ens345`).
+   - Local J +0.00023, 4/4 panels (log `/home/user/work/H3_t1ens345.log`).
+   - Adopt if Δ ≥ +0.0001 (matches the local prediction within 0.0002).
+2. **G7** (best with ongoing = v7: the v5 ongoing recipe retrained on hybrid labels; built by `trafficflow/t2/ongoing_v7.py` and spliced onto the v8 onset rows as `lgb_v8og7.csv`).
+   - Evidence: CV +0.0006 old / +0.0032 hybrid, non-recurrent slice −0.005. The onset label fix transferred at 3× its CV.
+   - LB probe: adopt if Δ ≥ +0.0005.
+   - If it loses, ongoing label work is closed.
+3. **Onset importance-weighted** (agent), if it passes the Task 2 gate for both months; adopt if Δ ≥ +0.0005.
+4. **Slots 4–5**: decided from 1–3. If no candidate is ready, use them only on probes that answer an open question, for example per-family queue probes that locate the March Task 2 loss.
+
+Closed today:
+- **Eligibility-aware Task 2 decoding.** The official IoU counts only eligible cells, but plain top-m already matches or beats every eligibility-aware decoder, including an oracle with an explicit empty option (onset 0.8874 vs 0.8853; ongoing 0.8963 vs 0.8969). See `trafficflow/t2/elig.py`.
 
 ## Decision log
 | Date | Submission | Public (Δ vs best) | Decision / lesson |
