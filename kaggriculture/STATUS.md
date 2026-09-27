@@ -90,8 +90,11 @@ Agents are built from `agents/edge/bases/base_sb.py` / `base_tsb.py` with the v_
 - S1 00:05: **P05 = d_sb_s150a0**. It passed 2 official games (DONE, won both; worst turn 0.07 s).
 - S2 04:50: if P05 is ≥ 2400 with ≥ 40 games, submit **t_sb_s150** (a different base, as a diversity probe; worst
   turn about 0.5 s, within the 1 s limit). If P05 is under 2300, re-submit P03 as the anchor and study P05's losses.
-- S3-S5: small deltas on the best measured agent (arm threshold 1.2/1.4, sa_from 100/200), each local-tested vs
-  (P05, v_sa2, P03, tetsutani, cha22, metav4) on fresh seeds before submission.
+- S3-S5: driven by P05's ladder losses (ladder_review). The planned knob deltas were tested at 23:00 on seeds
+  9900-9907, both seats. They are flat: sa_from=100 and arm_before=720 play identically to P05. fb1.4 goes 9/16 vs
+  P05 (+$1), fb1.2 goes 7/16, and sa_from=200 goes 3/16. So P05's knobs sit at a local optimum and won't be
+  submitted. P05 on these fresh seeds: v_sa2 15/16 (+777), P03 15/16, tetsutani 14/16, metav4 14/16, cha22 16/16,
+  v57 16/16. Next deltas must target what the ladder losses show (e.g. the animal-first/template-A class).
 
 **Checkpoints**: CP1 ≥ 2600 → keep that agent as the anchor and test only small deltas on it. Below 2400 after
 09-29 S3 → stop exploring and spend 09-30 on the best measured pair.
