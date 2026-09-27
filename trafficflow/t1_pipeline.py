@@ -397,29 +397,36 @@ def ensemble(tag: str, members) -> None:
 
 def ensemble_kinds(tag: str, reg, dark) -> None:
     """WORK/pred/state_<tag>.parquet: regular rows = mean of the `reg` members, blackout ("dark") rows = mean
-    of the `dark` members (a dark-only member, TFB_KINDS=dark, can only be a `dark` member)."""
+    of the `dark` members (a dark-only member, TFB_KINDS=dark, can only be a `dark` member). A member may carry a
+    weight as `tag:w` (default 1); each kind's weights are normalised to sum to 1."""
     import pyarrow as pa
     import pyarrow.parquet as pq
     out = WORK / "pred"
     vals = ("speed", "flow_lane", "dens_lane")
-    base = pq.read_table(out / f"state_{reg[0]}.parquet")
+    def parse(ms):
+        pairs = [(m.split(":")[0], float(m.split(":")[1]) if ":" in m else 1.0) for m in ms]
+        tot = sum(w for _, w in pairs)
+        return [(m, w / tot) for m, w in pairs]
+    reg_w, dark_w = parse(reg), parse(dark)
+    base = pq.read_table(out / f"state_{reg_w[0][0]}.parquet")
     isd = base.column("kind").to_numpy(zero_copy_only=False) == "dark"
     acc = {c: np.zeros(base.num_rows) for c in vals}
-    for members, rows in ((reg, ~isd), (dark, isd)):
-        for m in members:
+    for members, rows in ((reg_w, ~isd), (dark_w, isd)):
+        for m, wgt in members:
             t = pq.read_table(out / f"state_{m}.parquet")
             for c in base.column_names:
                 if c not in vals:
-                    assert t.column(c).equals(base.column(c)), f"{m}: column {c} differs from {reg[0]}"
+                    assert t.column(c).equals(base.column(c)), f"{m}: column {c} differs from {reg_w[0][0]}"
             for c in vals:
                 x = t.column(c).to_numpy()[rows]
                 assert np.isfinite(x).all(), f"{m}: {c} has non-finite values on its rows"
-                acc[c][rows] += x / len(members)
+                acc[c][rows] += wgt * x
             del t
     for c in vals:
         base = base.set_column(base.column_names.index(c), c, pa.array(acc[c]))
     pq.write_table(base, out / f"state_{tag}.parquet")
-    print(f"state_{tag}: regular rows = mean {list(reg)}, dark rows ({int(isd.sum())}) = mean {list(dark)}", flush=True)
+    print(f"state_{tag}: regular rows = {[(m, round(w, 4)) for m, w in reg_w]}, dark rows ({int(isd.sum())}) = "
+          f"{[(m, round(w, 4)) for m, w in dark_w]}", flush=True)
 
 
 def ensemble_weighted(tag: str, new: str, others, w_reg: float, w_dark: float) -> None:

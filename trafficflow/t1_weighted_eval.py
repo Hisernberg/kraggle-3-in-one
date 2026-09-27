@@ -126,7 +126,11 @@ def run_regs(reg_sets: dict, dark_tags: list[str], panels=HOLD_PANELS) -> pd.Dat
 
 
 if __name__ == "__main__":
-    if sys.argv[1] == "regs":  # regs <new tag> <existing reg tags,comma> <dark tags,comma>
+    if sys.argv[1] == "regspec":  # regspec '<json {name: [[tag, w], ...]}; first = reference>' <dark tags,comma>
+        import json
+        spec = json.loads(sys.argv[2])
+        run_regs({k: [(t, float(w)) for t, w in v] for k, v in spec.items()}, sys.argv[3].split(","))
+    elif sys.argv[1] == "regs":  # regs <new tag> <existing reg tags,comma> <dark tags,comma>
         new, old, dks = sys.argv[2], sys.argv[3].split(","), sys.argv[4].split(",")
         n = len(old)
         run_regs({"base": [(t, 1.0) for t in old], "add": [(t, 1.0) for t in old] + [(new, 1.0)],
