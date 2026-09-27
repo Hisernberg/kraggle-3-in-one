@@ -401,3 +401,9 @@ Holdout J, blackout rows fixed (= hold7) so only the regular change is measured 
 H7 build (27 Sep 17:28): `H7_reg9.zip`, 65/65 checks. Against H5w, 6,613,327 regular state rows change (mean |Δv| 0.091 km/h,
 |Δq| 9.7 veh/h); blackout rows, queue and ODME are identical. Predicting with the boosted models is slow: about 3 h for
 the test rows when two predictions share the CPU.
+
+## Leaderboard 2026-09-27 21:15 UTC
+We are 15th post-rebuild with H5w = 0.86838 (the raw best, H6 = 0.86839, is the same within noise). The top post-rebuild
+teams are KTK 0.90085, gichang 0.89628, George Daniel Gherasim 0.89145 (new), Inocchi 0.88697 and Giorgio Ottoboni 0.88548;
+the gap to #1 is 0.03246. Two container restarts today (about 13:00 and 17:40–21:14) cost the hold10 run; it
+restarted at 21:15.

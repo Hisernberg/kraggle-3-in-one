@@ -108,12 +108,18 @@ ongoing 0.843).
 the maximum score; H6 was below the +0.0001 adoption bar, so the base for single-factor steps stays H5w.
 
 1. **H7** (regular-only booster member `hold9/full9`, `reg_member.sh`; seed 6, 300k rows per panel, lr 0.05, up to
-   6000 rounds, no ramp features). Training since 27 Sep 11:14.
+   6000 rounds, no ramp features). **Built: `/home/user/work/subs/H7_reg9.zip`** (65/65; regular rows only vs H5w;
+   also in the Kaggle backup).
    - The gate uses holdout J with blackout rows fixed, i.e. the regular-cell change alone, which transfers exactly.
    - **Gate passed (27 Sep 12:52):** 0.5·hold9 + 0.5·mean(hold3, 4, 5, 7) gives ΔJ +0.00053 on 4/4 panels.
      full9 is training; `H7_reg9.zip` should be built around 15:00.
    - Adopt if Δ ≥ +0.0001 and within 0.0002 of the local ΔJ (+0.00053).
-2. **Remaining slots:** only probes that answer an open question, or a second regular seed if H7 lands as predicted.
+2. **H8** (second boosted seed `hold10/full10`, seed 7, `boost_member.sh`, density model up to 10000 rounds).
+   - Restarted 27 Sep 21:15 after the container restart; log `/home/user/work/H8_reg10.log`; ETA about 03:30.
+   - Gated against the H7 scheme (b2half / b2heavy / b2only).
+   - Submit only after H7 has scored and landed within 0.0002 of its local ΔJ (the H7 → H8 step is regular rows only).
+   - If the container restarts, re-run the same command: training skips models already saved.
+3. **Remaining slots:** only probes that answer an open question.
 
 **Paused lines (27 Sep evidence):**
 - **Ongoing:** 4 of the last 5 changes lost on March despite passing every local test (G8 passed the full gate).
