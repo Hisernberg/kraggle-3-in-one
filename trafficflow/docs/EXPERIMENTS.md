@@ -291,3 +291,7 @@ Only the within-run transitions (about 29% of the loss) can be smoothed. **LB: G
 - **Ongoing.** Stage-2 re-scoring hurts March even when it may only remove cells (H1b −0.010) or passes the shift-weighted CV and footprint checks. The March ongoing level (0.843) matches the validation-weighted CV (0.849), but no train-based evaluation predicts the *direction* of ongoing edits. From now on, ongoing changes are LB probes first.
 - **Leaderboard.** KTK 0.90033 (+0.012 on 25 Sep), gichang 0.89173, Inocchi 0.88635. We are 10th of 151 post-rebuild, gap 0.0326.
   - Where a 0.033 gap could come from: +0.1 S_queue = +0.030; +0.1 S_LWR = +0.010 (ceiling 0.955 against our ~0.55).
+
+## Leaderboard 2026-09-27 00:10 UTC
+We are 14th of 170 post-rebuild (20th overall) with H2 = 0.86777. The top post-rebuild teams are KTK 0.90038, gichang 0.89628, Inocchi 0.88635,
+Giorgio Ottoboni 0.88458 and Lukas 0.88382 (gap 0.0326). No new candidates were ready on 26 Sep, and the 26 Sep evening sweep ran in plan mode, so nothing ran.

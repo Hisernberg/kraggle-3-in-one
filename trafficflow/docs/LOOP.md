@@ -13,11 +13,10 @@ This loop works only on the traffic project:
 - it never edits another competition's folder or the shared root files;
 - data and artefacts stay outside the repository (`/home/user/data`, `/home/user/cache`, `/home/user/work`).
 
-> **Research agents paused (2026-09-25 ~13:00 UTC).** The user stopped two research agents, the
-> Task 1 ensemble and the importance-weighted onset training.
-> - Do not launch new agents until the user asks again.
-> - The Routines still run the submission chain with already-validated candidates, plus light local
->   work (builds, checks, logging, backups).
+> **Research: at most one agent at a time (since 2026-09-27).**
+> - The user stopped two parallel agents on 25 Sep, then said "continue". So research resumes with
+>   one agent at a time, and local shell jobs (model training, builds) need no agent at all.
+> - If the user stops an agent again, treat it as a firm "no agents".
 
 ## Schedule (UTC; Routines fire into this session)
 | Time | Job |
@@ -105,8 +104,10 @@ ongoing 0.843).
 - a blind resubmission after an ERROR.
 
 ## Candidate queue
-**Empty.** Research agents are paused (see the note at the top), so no new candidates are being built.
-Unused slots are only spent on probes that answer an open question.
+| ID | Change vs best | Evidence | Status |
+|---|---|---|---|
+| H3 | H2 with a third Task 1 seed (`ens345` = full3 + full4 + full5) | projected J +0.00026 | `trafficflow/seed_member.sh` running (log `/home/user/work/H3_t1ens345.log`). It builds `H3_t1ens345.zip` only if the 3-member ensemble passes the J gate |
+| – | onset trained with importance weights (validation- and private-weighted) | agent running (27 Sep) | Task 2 gate, then an LB test |
 
 ## Decision log
 | Date | Submission | Public (Δ vs best) | Decision / lesson |
