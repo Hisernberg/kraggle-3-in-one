@@ -28,7 +28,8 @@ P_BIG = dict(objective="binary", learning_rate=0.05, num_leaves=63, min_data_in_
 P_HUGE = {**P_BIG, "num_leaves": 127, "min_data_in_leaf": 50}
 # name -> (params, rounds). Final: onset "p1" (+ onset prior), ongoing "p2" (+ window weights)
 P_XL = {**P_HUGE, "num_leaves": 255}
-CFG = {"fast": (PARAMS, 250), "p1": (P_BIG, 400), "p2": (P_HUGE, 600), "p3": (P_XL, 900)}
+P_XXL = {**P_HUGE, "num_leaves": 511}
+CFG = {"fast": (PARAMS, 250), "p1": (P_BIG, 400), "p2": (P_HUGE, 600), "p3": (P_XL, 900), "p4": (P_XXL, 1200)}
 
 
 def load_train(panels=PANELS8):
