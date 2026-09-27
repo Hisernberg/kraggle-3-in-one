@@ -120,9 +120,18 @@ Adoption rules are fixed before submitting:
    - Blackout cells are about 2% of test targets but carry 20–55% of the speed SSE.
    - Settings: ramp features, 127 leaves, lr 0.1, up to 4000 rounds, 250k rows per panel.
    - J gate vs H5w's dark rows (3/4 panels + mean). Adopt if Δ ≥ +0.0001.
-5. **Remaining slot:** only probes that answer an open question.
+5. **Ongoing capacity probe (v11)**, if its CV passes: og_v3 / og_v3_noloc at `p3` (255 leaves, 900 rounds) in the v5 blend.
+   - Past capacity steps (31→63→127 leaves) each gave about +0.01 CV, and the v5 capacity gain transferred to March.
+   - Gate: sim ≥ +0.005 over p2 and no worse on the recurrence < 0.05 slice. LB probe; adopt if Δ ≥ +0.0005.
 
-Task 2 onset with ramp-flow features is closed (+0.15% log-loss only).
+**Checked and closed today (no submission needed):**
+- Task 2 onset with ramp-flow features (+0.15% log-loss only).
+- Characteristic (kinematic-wave) features for blackout cells: corr(ch − li, y − li) = −0.07. Congested waves travel 20+ km over a 90-min blackout.
+- Off-ramp share as a mainline-flow meter: ramps carry only 1–2.5% of mainline flow; the implied flow error (67–130 veh/h per lane) is worse than the model's.
+- TV smoothing strength for the 4-member ensemble: ×0.5–0.75 gives +0.00004 only; it stays at 1.0.
+- Scenario shift train → March/April: none (capacity q99.9, peak flow and median speed match; only per-panel queue shares move).
+- March onset site check (TASK2_ANALYSIS §19): site hits 0.775 vs 0.824 on train, so the loss is mostly extent.
+- March ongoing size check: predicted size is flat, 35% of queues gone by T+19 (train 28%); no bias to correct.
 
 **New data source (27 Sep): on/off-ramp flows.** Neither task used them.
 - They are released even inside the mainline blackouts (80% valid, the same as normal rows).
