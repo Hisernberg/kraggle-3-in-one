@@ -82,3 +82,12 @@ second-best measured agent and S5 = the best (the final active pair).
 
 **Checkpoints**: CP1 ≥ 2600 → keep that agent as the anchor and test only small deltas on it. Below 2400 after
 09-29 S3 → stop exploring and spend 09-30 on the best measured pair.
+
+**Scheduled wake-ups (send_later, fire into this session; cancel with delete_trigger):**
+09-27 23:00 prep `trig_01M1EtUTLmP3UbCF3cCSMQxX` ·
+09-28 S1 `trig_0185y4mzWG9DwrLnkmZecihS` S2 `trig_01PPqCKF7VuDB37fUXrc8oRc` S3 `trig_01FyaY6RLKTviP8xpHR3BYh9` S4 `trig_01BW5BcmeCBH79wSmDfUUW4i` S5 `trig_01BnyuvSH9nEKGrqB6naw79M` ·
+09-29 S1 `trig_016BBFdXBV5Q1maYN4DCSyka` S2 `trig_018YaoqzoqW1h9aLMFyevzuk` S3 `trig_01YZZXpS5mhthkDBXDvRAspD` S4 `trig_01HJAjLAhkoR6kPE7SchYP8j` S5 `trig_01Xwqqf2RuZGEatHZKy4Gxvm` ·
+09-30 S1 `trig_01FJhBAskFm5dWZMFFDgxhu7` S2 `trig_01Xf4ztN7UHHtksUc6QXwRk9` S3 `trig_01PSRZBibM7kLvvR9WXC25bz` S4 (hedge) `trig_01JTS2K7iLK8LP5RXysPHBPS` S5 (keeper) `trig_01MudqtTYzcukZLk6nHuXSqM`.
+
+Overnight (09-27 17:15 → 22:45): background build + local test of duel-answer candidates (v_sa2 + turn-0 duel
+opening / counter, edge layer on the tetsutani base) vs a mirror set (P03, v_sa2, duel openers, field_top).
