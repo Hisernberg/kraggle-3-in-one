@@ -11,7 +11,8 @@ submission, read the ladder, learn, then submit the next.
 | P01 | 09-27 05:20 | tetsutani demand-preserving (public) | probe of the strongest current public agent | 2093 (07:49, then retired) |
 | P02 | 09-27 06:05 | DSM tape 113970425_0 | replay a top player's recorded game + land catch-up | 1123 after 45 games (09:37) |
 | P03 | 09-27 06:26 | cha22_edge_arm | cha22 + market layer (sell-ahead-1, order search, on-sight switch) | 2377 after 48 games (09:37); 2372 after 78 (11:46) |
-| P04 | 09-27 11:50 | router r3_cg | tape router (280 tapes, day-start switching) + cash guard (fixes P02) + lazy per-tape decode (load 8 s → 0.1 s) | pending |
+| P04 | 09-27 11:50 | router r3_cg | tape router (280 tapes, day-start switching) + cash guard (fixes P02) + lazy per-tape decode (load 8 s → 0.1 s) | 1291 after 54 games (17:05) — **failed** |
+| (ext) | 09-27 13:50 | SB18 Macro-1 (not from this session) | tetsutani + turn-0 wheat duel | 1860 after 54 games (17:05), 34/40 wins, still climbing |
 
 ## What the ladder taught us
 
@@ -21,6 +22,18 @@ submission, read the ladder, learn, then submit the next.
   important evening seed buys, sell shed stock at hour 0 if needed). Local opponents never reproduced this.
 - **P03 loses mostly by tiny margins** (−$50…−$200) to near-mirror cha22-family opponents with their own market layers.
   Fertilizer/egg order-index races decide those games; forcing fertilizer first or selling it ahead is net negative.
+
+- **P04 (router) failed on the ladder**: 24/40 wins against low-rated opponents, many losses by 7k-120k. The day-1
+  hires worked every game (cash guard OK), so the loss is the known world-dependence of tapes: the switch picks
+  a tape whose production does not fit the world. Local 68-78% did not transfer. **The tape/router line is closed.**
+- **P03 by opponent class** (87 games): vs "duel" openers (BUY wheat, SELL wheat on turn 0; tetsutani family) 24/42,
+  +164 per game on average; vs cha22-family "BUY 5 wheat" 22/33, +72 per game; vs template-A animal-first 2/4. At
+  ~2370 the ladder is near-mirror copies of the same production route, and games are coin flips decided by
+  market micro-edges. Of 32 losses, 20 were by under $1000.
+- **Mistake: an external submission displaced our best agent.** SB18 (13:50, from another session/person on the
+  same account) was the 5th submission of 09-27. It used the last daily slot and pushed P03 (2370) out of the
+  active pair. The active pair is now SB18 + P04, so the team shows ~1860. **Only one process may submit.** If
+  another session keeps submitting, the slots below collide.
 
 ## Local evidence (fresh seeds, vs 9 strongest public agents, both seats)
 
@@ -33,7 +46,39 @@ submission, read the ladder, learn, then submit the next.
 vs top-team recorded games (forced worlds): every public agent and our tapes win ~37-42%; top teams are ~10-20% more
 productive than the public cluster (eggs/geese, wheat, wool pricing).
 
-## Next
+## Mistakes & lessons (running list)
 
-11:45 review: P03 plateaued ~2375 (≈rank 250); P02 stuck ~1110 (cash bug). Submitted P04 = router + cash guard.
-17:30 review → P05 (last of 09-27).
+1. The loader takes the LAST callable in the file: always end with a unique entry function (`router_agent`, `edge_agent`).
+2. Local win rate vs the public field does not predict the ladder for tape agents (P02 53/54 local → 1110; P04 68-78% → 1290).
+   Edge-layer agents do transfer (P03 87-97% local → 2370). Trust only agents whose production adapts to the world.
+3. Opponents on the ladder differ from local ones on turn 0 (bigger wheat buys, duel), which broke P02's cash. Every
+   candidate now gets a day-1 cash/hands check in `harness/ladder_review.py`.
+4. Do not submit anything until the daily count is known: the 6th submission of a UTC day gets HTTP 400 (17:10 test).
+5. A new submission always displaces the older of the active pair. Plan the pair, not the single submission.
+
+## Plan: automatic 5 slots per UTC day (09-28 → 09-30)
+
+Slots (UTC), about 4.75 h apart: **S1 00:05 · S2 04:50 · S3 09:35 · S4 14:20 · S5 19:05**, plus a 23:00 prep on 09-27.
+Each slot is a scheduled wake-up of this session and runs the **slot procedure**:
+
+1. `kaggle competitions submissions kaggriculture`: record the rating and game count of the 2 active submissions in the
+   ladder log; note any submission not made here.
+2. `python -m harness.ladder_review <newest id>`: W/L by opponent class, margins, day-1 cash. Write the lessons above.
+3. Pick the next agent from the queue (below), adjusted by what the ladder just showed.
+4. Validate: one official `kaggle_environments` game (DONE, no errors), plus a local fastsim check vs the field if the
+   agent is new.
+5. Submit with a descriptive message → commit/push the STATUS update → HF sync.
+
+**Pair policy.** Only the latest 2 are active; LB = the better one. A ~4.75 h slot gives ~50 games, enough for a
+rating within ~±50. So every slot measures one candidate while the previous one keeps playing. On 09-30, S4 = the
+second-best measured agent and S5 = the best (the final active pair).
+
+**Queue for 09-28** (re-ordered at every slot by evidence):
+- S1: **P05 = v_sa2** (P03 + sell-ahead-2; 18/20 vs P03, equal vs field). It replaces P04 (1291) as the pair partner of SB18.
+- S2: the better of v_sa2 / P03 plus an answer to the turn-0 wheat duel (duel openers are our most common loss class),
+  if the overnight local test is positive; else re-submit P03 exactly (known ~2370) as the anchor.
+- S3-S5: best of the overnight candidates (cha22 edge + duel opening, edge layer on the tetsutani base, sa2 on the
+  duel base), in order of local win rate against a mirror set of (P03, v_sa2, SB18-class, field_top).
+
+**Checkpoints**: CP1 ≥ 2600 → keep that agent as the anchor and test only small deltas on it. Below 2400 after
+09-29 S3 → stop exploring and spend 09-30 on the best measured pair.
