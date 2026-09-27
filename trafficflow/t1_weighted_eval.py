@@ -93,8 +93,45 @@ def run_kinds(reg_tags: list[str], dark_sets: list[list[str]], panels=HOLD_PANEL
     return d
 
 
+def run_regs(reg_sets: dict, dark_tags: list[str], panels=HOLD_PANELS) -> pd.DataFrame:
+    """Blackout cells = mean of `dark_tags` (fixed); regular cells = each entry of `reg_sets` (name -> list of
+    (tag, weight)); the first entry is the reference. A regular-only member (TFB_KINDS=reg, NaN on blackout
+    cells) can only appear in reg_sets."""
+    rows = []
+    for p in panels:
+        H = Hold(p)
+        tags = dict.fromkeys(dark_tags + [t for v in reg_sets.values() for t, _ in v])
+        P = {t: load_preds(p, t) for t in tags}
+        dark = np.asarray(H.dark_row, bool)[H.r]
+        dk = {c: np.mean([P[t][c] for t in dark_tags], 0) for c in CH3}
+        for name, members in reg_sets.items():
+            ws = sum(w for _, w in members)
+            rg = {c: sum(w * np.nan_to_num(P[t][c]) for t, w in members) / ws for c in CH3}
+            H.pr = {c: np.where(dark, dk[c], rg[c]) for c in CH3}
+            assert all(np.isfinite(H.pr[c][~dark]).all() for c in CH3), f"{p} {name}: non-finite regular predictions"
+            v, q, g = H.base()
+            v, q = H.smooth(v, q, g, **DEFAULT)
+            s = H.score(v, q)
+            e = float(np.sqrt(np.mean((rg["speed"][~dark] - H.ys[~dark]) ** 2)))
+            rows.append(dict(panel=p, reg=name, **{k: s[k] for k in ("J", "S_state", "LWR")}, reg_rmse_v=e))
+            print(p, name, {k: round(s[k], 5) for k in ("J", "S_state", "LWR")}, round(e, 4), flush=True)
+    d = pd.DataFrame(rows)
+    d.to_csv(WORK / "smooth" / "regs.csv", index=False)
+    order = list(reg_sets)
+    piv = d.pivot_table(index="reg", columns="panel", values="J").reindex(order)
+    base = piv.iloc[0]
+    print(piv.assign(mean=piv.mean(axis=1), dJ=(piv - base).mean(axis=1), up=(piv > base).sum(axis=1)).round(5).to_string())
+    print(d.pivot_table(index="reg", columns="panel", values="reg_rmse_v").reindex(order).round(4).to_string())
+    return d
+
+
 if __name__ == "__main__":
-    if sys.argv[1] == "kinds":  # kinds <reg tags,comma> "<dark set;dark set;...>" (a set: tag+tag)
+    if sys.argv[1] == "regs":  # regs <new tag> <existing reg tags,comma> <dark tags,comma>
+        new, old, dks = sys.argv[2], sys.argv[3].split(","), sys.argv[4].split(",")
+        n = len(old)
+        run_regs({"base": [(t, 1.0) for t in old], "add": [(t, 1.0) for t in old] + [(new, 1.0)],
+                  "half": [(t, 0.5 / n) for t in old] + [(new, 0.5)], "alone": [(new, 1.0)]}, dks)
+    elif sys.argv[1] == "kinds":  # kinds <reg tags,comma> "<dark set;dark set;...>" (a set: tag+tag)
         run_kinds(sys.argv[2].split(","), [s.split("+") for s in sys.argv[3].split(";")])
     else:
         run(sys.argv[1], sys.argv[2].split(","))
