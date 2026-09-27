@@ -112,10 +112,17 @@ Adoption rules are fixed before submitting:
    - Adopt if Δ ≥ +0.0001.
 2. **G7** (best with ongoing = v7, the v5 ongoing recipe retrained on hybrid labels, `lgb_v8og7.csv`). Building now.
    - LB probe: adopt if Δ ≥ +0.0005. If it loses, ongoing label work is closed.
-3. **H5** (Task 1 ensemble plus a ramp-feature member, `ens3457`). Training now; `seed_member.sh` applies the J gate automatically.
-   - Adopt if Δ ≥ +0.0001 and it matches the local ΔJ within 0.0002.
-4. **Task 2 onset with ramp-flow features.** The agent was stopped by the user; this would need to be done in the main session.
-5. **Remaining slots:** only probes that answer an open question.
+3. **H5w** (Task 1 ramp-feature member full7; regular rows = mean of full3/4/5/7, blackout rows = full7 alone).
+   - The equal-weight gate passed (+0.00039, 4/4). The per-kind weighting gives +0.00081 on 4/4 (EXPERIMENTS.md).
+   - Adopt if Δ ≥ +0.0001 and it matches the local ΔJ (+0.0008) within 0.0002.
+4. **H6** (dark-only booster member hold8/full8, `dark_member.sh`).
+   - The hold7 blackout models all stopped at the 3000-round cap (under-fitted).
+   - Blackout cells are about 2% of test targets but carry 20–55% of the speed SSE.
+   - Settings: ramp features, 127 leaves, lr 0.1, up to 4000 rounds, 250k rows per panel.
+   - J gate vs H5w's dark rows (3/4 panels + mean). Adopt if Δ ≥ +0.0001.
+5. **Remaining slot:** only probes that answer an open question.
+
+Task 2 onset with ramp-flow features is closed (+0.15% log-loss only).
 
 **New data source (27 Sep): on/off-ramp flows.** Neither task used them.
 - They are released even inside the mainline blackouts (80% valid, the same as normal rows).

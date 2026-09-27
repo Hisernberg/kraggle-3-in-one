@@ -6,6 +6,7 @@ weightings where the ramp member gets weight w_reg on regular cells and w_dark o
 the other members share the rest equally, with the adopted post-processing (gate 0.6, a 0.75, TV).
 
     python -m trafficflow.t1_weighted_eval hold7 hold3,hold4,hold5
+    python -m trafficflow.t1_weighted_eval kinds hold3,hold4,hold5,hold7 "hold7;hold8;hold7+hold8"
 """
 from __future__ import annotations
 
@@ -14,6 +15,7 @@ import sys
 import numpy as np
 import pandas as pd
 
+from .t1_pipeline import WORK
 from .t1_smooth import DEFAULT
 from .t1_smooth_eval import CH3, HOLD_PANELS, Hold, load_preds
 
@@ -57,5 +59,42 @@ def run(new_tag: str, other_tags: list[str], panels=HOLD_PANELS) -> pd.DataFrame
     return d
 
 
+def run_kinds(reg_tags: list[str], dark_sets: list[list[str]], panels=HOLD_PANELS) -> pd.DataFrame:
+    """Regular cells = mean of `reg_tags`; blackout cells = mean of each set in `dark_sets` (the first set is
+    the reference). A dark-only member (TFB_KINDS=dark, NaN on regular cells) can only be in `dark_sets`."""
+    rows = []
+    for p in panels:
+        H = Hold(p)
+        P = {t: load_preds(p, t) for t in dict.fromkeys(reg_tags + [t for s in dark_sets for t in s])}
+        dark = np.asarray(H.dark_row, bool)[H.r]
+        reg = {c: np.mean([P[t][c] for t in reg_tags], 0) for c in CH3}
+        for ds in dark_sets:
+            dk = {c: np.mean([P[t][c] for t in ds], 0) for c in CH3}
+            H.pr = {c: np.where(dark, dk[c], reg[c]) for c in CH3}
+            assert all(np.isfinite(H.pr[c]).all() for c in CH3), f"{p} {ds}: non-finite predictions"
+            v, q, g = H.base()
+            v, q = H.smooth(v, q, g, **DEFAULT)
+            s = H.score(v, q)
+            e = {c: float(np.sqrt(np.mean((dk[c][dark] - t[dark]) ** 2)))
+                 for c, t in (("speed", H.ys), ("flow", H.yq))}
+            name = "+".join(ds)
+            rows.append(dict(panel=p, dark=name, **{k: s[k] for k in ("J", "S_state", "LWR")},
+                             dark_rmse_v=e["speed"], dark_rmse_q=e["flow"]))
+            print(p, name, {k: round(s[k], 5) for k in ("J", "S_state", "LWR")},
+                  {k: round(x, 3) for k, x in e.items()}, flush=True)
+    d = pd.DataFrame(rows)
+    d.to_csv(WORK / "smooth" / "kinds.csv", index=False)
+    order = ["+".join(s) for s in dark_sets]
+    piv = d.pivot_table(index="dark", columns="panel", values="J").reindex(order)
+    base = piv.iloc[0]
+    out = piv.assign(mean=piv.mean(axis=1), dJ=(piv - base).mean(axis=1), up=(piv > base).sum(axis=1))
+    print(out.round(5).to_string())
+    print(d.pivot_table(index="dark", columns="panel", values="dark_rmse_v").reindex(order).round(3).to_string())
+    return d
+
+
 if __name__ == "__main__":
-    run(sys.argv[1], sys.argv[2].split(","))
+    if sys.argv[1] == "kinds":  # kinds <reg tags,comma> "<dark set;dark set;...>" (a set: tag+tag)
+        run_kinds(sys.argv[2].split(","), [s.split("+") for s in sys.argv[3].split(";")])
+    else:
+        run(sys.argv[1], sys.argv[2].split(","))

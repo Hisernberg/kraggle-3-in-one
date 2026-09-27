@@ -61,12 +61,12 @@ def predict_cells(X, dark: np.ndarray, tag: str, threads: int = 2) -> dict:
     """Raw speed / flow / density of WORK/models/<tag> at feature rows X (regular models on regular rows,
     blackout models on blackout rows), as the pipeline's predict stage."""
     import lightgbm as lgb
-    from .t1_pipeline import base_of
+    from .t1_pipeline import KINDS, base_of
     pr = {}
     for c in ("speed", "flow", "dens"):
         y = np.full(len(X), np.nan)
         for kind, m in (("reg", ~dark), ("dark", dark)):
-            if m.any():
+            if m.any() and kind in KINDS:  # TFB_KINDS=dark: a dark-only member, regular rows stay NaN
                 b = lgb.Booster(model_file=str(WORK / "models" / tag / f"{kind}_{c}.txt"))
                 y[m] = b.predict(X.loc[m, b.feature_name()], num_threads=threads) + base_of(X[m], c)
                 del b
@@ -119,7 +119,8 @@ def preds(panel: str, tags, check: bool = True):
     dark = P.dark[tt]
     del P; gc.collect()
     t1 = time.time()
-    if check:
+    from .t1_pipeline import KINDS
+    if check and set(KINDS) == {"reg", "dark"}:  # a dark-only member (TFB_KINDS=dark) cannot recompute hold3
         pr = predict_cells(X, dark, "hold3")
         same = all(np.array_equal(pr[c], z[c], equal_nan=True) for c in CH3)
         print(f"{panel}: hold3 recomputed == cache: {same}", flush=True)

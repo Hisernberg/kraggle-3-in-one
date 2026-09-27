@@ -9,6 +9,7 @@ Stages (python -m trafficflow.t1_pipeline <stage> ...):
   predict write WORK/pred/state_<tag>.parquet keyed like the Task 1 templates.
   rounds  print the --rounds JSON of a full fit from holdout tag <tag> (full_rounds).
   ens     state_<tag>.parquet = element-wise mean of state_<m>.parquet, --members m1 m2 ...
+  enskind per-kind mean: --reg m1 m2 ... on regular rows, --dark m1 ... on blackout rows
 TFB_SEED=s (default 0) trains seed-ensemble member s: other CAP row sample and LightGBM seeds.
 """
 from __future__ import annotations
@@ -272,6 +273,10 @@ PARAMS = dict(objective="regression", learning_rate=float(os.environ.get("TFB_LR
               num_threads=int(os.environ.get("TFB_THREADS", "3")), verbose=-1, **lgb_seeds(SEED))
 if os.environ.get("TFB_EXTRA", "0") == "1":
     PARAMS["extra_trees"] = True
+# TFB_KINDS=dark trains / predicts only the blackout models (a dark-only member; its regular rows stay NaN
+# and the per-kind ensemble `enskind` takes regular rows from other members)
+KINDS = tuple(os.environ.get("TFB_KINDS", "reg,dark").split(","))
+MAXR = int(os.environ.get("TFB_MAXR", 3000))
 
 
 def train(panels, holdout: bool, tag: str, rounds: dict | None = None):
@@ -282,6 +287,8 @@ def train(panels, holdout: bool, tag: str, rounds: dict | None = None):
     report = {}
     print(f"train {tag}: seed {SEED}, lgb seeds {lgb_seeds(SEED) or 'default'}", flush=True)
     for kind, targets in (("reg", ("speed", "flow", "dens")), ("dark", ("speed", "flow", "dens"))):
+        if kind not in KINDS:
+            continue
         d = load_train(panels, kind, seed=SEED)
         feats = [c for c in d.columns if c not in NON_FEAT]
         tr = d.day < HOLD if holdout else np.ones(len(d), bool)
@@ -306,7 +313,7 @@ def train(panels, holdout: bool, tag: str, rounds: dict | None = None):
             t0 = time.time()
             if holdout:
                 dva = lgb.Dataset(d.loc[va & ok, feats], y[va & ok], weight=None if w is None else w[va & ok], reference=dtr)
-                m = lgb.train(p, dtr, int(os.environ.get("TFB_MAXR", 3000)), valid_sets=[dva],
+                m = lgb.train(p, dtr, MAXR, valid_sets=[dva],
                               callbacks=[lgb.early_stopping(100, verbose=False),
                                                                         lgb.log_evaluation(250)])
                 pred = m.predict(d.loc[va, feats], num_iteration=m.best_iteration) + base_of(d[va], c)
@@ -326,8 +333,8 @@ def train(panels, holdout: bool, tag: str, rounds: dict | None = None):
 def predict(panels, tag: str):
     mdir = WORK / "models" / tag
     out = WORK / "pred"; out.mkdir(parents=True, exist_ok=True)
-    models = {n: lgb.Booster(model_file=str(mdir / f"{n}.txt")) for n in
-              ("reg_speed", "reg_flow", "reg_dens", "dark_speed", "dark_flow", "dark_dens")}
+    models = {f"{k}_{c}": lgb.Booster(model_file=str(mdir / f"{k}_{c}.txt")) for k in KINDS
+              for c in ("speed", "flow", "dens")}
     frames = []
     for p in panels:
         d = pd.read_parquet(WORK / "feat" / f"{p}_test.parquet")
@@ -336,9 +343,9 @@ def predict(panels, tag: str):
             d = add_fd(d)
         if USE_RAMP:
             d = add_ramp(d)
-        feats = models["reg_speed"].feature_name()
-        sp = np.empty(len(d)); fl = np.empty(len(d)); dn = np.empty(len(d))
-        for kind in ("reg", "dark"):
+        feats = models[f"{KINDS[0]}_speed"].feature_name()
+        sp = np.full(len(d), np.nan); fl = np.full(len(d), np.nan); dn = np.full(len(d), np.nan)
+        for kind in KINDS:
             m = (d.kind == kind).to_numpy()
             if m.any():
                 X = d.loc[m, feats]
@@ -354,7 +361,7 @@ def predict(panels, tag: str):
     return res
 
 
-def full_rounds(report: dict, maxr: int = 3000) -> dict:
+def full_rounds(report: dict, maxr: int = MAXR) -> dict:
     """Rounds of a full-data fit from a holdout report (the rule behind full3): 1.1 x the best iteration,
     rounded to 10; a model whose early stopping ran into the round cap (best >= maxr - 20) gets 1.1 x maxr."""
     return {k: int(round(1.1 * (maxr if v["best_iter"] >= maxr - 20 else v["best_iter"]), -1))
@@ -386,6 +393,33 @@ def ensemble(tag: str, members) -> None:
         base = base.set_column(base.column_names.index(c), c, pa.array(acc[c] / len(members)))
     pq.write_table(base, out / f"state_{tag}.parquet")
     print(f"state_{tag}: mean of {list(members)}, {base.num_rows} rows, NaN in members {nan}", flush=True)
+
+
+def ensemble_kinds(tag: str, reg, dark) -> None:
+    """WORK/pred/state_<tag>.parquet: regular rows = mean of the `reg` members, blackout ("dark") rows = mean
+    of the `dark` members (a dark-only member, TFB_KINDS=dark, can only be a `dark` member)."""
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+    out = WORK / "pred"
+    vals = ("speed", "flow_lane", "dens_lane")
+    base = pq.read_table(out / f"state_{reg[0]}.parquet")
+    isd = base.column("kind").to_numpy(zero_copy_only=False) == "dark"
+    acc = {c: np.zeros(base.num_rows) for c in vals}
+    for members, rows in ((reg, ~isd), (dark, isd)):
+        for m in members:
+            t = pq.read_table(out / f"state_{m}.parquet")
+            for c in base.column_names:
+                if c not in vals:
+                    assert t.column(c).equals(base.column(c)), f"{m}: column {c} differs from {reg[0]}"
+            for c in vals:
+                x = t.column(c).to_numpy()[rows]
+                assert np.isfinite(x).all(), f"{m}: {c} has non-finite values on its rows"
+                acc[c][rows] += x / len(members)
+            del t
+    for c in vals:
+        base = base.set_column(base.column_names.index(c), c, pa.array(acc[c]))
+    pq.write_table(base, out / f"state_{tag}.parquet")
+    print(f"state_{tag}: regular rows = mean {list(reg)}, dark rows ({int(isd.sum())}) = mean {list(dark)}", flush=True)
 
 
 def ensemble_weighted(tag: str, new: str, others, w_reg: float, w_dark: float) -> None:
@@ -425,6 +459,8 @@ if __name__ == "__main__":
     ap.add_argument("--new", help="ensw: member weighted per kind")
     ap.add_argument("--w-reg", type=float, default=0.25)
     ap.add_argument("--w-dark", type=float, default=0.25)
+    ap.add_argument("--reg", nargs="*", help="enskind: members averaged on regular rows")
+    ap.add_argument("--dark", nargs="*", help="enskind: members averaged on blackout rows")
     a = ap.parse_args()
     if a.stage == "feat":
         for p in a.panels:
@@ -440,3 +476,5 @@ if __name__ == "__main__":
         ensemble(a.tag, a.members)
     elif a.stage == "ensw":
         ensemble_weighted(a.tag, a.new, a.members, a.w_reg, a.w_dark)
+    elif a.stage == "enskind":
+        ensemble_kinds(a.tag, a.reg, a.dark)
