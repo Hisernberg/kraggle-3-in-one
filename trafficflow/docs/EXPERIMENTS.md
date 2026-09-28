@@ -612,3 +612,26 @@ day parity (estimated on even days, applied to odd days, and vice versa), shrunk
 The gate at 0.6·v_f is still right for the transductive members. Partial reconciliation above the gate (any share,
 any speed/flow split) changes the score proxy 0.35·ΔS_state − 0.10·0.42·Δ(relative N error) by at most +0.00007:
 the reconciliation lever is used up.
+
+## Blackout-row smoothing on the simulated test-month blackouts (2026-09-28, `t1_dsmooth.py`)
+H13P's blackout rows (0.5·fullPD + 0.5·fullPD2) on the evaluation half of the simulated blackouts (585k cells) go
+through the production post-processing (gated reconciliation, then TV smoothing with the blackout category).
+`e_lwr` is the LWR proxy inside the span: sum |ΔN_sub − ΔN_true| / sum |ΔN_true| over consecutive known cells from
+T to T+19, with the observed rows T and T+19 as boundaries.
+
+| dark τ (a_out) | e_lwr March / April | boundary share of the error | speed RMSE | flow RMSE per lane |
+|---|---|---|---|---|
+| 0 | 1.154 / 1.178 | 12% / 10% | 6.471 / 5.991 | 75.7 / 63.3 |
+| **0.05 (current, a_out 0)** | **1.107 / 1.131** | 12% / 10% | 6.459 / 5.976 | 76.6 / 64.4 |
+| 0.2 (a_out 0) | 1.072 / 1.100 | – | 6.450 / 5.965 | 79.2 / 67.4 |
+| 0.2 (a_out 0.5) | 1.072 / 1.100 | – | 6.475 / 5.998 | 76.5 / 64.3 |
+| 0.5 (a_out 0.5) | 1.056 / 1.088 | – | 6.502 / 6.031 | 77.1 / 65.0 |
+| 1.0 (a_out 0) | 1.051 / 1.083 | 14% / 11% | 6.456 / 5.971 | 84.1 / 72.7 |
+
+- Blackout spans hold about 2.1% of a Task 2 panel's eligible pairs, and their |ΔN| is about 1.2× the month's
+  average. The D12_I405 panels have none, so the spans are f ≈ 2% of the 10-panel S_LWR denominator.
+- τ 0.2 with a 50/50 speed/flow split would give about 0.10·0.035·0.02 ≈ +0.00007 on S_LWR and cost about −0.00001 on
+  S_state. That is below the adoption bar, so the setting stays.
+- **The floor.** Even flattened (τ = 1) the span error equals the true increments inside the span (e ≈ 1.05, 86–89% of
+  it interior). The minute-scale variation of the truth inside a blackout is mostly measurement noise. No smoother
+  or model can predict it, so the blackout rows are at their LWR floor; only their level (RMSE) can still improve.

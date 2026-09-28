@@ -72,7 +72,7 @@ def panel_eval(panel: str, members, taus, tau_a: float = 0.0, a_out: float = 0.0
             m = (X.split == split).to_numpy()
             if not m.any():
                 continue
-            num = den = 0.0
+            num = den = nb = 0.0
             for T in np.unique(X.origin.to_numpy()[m]):
                 mm = m & (X.origin.to_numpy() == T)
                 Ns = np.full((20, len(links)), np.nan); Nt = np.full((20, len(links)), np.nan)
@@ -84,10 +84,12 @@ def panel_eval(panel: str, members, taus, tau_a: float = 0.0, a_out: float = 0.0
                 scale = lanes * length
                 Ns *= scale[None, :]; Nt *= scale[None, :]
                 ok = np.isfinite(Nt[1:]) & np.isfinite(Nt[:-1])
-                num += np.abs((Ns[1:] - Ns[:-1]) - (Nt[1:] - Nt[:-1]))[ok].sum()
+                err = np.abs((Ns[1:] - Ns[:-1]) - (Nt[1:] - Nt[:-1]))
+                num += err[ok].sum()
                 den += np.abs(Nt[1:] - Nt[:-1])[ok].sum()
+                nb += err[[0, -1]][ok[[0, -1]]].sum()            # the two boundary transitions (T->T+1, T+18->T+19)
             bm, bn, bsize = base[split.split("_")[0]]
-            rows.append(dict(panel=panel, split=split, tau=tau, num=num, den=den, n=int(m.sum()), n_orig=len(np.unique(X.origin.to_numpy()[m])),
+            rows.append(dict(panel=panel, split=split, tau=tau, num=num, den=den, num_bnd=nb, n=int(m.sum()), n_orig=len(np.unique(X.origin.to_numpy()[m])),
                              base_mean_dN=bm, base_pairs=bsize,
                              sse_v=float(((vs[m] - X.y_speed.to_numpy()[m]) ** 2).sum()),
                              sse_q=float(((qs[m] - X.y_flow.to_numpy()[m]) ** 2).sum())))
@@ -100,10 +102,11 @@ def run(members, taus, tau_a: float = 0.0, a_out: float = 0.0) -> pd.DataFrame:
         rows += panel_eval(p, members, taus, tau_a, a_out)
         print(p, "done", flush=True)
     d = pd.DataFrame(rows)
-    g = d.groupby(["split", "tau"])[["num", "den", "n", "sse_v", "sse_q"]].sum()
+    g = d.groupby(["split", "tau"])[["num", "den", "num_bnd", "n", "sse_v", "sse_q"]].sum()
     g["e_lwr"] = g.num / g.den
+    g["bnd_share"] = g.num_bnd / g.num
     g["rmse_v"] = np.sqrt(g.sse_v / g.n); g["rmse_q"] = np.sqrt(g.sse_q / g.n)
-    print(g[["e_lwr", "rmse_v", "rmse_q"]].round(5).to_string())
+    print(g[["e_lwr", "bnd_share", "rmse_v", "rmse_q"]].round(5).to_string())
     d.to_csv(OUT / "dsmooth.csv", index=False)
     return d
 
