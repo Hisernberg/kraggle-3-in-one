@@ -36,12 +36,14 @@ import pandas as pd
 
 from ..data import SLOTS, SPLIT_DAYS, load
 from .build_features import _rows, masked_view
-from .core import H, K, PANELS8, WORK, aggregate, statics
+from .core import H, K, PANELS8, SPACING, WORK, aggregate, statics
 from .dataset import load_ds
 from .features import profiles
 from .robust_pipeline import decode_topm
 
-OUT = WORK / "pseudo2"
+OUT = WORK / os.environ.get("T2_PSEUDO_DIR", "pseudo2")
+MODE = os.environ.get("T2_PSEUDO_MODE", "all")   # all: every onset run start + every 6th ongoing candidate;
+                                                  # sim: the official greedy selector replayed from every start day
 OG_EVERY = 6
 FILL = 3
 
@@ -55,6 +57,27 @@ def _ffill_targets(x: np.ndarray, hidden: np.ndarray, limit: int = FILL) -> np.n
         src = np.roll(x, k, 0)
         f[m] = src[m]
     return f
+
+
+def select_sim(cand: pd.DataFrame, lo: int, hi: int, quota: int = 5) -> pd.DataFrame:
+    """The official selector replayed from every start day of the split (as ``core.simulate_windows`` does on train):
+    chronological, ``quota`` windows per condition, every pair of selected origins >= 360 min apart. Official
+    ongoing windows are therefore mostly the first established queue after a gap, not a random stage of an episode.
+    Returns the unique windows with their draw counts."""
+    Tc = cand["T"].to_numpy(); og = cand.og.to_numpy()
+    out = {}
+    for s0 in range((hi - lo) // SLOTS - 1):
+        start = lo + s0 * SLOTS + H
+        acc, cnt = [], {True: 0, False: 0}
+        for T, o in zip(Tc[Tc >= start], og[Tc >= start]):
+            if cnt[o] >= quota or any(abs(T - a) < SPACING for a in acc):
+                continue
+            acc.append(T); cnt[o] += 1
+            out[(int(T), bool(o))] = out.get((int(T), bool(o)), 0) + 1
+            if cnt[True] >= quota and cnt[False] >= quota:
+                break
+    W = pd.DataFrame([(T, o, n) for (T, o), n in out.items()], columns=["T", "og", "draws"])
+    return W.sort_values("T").reset_index(drop=True)
 
 
 def find_windows(panel: str, split: str):
@@ -91,15 +114,18 @@ def find_windows(panel: str, split: str):
                 continue
         cand.append((T, og))
     cand = pd.DataFrame(cand, columns=["T", "og"])
-    first_on = (~cand.og & ~(cand["T"] - 1).isin(cand["T"])).to_numpy()
-    keep_og = cand.og.to_numpy() & (cand["T"].to_numpy() % OG_EVERY == 0)
-    W = cand[first_on | keep_og].reset_index(drop=True)
+    if MODE == "sim":
+        W = select_sim(cand, lo, hi)
+    else:
+        first_on = (~cand.og & ~(cand["T"] - 1).isin(cand["T"])).to_numpy()
+        keep_og = cand.og.to_numpy() & (cand["T"].to_numpy() % OG_EVERY == 0)
+        W = cand[first_on | keep_og].reset_index(drop=True)
     W["condition"] = np.where(W.og, "queue_ongoing", "queue_onset")
     Ts = W["T"].to_numpy()
     hidx = Ts[:, None] + np.arange(-H, 0)[None, :]
     fidx = Ts[:, None] + np.arange(1, K + 1)[None, :]
     arr = dict(hs=spf[hidx], hf=flf[hidx], he=el[hidx], hp=pct[hidx].astype(np.int8), y=qk[fidx], known=known[fidx])
-    return W[["T", "condition"]], arr
+    return W[[c for c in ("T", "condition", "draws") if c in W]], arr
 
 
 def build(panels=PANELS8) -> None:
@@ -192,6 +218,9 @@ def score(cond: str, schemes: dict, panels=PANELS8) -> pd.DataFrame:
         gc.collect()
         for name, members in schemes.items():
             pr = sum(w * P[m] for m, w in members) / sum(w for _, w in members)
+            if "@" in name:                  # "<scheme>@<b>": logit shift b before top-m decoding
+                b = float(name.split("@")[1])
+                pr = 1.0 / (1.0 + np.exp(-(np.log(np.clip(pr, 1e-6, 1 - 1e-6) / np.clip(1 - pr, 1e-6, 1)) + b)))
             out.append(window_iou(decode_topm(key.assign(p=pr)), Ys, M).assign(scheme=name))
         print(p, "scored", flush=True)
     d = pd.concat(out, ignore_index=True)
