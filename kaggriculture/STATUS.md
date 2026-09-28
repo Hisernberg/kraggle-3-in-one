@@ -11,8 +11,11 @@ submission, read the ladder, learn, then submit the next.
 | P01 | 09-27 05:20 | tetsutani demand-preserving (public) | probe of the strongest current public agent | 2093 (07:49, then retired) |
 | P02 | 09-27 06:05 | DSM tape 113970425_0 | replay a top player's recorded game + land catch-up | 1123 after 45 games (09:37) |
 | P03 | 09-27 06:26 | cha22_edge_arm | cha22 + market layer (sell-ahead-1, order search, on-sight switch) | 2377 after 48 games (09:37); 2372 after 78 (11:46) |
-| P04 | 09-27 11:50 | router r3_cg | tape router (280 tapes, day-start switching) + cash guard (fixes P02) + lazy per-tape decode (load 8 s → 0.1 s) | 1291 after 54 games (17:05) — **failed** |
-| (ext) | 09-27 13:50 | SB18 Macro-1 (not from this session) | tetsutani + turn-0 wheat duel | 1860 after 54 games (17:05), 34/40 wins, still climbing |
+| P04 | 09-27 11:50 | router r3_cg | tape router (280 tapes, day-start switching) + cash guard (fixes P02) + lazy per-tape decode (load 8 s → 0.1 s) | 1291 after 54 games (17:05); 1309 after 64 (23:00) — **failed** |
+| (ext) | 09-27 13:50 | SB18 Macro-1 (not from this session) | tetsutani + turn-0 wheat duel | 1860 after 54 games (17:05), 34/40 wins; 1947 after 93 (23:00) |
+| P05 | 09-28 00:08 | d_sb_s150a0 (id 56623202) | cha22 + SB18 opener + armed sell-ahead-2 (sell sub-1.3×-base stock first from step 150) | 1926/17 games (01:13) · 2231/39 (02:14) · 2310/56 (03:15) · 2282/71 (04:16) · 2273/82 (04:51) · 2293/98 (09:36) — plateau ≈ 2280-2295, below P03 |
+| P06 | 09-28 04:51 | t_sb_s150 (id 56629305) | tetsutani base + SB18 opener + armed sell-ahead-2 from step 150 (targets the duel-opener wheat route) | 1440/12 (05:22) · 1961/30 (06:30) · 2289/81 (09:36): 63/78; duel 91%, buy5 (cha22 family) 62% |
+| P07 | 09-28 09:39 | t6_fb20 (id 56636707) | P06 with sell-first threshold 2.0× base (mirror tie-breaks) | pending (active pair P06 + P07; P05 2293 displaced) |
 
 ## What the ladder taught us
 
@@ -55,6 +58,39 @@ productive than the public cluster (eggs/geese, wheat, wool pricing).
    candidate now gets a day-1 cash/hands check in `harness/ladder_review.py`.
 4. Do not submit anything until the daily count is known: the 6th submission of a UTC day gets HTTP 400 (17:10 test).
 5. A new submission always displaces the older of the active pair. Plan the pair, not the single submission.
+6. (09-28 S1) SB18 at ~1960 is 18/30 in its latest games; vs duel openers only 6/14 with an average margin of +1. The
+   near-mirror coin-flip pattern holds at every rating level. Only the market micro-edge (armed selling) separates them.
+7. (09-28 04:20) **P05 did not beat P03 on the ladder** (≈2290 vs 2370), despite 45/48 vs P03 locally. Ladder
+   review, 68 games: vs duel openers 54% (21/39), 15 losses under $600; vs buy5 86%; vs other 79%. In 12 close
+   losses to duel openers, the opponents pick up about 619 wheat per game vs our 488 and sell 902 vs 760.
+   **They out-produce us on wheat (the tetsutani-lineage route). They do not out-trade us.** Our local duel proxy
+   (public tetsutani) is weaker than the ladder's duel players, so local tests overrated the cha22 base. Next:
+   the tetsutani base with our armed edge (t_sb_s150). Locally it beats tetsutani 24/24 and P05 34/48; an official
+   game vs P05 won by +621, worst turn 0.18 s.
+8. (09-28 06:30) Edge knobs DO matter on the tetsutani base, unlike on cha22. Local test, seeds 10000-10059:
+   sa_full_below=2.0 (t6_fb20) beats P06 78/120 (+23), mostly by breaking exact mirror ties. It is equal or
+   slightly better vs P05/tets/cha22/metav4 (+6..+30 margin, same win counts). Harmful settings: l2 off, arm_k=2,
+   sa_from=216, and adding WHEAT to sell-ahead (−20k, catastrophic). Local wheat output of P05 ≈ P06 ≈ tetsutani
+   (552 harvested/game), so the ladder wheat gap comes from ladder opponents' own variants, not from the base.
+9. (09-28 S3) **The two bases have opposite weaknesses on the ladder and the same rating (≈2290).** P05 (cha22 base)
+   vs duel openers 54%, vs cha22-family 86%. P06 (tetsutani base) vs duel openers 91%, vs cha22-family 62%.
+   Neither reaches P03's 2370. The next gain has to come from beating the family we are weak against, not from
+   more mirror micro-edges. (The P07 validation game on one seed: P05 beat fb20 by $4.9k; locally fb20 vs P05 86/120.)
+10. (09-28 11:45) **Opponent-adaptive switcher.**
+    - Our two bases emit identical actions for steps 0-90. The first difference is at step 91: the cha22 base
+      sells 3 wheat, the tetsutani base does not. The ladder's families do the same (cha22 family sells at 91 in
+      34/39 games, tetsutani lineage doesn't in 67/69).
+    - Rule: rival money rises at step 92 → play the P05 (cha22) base, else the P06/P07 (tetsutani) base.
+    - Ladder split: vs "sold at 91" P05 86% / P06 67%; vs "didn't sell" P05 56% / P06 88%. The projected
+      switcher win rate is ≈87%, vs P06 81%.
+    - Where the base losses come from: P05 loses the last-day liquidation (690-718) to tetsutani, which sells
+      milk/wool/eggs a turn earlier. P06 loses days 22-28 to the cha22 family.
+    - The switcher (`agents/edge/build_switch.py`; both agents exec'd in separate namespaces; `switch_agent` last)
+      scored, both seats:
+      - seeds 11000-11059: P05 105/120, P06 60/120, tets 117/120, cha22 114/120, m4 112/120.
+      - my check, seeds 12000-12007: P03 16/16, P05 15/16, P06 8/16.
+    - With P07 as the tetsutani half (`sw_p05p07`, seeds 12100-12111): P03 23/24, P05 23/24, P06 15/24,
+      P07 12/24, sw_p05p06 15/24, tets 23/24, m4 19/24. Official games DONE; worst turn 0.24 s.
 
 ## Plan: automatic 5 slots per UTC day (09-28 → 09-30)
 
@@ -73,12 +109,31 @@ Each slot is a scheduled wake-up of this session and runs the **slot procedure**
 rating within ~±50. So every slot measures one candidate while the previous one keeps playing. On 09-30, S4 = the
 second-best measured agent and S5 = the best (the final active pair).
 
+**Turn-0 duel, measured locally (09-27 evening)**: prices are quoted per unit in lockstep, and BUY is quoted at
+price(inv-1). So [BUY a, SELL b, BUY c] only gains when the rival buys more at the same index, and against our
+[BUY 5, SEED] it changes nothing. It does cash-starve the v54-v57 lineage ([B20,S15]): about 24/24 wins, +15k.
+The real gain came from "always armed" selling (sell everything priced below 1.3x base, first in the order list,
+from step 150). It wins the early milk/strawberry sale races against near-mirrors.
+
+| candidate | vs v_sa2 | vs P03 | vs tetsutani | vs cha22 | field |
+|---|---|---|---|---|---|
+| **d_sb_s150a0** (cha22 + SB18 opener + armed sa, `submissions/p05_d_sb_s150a0`) | 45/48 +496 · my check 14/16 | 47/48 · 16/16 | 13/24 · 12/16 | 24/24 · 16/16 | 88% (v_sa2 82%) |
+| t_sb_s150 (tetsutani base, `submissions/cand_t_sb_s150`) | 38/48 · my check 10/16 −5 | 38/48 · 10/16 | 24/24 · 14/16 | 20/24 · 10/16 | 91% |
+
+Agents are built from `agents/edge/bases/base_sb.py` / `base_tsb.py` with the v_sa2 config plus sa_from=150, arm_k=0.
+
 **Queue for 09-28** (re-ordered at every slot by evidence):
-- S1: **P05 = v_sa2** (P03 + sell-ahead-2; 18/20 vs P03, equal vs field). It replaces P04 (1291) as the pair partner of SB18.
-- S2: the better of v_sa2 / P03 plus an answer to the turn-0 wheat duel (duel openers are our most common loss class),
-  if the overnight local test is positive; else re-submit P03 exactly (known ~2370) as the anchor.
-- S3-S5: best of the overnight candidates (cha22 edge + duel opening, edge layer on the tetsutani base, sa2 on the
-  duel base), in order of local win rate against a mirror set of (P03, v_sa2, SB18-class, field_top).
+- S1 00:05: **P05 = d_sb_s150a0**. It passed 2 official games (DONE, won both; worst turn 0.07 s).
+- S2 04:50 (**decided 04:20: submit t_sb_s150**, see lesson 7): if P05 is ≥ 2400 with ≥ 40 games, submit **t_sb_s150** (a different base, as a diversity probe; worst
+  turn about 0.5 s, within the 1 s limit). If P05 is under 2300, re-submit P03 as the anchor and study P05's losses.
+- **S4 14:20: submit submissions/cand_sw_p05p07** (switcher, lesson 10). Pair becomes P07 + switcher (P06 displaced).
+- S3 09:35 rule: if P06 ≥ 2250 (or still climbing above P05's pace) → submit **submissions/cand_t6_fb20** (P06 +
+  sa_full_below 2.0; official game DONE, worst turn 0.14 s); pair becomes P06 + fb20. Else → re-submit P03 (2370 anchor).
+- (earlier notes) S3-S5: driven by P05's ladder losses (ladder_review). The planned knob deltas were tested at 23:00 on seeds
+  9900-9907, both seats. They are flat: sa_from=100 and arm_before=720 play identically to P05. fb1.4 goes 9/16 vs
+  P05 (+$1), fb1.2 goes 7/16, and sa_from=200 goes 3/16. So P05's knobs sit at a local optimum and won't be
+  submitted. P05 on these fresh seeds: v_sa2 15/16 (+777), P03 15/16, tetsutani 14/16, metav4 14/16, cha22 16/16,
+  v57 16/16. Next deltas must target what the ladder losses show (e.g. the animal-first/template-A class).
 
 **Checkpoints**: CP1 ≥ 2600 → keep that agent as the anchor and test only small deltas on it. Below 2400 after
 09-29 S3 → stop exploring and spend 09-30 on the best measured pair.
