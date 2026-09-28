@@ -277,6 +277,7 @@ def backup(extra: list[str]):
     files = [str(SUBS / b["file"])] if b and (SUBS / b["file"]).exists() else []
     for g in BACKUP_GLOBS + list(extra):
         files += sorted(glob.glob(g))
+    files = list(dict.fromkeys(files))            # a file listed twice (e.g. the best zip) is staged once
     manifest = {}
     for f in files:
         name = f.replace("/home/user/", "").replace("/", "__")
