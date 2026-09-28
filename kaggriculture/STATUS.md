@@ -13,7 +13,8 @@ submission, read the ladder, learn, then submit the next.
 | P03 | 09-27 06:26 | cha22_edge_arm | cha22 + market layer (sell-ahead-1, order search, on-sight switch) | 2377 after 48 games (09:37); 2372 after 78 (11:46) |
 | P04 | 09-27 11:50 | router r3_cg | tape router (280 tapes, day-start switching) + cash guard (fixes P02) + lazy per-tape decode (load 8 s → 0.1 s) | 1291 after 54 games (17:05); 1309 after 64 (23:00) — **failed** |
 | (ext) | 09-27 13:50 | SB18 Macro-1 (not from this session) | tetsutani + turn-0 wheat duel | 1860 after 54 games (17:05), 34/40 wins; 1947 after 93 (23:00) |
-| P05 | 09-28 00:08 | d_sb_s150a0 (id 56623202) | cha22 + SB18 opener + armed sell-ahead-2 (sell sub-1.3×-base stock first from step 150) | 1926/17 games (01:13) · 2231/39 (02:14) · 2310/56 (03:15) · 2282/71 (04:16) — plateau ≈ 2280-2310, below P03 |
+| P05 | 09-28 00:08 | d_sb_s150a0 (id 56623202) | cha22 + SB18 opener + armed sell-ahead-2 (sell sub-1.3×-base stock first from step 150) | 1926/17 games (01:13) · 2231/39 (02:14) · 2310/56 (03:15) · 2282/71 (04:16) · 2273/82 (04:51) — plateau ≈ 2280, below P03 |
+| P06 | 09-28 04:51 | t_sb_s150 (id 56629305) | tetsutani base + SB18 opener + armed sell-ahead-2 from step 150 (targets the duel-opener wheat route) | pending (active pair P05 + P06; SB18 1993 displaced) |
 
 ## What the ladder taught us
 
