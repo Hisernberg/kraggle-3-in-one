@@ -551,4 +551,15 @@ Baseline blackout RMSE (cell-weighted over panels):
 | full7 (current blackout rows, ramp-flow member) | 7.33 / 6.89 | 81.2 / 72.0 |
 | hold7 (same, train days < 243) | 7.35 / 6.95 | 81.1 / 72.4 |
 
-fullPD (full7's settings plus the training half of these blackouts, `TFB_PSEUDO_DARK=1`) is training.
+**fullPD** (full7's settings plus the training half of these blackouts, `TFB_PSEUDO_DARK=1`, seed 15):
+
+| model | speed, March / April | flow per lane, March / April |
+|---|---|---|
+| full7 | 7.33 / 6.89 | 81.2 / 72.0 |
+| **fullPD** | **6.42 / 5.91** (−12% / −14%) | **76.1 / 63.5** (−6% / −12%) |
+| 0.5·full7 + 0.5·fullPD | 6.72 / 6.21 | 77.2 / 66.2 |
+
+- **Expected LB gain, from the test's blackout share (about 2.1% of targets):** speed RMSE per regime 2.108 → 2.045
+  (ΔS_state about +0.0014 on the 8 blackout panels), and a smaller gain on flow. S_total about +0.0004 to +0.0006.
+- H12P = H11P with blackout rows = fullPD.
+- fullPB (boosted config plus 3 row sets) was OOM-killed at 10.3 GB while fullPD trained alongside. Run it alone.
