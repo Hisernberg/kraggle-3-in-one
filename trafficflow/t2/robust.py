@@ -107,13 +107,19 @@ def report(df: pd.DataFrame, rec: pd.Series, cond: str) -> dict:
     return {k: (round(v, 4) if isinstance(v, float) else v) for k, v in out.items()}
 
 
+# share of the extra (non-selector) ongoing candidate windows used for training (T2_CAND_FRAC; 0.5 = the v5 recipe)
+CAND_FRAC = float(os.environ.get("T2_CAND_FRAC", "0.5"))
+
+
 def run_cv(variant: str, cfg: str, weighted: bool, cond: str = "queue_ongoing", oprior: bool = False):
     params, rounds = CFG[cfg]
     seed = int(os.environ.get("T2_SEED", "0"))
     params = {**params, "seed": seed}
     tag = f"rob_{variant}_{cfg}{'_w' if weighted else ''}{'_op' if oprior else ''}{f'_s{seed}' if seed else ''}"
+    if cond == "queue_ongoing" and CAND_FRAC != 0.5:
+        tag += f"_c{CAND_FRAC:g}"
     t = time.time()
-    R, M = gather(cond, cand_frac=0.5 if cond == "queue_ongoing" else 1.0, drop=VARIANTS[variant])
+    R, M = gather(cond, cand_frac=CAND_FRAC if cond == "queue_ongoing" else 1.0, drop=VARIANTS[variant])
     if cond == "queue_onset" and (variant.startswith("op") or oprior):
         from .oprior import add_to_rows
         R = add_to_rows(R, M, PANELS8)

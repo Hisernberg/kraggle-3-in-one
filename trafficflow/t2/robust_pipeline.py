@@ -31,15 +31,23 @@ from .robust import VARIANTS, recurrence
 from .submit import check, write
 
 
-def train_variant(variant: str, cfg: str, weighted: bool, cond="queue_ongoing", seed=0, oprior=False):
+def train_variant(variant: str, cfg: str, weighted: bool, cond="queue_ongoing", seed=0, oprior=False,
+                  gw_weight: pd.Series | None = None):
+    """``gw_weight`` (optional, indexed by gw): importance weight of each window, multiplied into the
+    weights of all its rows (``onset_iw``); None keeps the plain behaviour."""
     params, rounds = CFG[cfg]
-    R, M = gather(cond, cand_frac=0.5 if cond == "queue_ongoing" else 1.0, drop=VARIANTS[variant])
+    from .robust import CAND_FRAC
+    R, M = gather(cond, cand_frac=CAND_FRAC if cond == "queue_ongoing" else 1.0, drop=VARIANTS[variant])
     if oprior:
         from .core import PANELS8
         from .oprior import add_to_rows
         R = add_to_rows(R, M, PANELS8)
-    ds = lgb.Dataset(R.X, R.y.astype(np.float32), feature_name=list(R.cols),
-                     weight=window_weights(R.gw) if weighted else None,
+    wt = window_weights(R.gw) if weighted else None
+    if gw_weight is not None:
+        sw = gw_weight.reindex(R.gw).to_numpy(np.float32)
+        assert np.isfinite(sw).all(), "gw_weight: windows without a weight"
+        wt = sw if wt is None else (wt * sw).astype(np.float32)
+    ds = lgb.Dataset(R.X, R.y.astype(np.float32), feature_name=list(R.cols), weight=wt,
                      params={"verbose": -1, "max_bin": params.get("max_bin", 255)}).construct()
     del R, M
     gc.collect()

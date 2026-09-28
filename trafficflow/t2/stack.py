@@ -156,11 +156,15 @@ def add_extra(X: pd.DataFrame, Mi: pd.DataFrame) -> pd.DataFrame:
     return pd.concat(parts, ignore_index=True)
 
 
-def cv(X: pd.DataFrame, cols, params=P2, rounds=300) -> np.ndarray:
+def cv(X: pd.DataFrame, cols, params=P2, rounds=300, weight=None) -> np.ndarray:
+    """4 week-fold OOF stage-2 probabilities. ``weight`` (optional, one value per row of X, e.g.
+    importance weights by window as in ``onset_iw``); None keeps the plain behaviour."""
     p = np.full(len(X), np.nan, np.float32)
+    wt = None if weight is None else np.asarray(weight, np.float32)
     for f in range(4):
         tr = (X.fold != f).to_numpy(); te = (X.fold == f).to_numpy()
-        m = lgb.train(params, lgb.Dataset(X.loc[tr, cols].to_numpy(np.float32), X.y[tr].to_numpy(np.float32)), rounds)
+        m = lgb.train(params, lgb.Dataset(X.loc[tr, cols].to_numpy(np.float32), X.y[tr].to_numpy(np.float32),
+                                          weight=None if wt is None else wt[tr]), rounds)
         p[te] = m.predict(X.loc[te, cols].to_numpy(np.float32), num_threads=P2["num_threads"])
     return p
 
