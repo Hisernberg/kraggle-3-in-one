@@ -1958,9 +1958,9 @@ level (v5: 0.825 March) is close to the official 0.843; the every-6th-candidate 
 
 | ongoing scheme (vs v5) | sim March | sim April | all-windows March / April |
 |---|---|---|---|
-| v7 (G7 recipe, all four components on hybrid labels) | +0.0103 | +0.0025 | – |
+| v7 (G7 recipe, all four components on hybrid labels) | +0.0103 | +0.0025 | +0.0037 / +0.0089 |
 | v11 (G8) | +0.0032 | +0.0012 | +0.0020 / +0.0022 |
-| **v7+v11 mix** (0.175 each of v7/v11 og_v3 and noloc, 0.15 each v7 og_v2 / og_v2_noloc) | **+0.0138** | **+0.0067** | – |
+| **v7+v11 mix** (0.175 each of v7/v11 og_v3 and noloc, 0.15 each v7 og_v2 / og_v2_noloc) | **+0.0138** | **+0.0067** | **+0.0089 / +0.0107** (window-paired +0.0108 ± 0.0009 / +0.0121 ± 0.0010) |
 | v7+v11 with logit shift ±0.25 | +0.011 | +0.005 | – |
 | v9 stacking (G3) | −0.0046 | +0.0032 | −0.0048 / −0.0006 |
 
@@ -1975,4 +1975,7 @@ the pseudo-holdout is biased for ongoing label/capacity changes in a way not yet
 catches failures that plain CV misses. Draw-weighted April: v7v11 +0.005 ± 0.010, P(< 0) = 0.29.
 
 **Decision.** The v7+v11 ongoing is a hedge, not an adoption: at the final pick, one file keeps the v5 ongoing and
-one carries the pseudo-best Task 2. Kaggle scores the better of the two on private.
+one carries the pseudo-best Task 2. Kaggle scores the better of the two on private. H16P (H15P + v7+v11 ongoing,
+`/home/user/work/t2/lgb_v8og_v7v11.csv` from `ongoing_mix.py`) goes to the LB on 29 Sep as the one affordable test.
+Under the pseudo-holdout its March LB delta is +0.013 ± 0.007 on ongoing (+0.002 total). Under the G7/G8 pattern
+it is about −0.002 (−0.0003 total). It also registers the file for the final pick.

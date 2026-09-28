@@ -124,7 +124,13 @@ ongoing 0.843).
    mix of fullP2/P3/P4 on the pseudo-holdout. It is built only if a mix beats H11P's there.
 4. **H15P** (`H15P_monthbias.zip`): H14P (or H13P) with the month-specific speed level of `t1_bias.py`. Cross-fitted
    +0.0001, 10/10 panels in both months. Adopt if Δ ≥ +0.0001, or if Δ ≥ 0 matches the local estimate.
-5. Fifth slot: only a probe that answers an open question. Task 2 changes are not LB-testable (noise), so none of them.
+5. **H16P** (`H16P_og_v7v11.zip`, `/home/user/work/queue_H16_adapt.sh`): H15P with ongoing = the v7+v11 mix
+   (Task 2 pseudo-holdout best: +0.0089 March / +0.0107 April on 3,000 windows, +0.0138 / +0.0067 on official-style
+   windows). It is a probe of pseudo-holdout vs LB, not a candidate for the public main line.
+   - LB Δ vs H15P ≥ +0.0005 (ongoing ≥ +0.003): the pseudo-holdout is confirmed on March; adopt.
+   - Δ within ±0.0005: noise, as predicted for 40 windows. It stays the private-optimized hedge.
+   - Δ ≤ −0.001: a third March loss for ongoing label/capacity changes. Treat the pseudo-holdout as biased for this
+     change type and keep v5 ongoing in both finals.
 
 **Private-optimized line (for the final pick).** Current best plus the pseudo-holdout's best Task 2. Candidates:
 v7 ongoing (hybrid labels; pseudo +0.0069 March / +0.0102 April, about +0.0015 on the private score) and online
