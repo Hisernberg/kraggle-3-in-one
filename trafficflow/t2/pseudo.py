@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import gc
 import json
+import os
 import sys
 import time
 
@@ -116,7 +117,7 @@ def build(panels=PANELS8) -> None:
             W["split"] = split
             W.index = np.arange(base, base + len(W)); base += len(W)
             W["window_id"] = [f"PS_{panel}_{i}" for i in W.index]
-            for cond in ("queue_onset", "queue_ongoing"):
+            for cond in os.environ.get("T2_PSEUDO_CONDS", "queue_onset,queue_ongoing").split(","):
                 sel = np.flatnonzero((W.condition == cond).to_numpy())
                 for c0 in range(0, len(sel), 150):
                     s = sel[c0:c0 + 150]
@@ -173,7 +174,7 @@ def window_iou(pred: dict, Ys: dict, M: pd.DataFrame) -> pd.DataFrame:
 def _booster(m: str, cond: str) -> lgb.Booster:
     """"<name>" -> WORK/model_<name>_<cond>.txt; "t2h:<name>" -> /home/user/work/t2h/model_<name>_<cond>.txt."""
     d, n = (m.split(":", 1) if ":" in m else (str(WORK), m))
-    d = {"t2h": "/home/user/work/t2h"}.get(d, d)
+    d = {"t2h": "/home/user/work/t2h", "adapt": str(WORK / "adapt")}.get(d, d)
     return lgb.Booster(model_file=f"{d}/model_{n}_{cond}.txt")
 
 
@@ -219,10 +220,48 @@ def summarize(d: pd.DataFrame, order: list) -> pd.DataFrame:
     return r
 
 
+V5 = [("lgb_v5_og_v3", 0.35), ("lgb_v5_og_v3_noloc", 0.35), ("lgb_v3", 0.15), ("rob_noloc_p2w", 0.15)]
+
+
+def score_v9(w_stack: float = 0.8, tag: str = "v9_ogstack08", seeds=(0, 1, 2), panels=PANELS8) -> pd.DataFrame:
+    """G3 replayed on the pseudo windows: stage 1 = the v5 blend, stage 2 = the saved stacking models
+    (``og_stack`` features from the stage-1 field and the pseudo feature tables), p = w*p2 + (1-w)*p1, top-m.
+    Recurrence is not a feature of the saved recipe (x_rec dropped), so it is passed as 0."""
+    from . import og_stack as og
+    cond = "queue_ongoing"
+    B1 = {m: _booster(m, cond) for m, _ in V5}
+    S2 = [lgb.Booster(model_file=str(WORK / f"model_{tag}_stage2_s{s}_{cond}.txt")) for s in seeds]
+    cols = S2[0].feature_name()
+    out = []
+    for p in panels:
+        X, M, Ys = load_cond(cond, p)
+        p1 = sum(w * b.predict(X[b.feature_name()].to_numpy(np.float32), num_threads=4) for (m, w), b
+                 in zip(V5, B1.values())) / sum(w for _, w in V5)
+        R = X[["window_id", "k", "link"]].assign(p=p1)
+        Fr = X[["window_id", "k", "link"] + [c for c in og.CTX if c != "pq_k"]]
+        del X
+        gc.collect()
+        rec = pd.Series(0.0, index=pd.unique(R.window_id))
+        F = og.panel_rows(R, Fr, p, rec, "window_id", False, cols)
+        A = F[cols].to_numpy(np.float32)
+        p2 = np.mean([m.predict(A, num_threads=4) for m in S2], 0)
+        del F, A
+        key = R[["window_id", "k", "link"]].assign(panel=p)
+        for name, pr in (("v5", p1), ("v9_stack", w_stack * p2 + (1 - w_stack) * p1), ("v9_p2only", p2)):
+            out.append(window_iou(decode_topm(key.assign(p=pr)), Ys, M).assign(scheme=name))
+        print(p, "scored", flush=True)
+    d = pd.concat(out, ignore_index=True)
+    d.to_csv(OUT / "score_v9.csv", index=False)
+    summarize(d, ["v5", "v9_stack", "v9_p2only"])
+    return d
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1]
     if cmd == "build":
         build(sys.argv[2:] or PANELS8)
+    elif cmd == "v9":
+        score_v9()
     elif cmd == "score":
         spec = json.loads(sys.argv[3])
         score(sys.argv[2], {k: [(m, float(w)) for m, w in v] for k, v in spec.items()})
