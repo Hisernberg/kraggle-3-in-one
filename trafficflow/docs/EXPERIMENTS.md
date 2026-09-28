@@ -87,6 +87,7 @@ That compares with the best post-rebuild public score of 0.879. Our previous bes
 | 2026-09-27 09:58 | H6 `H6_dark8.zip` | H5w with blackout rows = mean(full7, full8) (dark-only booster) | 0.86839 | – | **+0.00001** (local +0.00016). Not adopted. Blackout-row gains transfer unreliably (below) |
 | 2026-09-27 11:10 | G8 `G8_ongoing_v11.zip` | H5w with ongoing = v11 (v5 blend, og_v3 / og_v3_noloc at capacity p3; +32/−45 cells in 28/40 validation windows) | 0.86798 | – | **−0.00041 → March ongoing −0.0027**, against CV +0.0053 ± 0.0005, shift-weighted +0.0050 (validation) / +0.0052 (private), footprint clean. Passed the full Task 2 gate and lost. Not adopted; robust list for the final pick |
 | 2026-09-28 00:10 | **H7** `H7_reg9.zip` | H5w with Task 1 regular rows = 0.5·full9 (boosted regular member) + 0.5·mean(full3, 4, 5, 7) | **0.86864** | – | **+0.00026** vs H5w (local +0.00053). Adopted, base → H7. Transfer about 50%: the S_state part (+0.00022) came through, the LWR part (+0.00031, a better density model in congested cells) mostly did not |
+| 2026-09-28 03:05 | H8 `H8_reg10.zip` | H7 with regular rows = 0.5·full9 + 0.5·full10 (two boosted seeds, old members dropped) | 0.86868 | – | **+0.00004** vs H7 (local +0.00026: S_state +0.00013, LWR +0.00013). Not adopted (bar +0.0001). Even the S_state part did not transfer |
 
 ### Decomposition of A (0.85204), exact from the probes
 | Task | Weighted | Task score | Local estimate |
@@ -440,3 +441,24 @@ Holdout J, blackout rows fixed (= hold7), reference = the H7 scheme:
   congested than March on some panels (D12_I5_N, D12_I5_S), and the gated cells are where the density model acts.
 - **Proxy rule from now on:** predict Task 1 LB Δ as 0.35·ΔS_state plus the LWR part discounted to about 15% when it
   comes from density accuracy.
+
+### Capacity gains do not transfer; variance reduction does (28 Sep)
+
+| change | kind | local ΔJ | LB Δ | transfer |
+|---|---|---|---|---|
+| H2: mean of 2 seeds | variance reduction | +0.00077 | +0.00066 | ~85% |
+| H3: 3rd seed | variance reduction | +0.00023 | +0.00022 | ~95% |
+| G1: TV smoothing | post-processing | +0.00062 | +0.00060 | ~100% |
+| H7: boosted member (2× rows, lr 0.05) at 0.5 | capacity / data | +0.00053 | +0.00026 | ~50% |
+| H8: 2 boosted seeds, old members dropped | capacity / data | +0.00026 | +0.00004 | ~15% |
+
+The holdout is the last 30 train days, which share the train simulation's demand draw. March and April are
+independent draws ("their own demand draws and incident schedules", DATA.md). More capacity or more rows fit
+train-draw-specific structure that the holdout rewards and the test months do not. Seed averaging and smoothing only
+remove variance, so they transfer.
+
+**Proxy rule:** discount capacity/data-driven local gains to about 30%; count variance-reduction and post-processing
+gains in full.
+
+**Consequence for the protocol:** a holdout that is an independent draw would measure transfer directly. None
+exists in train, but the observed (non-target) cells of March/April could serve as a transductive check (backlog).
