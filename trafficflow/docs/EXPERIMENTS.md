@@ -535,3 +535,20 @@ Returns from more rows alone are flattening (1× → 2× gave +0.0005, 2× → 3
 
 The LB gain includes an LWR part (better density in the test months) that the pseudo-holdout does not measure, so the
 pseudo figure is a conservative lower bound for transductive changes.
+
+## Test-month blackout pseudo-holdout (2026-09-28, `t1_pseudo.py dark`)
+Queue-like origins are found in the observed March/April data with the selector replica on the masked view, away from
+the released blackouts. At most 40 per month and panel are kept, and rows T+1..T+18 are blanked at each, as in the
+release. Features are built for the eligible observed cells in those rows. Origins alternate between an evaluation half
+and a training half (disjoint events): 800 simulated blackouts in all, 1.18M blackout cells, 585k of them for
+evaluation. The history rows T−12..T−1 stay in the masked view; in a real window they are fully observed, so the context
+is slightly harder.
+
+Baseline blackout RMSE (cell-weighted over panels):
+
+| model | speed, March / April | flow per lane, March / April |
+|---|---|---|
+| full7 (current blackout rows, ramp-flow member) | 7.33 / 6.89 | 81.2 / 72.0 |
+| hold7 (same, train days < 243) | 7.35 / 6.95 | 81.1 / 72.4 |
+
+fullPD (full7's settings plus the training half of these blackouts, `TFB_PSEUDO_DARK=1`) is training.
