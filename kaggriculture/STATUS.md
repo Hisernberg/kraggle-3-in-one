@@ -13,6 +13,7 @@ submission, read the ladder, learn, then submit the next.
 | P03 | 09-27 06:26 | cha22_edge_arm | cha22 + market layer (sell-ahead-1, order search, on-sight switch) | 2377 after 48 games (09:37); 2372 after 78 (11:46) |
 | P04 | 09-27 11:50 | router r3_cg | tape router (280 tapes, day-start switching) + cash guard (fixes P02) + lazy per-tape decode (load 8 s → 0.1 s) | 1291 after 54 games (17:05); 1309 after 64 (23:00) — **failed** |
 | (ext) | 09-27 13:50 | SB18 Macro-1 (not from this session) | tetsutani + turn-0 wheat duel | 1860 after 54 games (17:05), 34/40 wins; 1947 after 93 (23:00) |
+| P05 | 09-28 00:08 | d_sb_s150a0 (id 56623202) | cha22 + SB18 opener + armed sell-ahead-2 (sell sub-1.3×-base stock first from step 150) | pending (active pair now SB18 1963 + P05; P04 1314 retired) |
 
 ## What the ladder taught us
 
@@ -55,6 +56,8 @@ productive than the public cluster (eggs/geese, wheat, wool pricing).
    candidate now gets a day-1 cash/hands check in `harness/ladder_review.py`.
 4. Do not submit anything until the daily count is known: the 6th submission of a UTC day gets HTTP 400 (17:10 test).
 5. A new submission always displaces the older of the active pair. Plan the pair, not the single submission.
+6. (09-28 S1) SB18 at ~1960 is 18/30 in its latest games; vs duel openers only 6/14 with an average margin of +1. The
+   near-mirror coin-flip pattern holds at every rating level. Only the market micro-edge (armed selling) separates them.
 
 ## Plan: automatic 5 slots per UTC day (09-28 → 09-30)
 
