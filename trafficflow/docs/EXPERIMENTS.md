@@ -90,6 +90,7 @@ That compares with the best post-rebuild public score of 0.879. Our previous bes
 | 2026-09-28 03:05 | H8 `H8_reg10.zip` | H7 with regular rows = 0.5·full9 + 0.5·full10 (two boosted seeds, old members dropped) | 0.86868 | – | **+0.00004** vs H7 (local +0.00026: S_state +0.00013, LWR +0.00013). Not adopted (bar +0.0001). Even the S_state part did not transfer |
 | 2026-09-28 05:05 | **H9P** `H9P_transductive.zip` | H7 with Task 1 regular rows = fullP (transductive member: train + observed March/April cells) | **0.87093** | 14/post-rebuild | **+0.00229** vs H7 (pseudo-holdout +0.0019 from S_state alone). Adopted, base → H9P. The largest Task 1 step since E1 |
 | 2026-09-28 06:48 | **H10P** `H10P_transductive2.zip` | H9P with regular rows = 0.35·fullP + 0.65·fullP2 (2× transductive rows) | **0.87202** | – | **+0.00109** vs H9P (pseudo-holdout +0.00054 from S_state). Adopted, base → H10P. The LB gain is about 2× the S_state-only pseudo figure, as for H9P |
+| 2026-09-28 08:35 | **H11P** `H11P_transductive3.zip` | H10P with regular rows = 0.5·fullP2 + 0.5·fullP3 (fullP3: 3× transductive rows, seed 13) | **0.87249** | – | **+0.00047** vs H10P (pseudo +0.00025 from S_state; the ~2× LB factor held). Adopted, base → H11P |
 
 ### Decomposition of A (0.85204), exact from the probes
 | Task | Weighted | Task score | Local estimate |
@@ -520,3 +521,17 @@ Pseudo-holdout, 0.35·ΔS_state vs fullP alone (March / April, panels up):
 - H10P = H9P with the weighted pair.
 - A third disjoint set is built; fullP3 (3×, seed 13) is chained after H10P (`/home/user/work/chain_H11P.sh`).
 - 733 MB were freed by deleting `/home/user/work/t2/_xev_11368.npy`, a temp file the killed p4 CV left behind.
+
+### 3× transductive rows (fullP3, seed 13) and the day's transductive curve
+Pseudo-holdout vs H10P, 0.35·ΔS_state (March / April, panels up): fullP3 alone +0.00013 (7) / +0.00008 (8);
+**0.5·fullP2 + 0.5·fullP3 +0.00024 (10) / +0.00026 (9)**; 0.2·P + 0.35·P2 + 0.45·P3 +0.00023 (10) / +0.00026 (10).
+Returns from more rows alone are flattening (1× → 2× gave +0.0005, 2× → 3× +0.0001); averaging members adds the rest.
+
+| step | pseudo (S_state only) | LB Δ | LB / pseudo |
+|---|---|---|---|
+| H7 → H9P (1×) | +0.0019 | +0.00229 | 1.2 |
+| H9P → H10P (2×) | +0.00054 | +0.00109 | 2.0 |
+| H10P → H11P (3×) | +0.00025 | +0.00047 | 1.9 |
+
+The LB gain includes an LWR part (better density in the test months) that the pseudo-holdout does not measure, so the
+pseudo figure is a conservative lower bound for transductive changes.

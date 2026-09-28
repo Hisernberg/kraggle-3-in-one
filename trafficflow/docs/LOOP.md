@@ -55,22 +55,23 @@ Background agents and jobs wake the session when they finish, so work continues 
    (**Backup** below).
 
 ## Current best
-**`H10P_transductive2.zip` = 0.87202** (2026-09-28). #1 KTK 0.90085.
+**`H11P_transductive3.zip` = 0.87249** (2026-09-28). #1 KTK 0.90085.
 
 Build:
 ```
-python3 -m trafficflow.make_submission --state-tag ens_H10P --recon-a 0.75 --gate 0.6 \
+python3 -m trafficflow.make_submission --state-tag ens_H11P --recon-a 0.75 --gate 0.6 \
   --smooth "free=0.0075,free_a=0.001,gate=0.02,gate_a=0.005,dark=0.05" \
   --queue /home/user/work/t2/lgb_v8_seeds9_stack03.csv --odme /home/user/work/t4/t4_l2proj.csv \
   --out /home/user/work/subs/<ID>.csv --note "<ID>: ..."
 python3 -m trafficflow.loop pack /home/user/work/subs/<ID>.csv
 ```
 
-- **Task 1:** regular rows = 0.35·`fullP` + 0.65·`fullP2` (transductive); blackout rows = `full7` (ramp-flow member).
+- **Task 1:** regular rows = 0.5·`fullP2` + 0.5·`fullP3` (transductive); blackout rows = `full7` (ramp-flow member).
+  - `fullP3`: seed 13, three disjoint transductive row sets (`trainrows,trainrows2,trainrows3`).
   - `fullP2`: like `fullP`, seed 12, trained on two disjoint transductive row sets (`TFB_PSEUDO_FILES=trainrows,trainrows2`).
   - `fullP`: regular models only (`TFB_KINDS=reg`), FD features, seed 11, standard config.
     It trains on train rows plus 180k observed March/April cells per panel (`t1_pseudo.py trainrows`, `TFB_PSEUDO=1`).
-  - `state_ens_H10P.parquet` comes from `t1_pipeline enskind --tag ens_H10P --reg fullP:0.35 fullP2:0.65 --dark full7`.
+  - `state_ens_H11P.parquet` comes from `t1_pipeline enskind --tag ens_H11P --reg fullP2:0.5 fullP3:0.5 --dark full7`.
   - Density reconciliation where v < 0.6·v_f (a = 0.75), then TV smoothing.
 - **Task 2:** `lgb_v8_seeds9_stack03`.
   - Onset v8: stacking + 9 seeds on hybrid labels.
@@ -170,6 +171,7 @@ the maximum score; H6 was below the +0.0001 adoption bar, so the base for single
 | 09-28 | H8: two boosted seeds, old members dropped | 0.86868 (+0.00004) | Local +0.00026. **Capacity/data gains transfer at 15–50%; variance reduction at 85–100%** (EXPERIMENTS.md). Not adopted; base stays H7. The loop's `status` shows H8 as best (max score) |
 | 09-28 | **H9P: transductive Task 1 member (regular rows)** | **0.87093 (+0.00229)** | Pseudo-holdout +0.0019 from S_state alone. **Adopted: new best.** Learning from the test months' observed cells is the biggest Task 1 lever |
 | 09-28 | **H10P: 2× transductive rows (0.35·fullP + 0.65·fullP2)** | **0.87202 (+0.00109)** | Pseudo-holdout +0.00054 (S_state only). **Adopted: new best.** More test-month rows keep paying |
+| 09-28 | **H11P: 0.5·fullP2 + 0.5·fullP3 (3× rows)** | **0.87249 (+0.00047)** | Pseudo +0.00025; the LB gives about 2× the S_state-only pseudo figure for transductive steps. **Adopted: new best.** Day: 0.86838 → 0.87249 |
 | 09-26 | **H2: G2 + Task 1 seed ensemble** (state rows only) | **0.86777 (+0.00066)** | local J +0.00077. **Adopted: new best** |
 | 09-26 | H1b: H2 + ongoing v10 (stage 2 may only remove cells, recurrence ≥ 0.05) | 0.86629 (−0.00148) | Passed the new Task 2 gate and still failed (ongoing −0.010). **Ongoing stacking line dropped, final pick included.** Ongoing changes are LB probes first from now on |
 | 09-26 | P5 probe: H2 + TV smoothing ×3 | 0.86736 (−0.00041) | local −0.00062. The official Task 3 truth behaves like the train truth, and the smoothing strength is at or near its optimum |
