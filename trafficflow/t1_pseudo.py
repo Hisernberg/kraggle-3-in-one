@@ -125,6 +125,102 @@ def build_train_rows(panel: str, rounds: int = 3, n_per_round: int = 30_000, see
     print(f"{panel}: {len(X)} transductive rows, {time.time() - t0:.0f}s", flush=True)
 
 
+def build_dark_panel(panel: str, spacing: int = 36, seed: int = 0) -> None:
+    """Transductive blackout rows. Queue-like origins T are found in the observed March/April data (the Task 2
+    selector replica on the masked view; hidden cells count as not queued) away from the real blackouts. Rows T+1..T+18
+    are blanked at every origin, exactly like a released blackout, and features are built for the eligible observed
+    cells in those rows (labels = the observed values). Origins alternate between an evaluation set (`split` ending
+    in `_eval`) and a training set, so the two are disjoint events. -> WORK/pseudo/<panel>_dark.parquet"""
+    f = OUT / f"{panel}_dark.parquet"
+    if f.exists():
+        return
+    t0 = time.time()
+    P = train_blackout_panel(panel)
+    a0 = SPLIT_DAYS["validation"][0] * SLOTS
+    P.tspeed[a0:] = P.X["speed"][a0:]                    # the selector replica reads tspeed; test months: masked view
+    real_dark = P.dark.copy()
+    orig = []
+    for split in ("validation", "private"):
+        a, b = SPLIT_DAYS[split]
+        for T, cond in P.select_origins(a, b, spacing=spacing):
+            if not real_dark[T - 12:T + 20].any():         # keep clear of the released blackouts
+                orig.append((T, cond, split))
+    rng = np.random.default_rng(seed + 7 * PANELS.index(panel))
+    orig = [o for sp in ("validation", "private") for o in
+            (lambda xs: [xs[i] for i in sorted(rng.choice(len(xs), min(40, len(xs)), replace=False))])(
+                [o for o in orig if o[2] == sp])]                # at most 40 blackouts per month (disk)
+    keep = {c: P.X[c].copy() for c in P.X}
+    for T, _, _ in orig:
+        for c in P.X:
+            P.X[c][T + 1:T + 19] = np.nan
+    P._interp()
+    rows = []
+    for i, (T, cond, split) in enumerate(orig):
+        rr = np.arange(T + 1, T + 19)
+        ok = np.isfinite(keep["speed"][rr]) & np.isfinite(keep["flow"][rr]) & P.elig[rr]
+        tt, ll = np.nonzero(ok); tt = rr[tt]
+        rows.append(pd.DataFrame({"t": tt.astype(np.int32), "j": ll.astype(np.int16),
+                                  "split": split + ("_eval" if i % 2 == 0 else "_train"), "cond": cond, "origin": T}))
+    R = pd.concat(rows, ignore_index=True)
+    tt, ll = R.t.to_numpy(), R.j.to_numpy().astype(np.int64)
+    F = P.features(tt, ll)
+    m = pd.DataFrame({"panel": panel, "t": tt, "j": ll.astype(np.int16), "kind": "dark", "day": (tt // SLOTS).astype(np.int16),
+                      "treg": P.regime_day[tt // SLOTS].astype(np.int8), "y_speed": keep["speed"][tt, ll],
+                      "y_flow": keep["flow"][tt, ll], "split": R.split, "cond": R.cond, "origin": R.origin,
+                      "lanes_": P.lanes[ll], "vf_": P.vf[ll]})
+    f64 = F.select_dtypes("float64").columns
+    F[f64] = F[f64].astype(np.float32)
+    X = pd.concat([m, F], axis=1)
+    X.to_parquet(f)
+    n_ev = int(X.split.str.endswith("_eval").sum())
+    print(f"{panel}: {len(orig)} simulated test-month blackouts, {len(X)} dark cells ({n_ev} eval), {time.time() - t0:.0f}s", flush=True)
+
+
+def predict_dark(tags, panels=PANELS, threads: int = 4) -> None:
+    """Blackout-model predictions of the evaluation dark cells -> WORK/pseudo/dpred_<tag>_<panel>.npz."""
+    import lightgbm as lgb
+    for tag in tags:
+        models = {c: lgb.Booster(model_file=str(WORK / "models" / tag / f"dark_{c}.txt")) for c in ("speed", "flow", "dens")}
+        for panel in panels:
+            f = OUT / f"dpred_{tag}_{panel}.npz"
+            if f.exists():
+                continue
+            X = pd.read_parquet(OUT / f"{panel}_dark.parquet")
+            X = X[X.split.str.endswith("_eval")].reset_index(drop=True)
+            X["panel_id"] = np.int16(PANELS.index(panel))
+            X = add_ramp(add_fd(X))
+            pr = {c: m.predict(X[m.feature_name()], num_threads=threads) + base_of(X, c) for c, m in models.items()}
+            np.savez_compressed(f, **pr)
+        print(f"{tag}: dark eval predicted", flush=True)
+
+
+def score_dark(schemes: dict, panels=PANELS) -> pd.DataFrame:
+    """Blackout-cell RMSE (speed, flow per lane) of dark-model mixes on the evaluation blackouts, per month."""
+    tags = sorted({t for v in schemes.values() for t, _ in v})
+    rows = []
+    for panel in panels:
+        X = pd.read_parquet(OUT / f"{panel}_dark.parquet", columns=["split", "y_speed", "y_flow"])
+        X = X[X.split.str.endswith("_eval")].reset_index(drop=True)
+        P = {t: dict(np.load(OUT / f"dpred_{t}_{panel}.npz")) for t in tags}
+        for name, members in schemes.items():
+            v = sum(w * P[t]["speed"] for t, w in members); q = sum(w * P[t]["flow"] for t, w in members)
+            for split in ("validation_eval", "private_eval"):
+                m = (X.split == split).to_numpy()
+                if not m.any():
+                    continue
+                rows.append(dict(panel=panel, split=split, scheme=name, n=int(m.sum()),
+                                 rmse_v=float(np.sqrt(np.mean((v[m] - X.y_speed.to_numpy()[m]) ** 2))),
+                                 rmse_q=float(np.sqrt(np.mean((q[m] - X.y_flow.to_numpy()[m]) ** 2)))))
+    d = pd.DataFrame(rows)
+    d.to_csv(OUT / "score_dark.csv", index=False)
+    for split in ("validation_eval", "private_eval"):
+        x = d[d.split == split]
+        print(split, "blackout RMSE (cell-weighted over panels):")
+        g = x.assign(sv=x.rmse_v ** 2 * x.n, sq=x.rmse_q ** 2 * x.n).groupby("scheme")[["sv", "sq", "n"]].sum()
+        print(pd.DataFrame({"rmse_v": np.sqrt(g.sv / g.n), "rmse_q": np.sqrt(g.sq / g.n), "cells": g.n}).reindex(list(schemes)).round(3).to_string())
+    return d
+
+
 def predict(tags, panels=PANELS, threads: int = 4) -> None:
     import lightgbm as lgb
     for tag in tags:
@@ -209,6 +305,15 @@ if __name__ == "__main__":
             build_train_rows(p, seed=sd, name=name); gc.collect()
     elif cmd == "predict":
         predict(sys.argv[2].split(","), sys.argv[3:] or PANELS)
+    elif cmd == "dark":          # simulated test-month blackouts
+        for p in (sys.argv[2:] or PANELS):
+            build_dark_panel(p); gc.collect()
+    elif cmd == "dpredict":
+        predict_dark(sys.argv[2].split(","), sys.argv[3:] or PANELS)
+    elif cmd == "dscore":        # dscore '{"name": [["tag", w], ...]}'
+        import json
+        spec = json.loads(sys.argv[2])
+        score_dark({k: [(t, float(w)) for t, w in v] for k, v in spec.items()})
     elif cmd == "score":  # score ['{"name": [["tag", w], ...], ...}']  (default: SCHEMES; the first is the reference)
         import json
         spec = json.loads(sys.argv[2]) if len(sys.argv) > 2 else None

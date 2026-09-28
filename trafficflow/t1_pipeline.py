@@ -96,6 +96,7 @@ NON_FEAT = {"panel", "t", "j", "kind", "day", "treg", "y_speed", "y_flow", "link
 # TFB_PSEUDO=1: append the transductive rows of the test months (t1_pseudo.build_train_rows) to the regular training
 # data; they always train and never enter the early-stopping validation set
 USE_PSEUDO = os.environ.get("TFB_PSEUDO", "0") == "1"
+USE_PSEUDO_DARK = os.environ.get("TFB_PSEUDO_DARK", "0") == "1"
 USE_FD = os.environ.get("TFB_FD", "0") == "1"
 _FD_CACHE: dict = {}
 
@@ -238,6 +239,10 @@ def load_train(panels, kind, seed=0):
             for name in os.environ.get("TFB_PSEUDO_FILES", "trainrows").split(","):
                 pr = pd.read_parquet(WORK / "pseudo" / f"{p}_{name}.parquet").assign(pseudo=True)
                 d = pd.concat([d, pr[[c for c in d.columns if c in pr.columns]]], ignore_index=True)
+        if USE_PSEUDO_DARK and kind == "dark":  # simulated test-month blackouts, training half only (t1_pseudo dark)
+            pr = pd.read_parquet(WORK / "pseudo" / f"{p}_dark.parquet")
+            pr = pr[pr.split.str.endswith("_train")].assign(pseudo=True)
+            d = pd.concat([d, pr[[c for c in d.columns if c in pr.columns]]], ignore_index=True)
         f64 = d.select_dtypes("float64").columns
         d[f64] = d[f64].astype(np.float32)
         dfs.append(d)
