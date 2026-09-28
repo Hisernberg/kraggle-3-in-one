@@ -129,7 +129,7 @@ the maximum score; H6 was below the +0.0001 adoption bar, so the base for single
      before stacking more on it.
 0. **H12P for 29 Sep S1:** H11P with blackout rows = fullPD, the transductive blackout member. On the simulated test-month
    blackouts, speed RMSE falls 12–14%. Expected +0.0004 to +0.0006; adopt if Δ ≥ +0.0001.
-   Built by `/home/user/work/build_H12P.sh`.
+   **Built 28 Sep 10:19: `H12P_darkP.zip`** (65/65; 133k state rows differ from H11P, the blackout rows plus smoothing neighbours).
 4. **H10P**: regular rows = 0.35·fullP + 0.65·fullP2 (2× transductive rows). Pseudo-holdout +0.00054 (March) /
    +0.00067 (April) vs H9P, 10/10 panels. Adopt if Δ ≥ +0.0001.
 5. **H11P**: fullP3 on 3× rows; the scheme is picked on the pseudo-holdout, chained after H10P (log `/home/user/work/H11P.log`).
