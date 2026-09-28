@@ -9,6 +9,7 @@ credentials in ~/.kaggle/kaggle.json).
     python daily/run.py submit NAME "message"       # submit daily/out/NAME.csv, wait, log, update best
 """
 import csv
+import shutil
 import datetime as dt
 import json
 import shlex
@@ -54,8 +55,8 @@ def merge_args(base, extra):
 def status():
     s = load()
     print(sh(["kaggle", "competitions", "submission-limits", COMP]).strip().splitlines()[-1])
-    lb = sh(["kaggle", "competitions", "leaderboard", COMP, "-s"]).splitlines()[3:10]
-    print("leaderboard:", " | ".join(" ".join(l.split()[1:2] + l.split()[-1:]) for l in lb if l.strip()))
+    lb = [l for l in sh(["kaggle", "competitions", "leaderboard", COMP, "-s"]).splitlines() if l[:1].isdigit()][:8]
+    print("leaderboard:", " | ".join(f"{i + 1}. {l.split()[-1]}" for i, l in enumerate(lb)))
     print("best:", s["best_score"], s["best_name"], " ".join(s["best_args"]))
     print("queue:")
     for q in s["queue"]:
@@ -74,14 +75,18 @@ def build(name, extra):
 
 def submit(name, msg):
     f = OUT / f"{name}.csv"
-    subprocess.run(["kaggle", "competitions", "submit", COMP, "-f", str(f), "-m", msg], capture_output=True, cwd=UMUD)
-    while True:
-        rows = sh(["kaggle", "competitions", "submissions", COMP]).splitlines()
-        top = rows[3] if len(rows) > 3 else ""
-        if f.name in top and "PENDING" not in top:
-            break
+    r = subprocess.run(["kaggle", "competitions", "submit", COMP, "-f", str(f), "-m", msg],
+                       capture_output=True, text=True, cwd=UMUD)
+    print(r.stdout.strip() or r.stderr.strip())
+    for _ in range(90):  # up to 15 min
         time.sleep(10)
+        top = next((l for l in sh(["kaggle", "competitions", "submissions", COMP]).splitlines() if f.name in l), "")
+        if "COMPLETE" in top or "ERROR" in top:
+            break
+    if "COMPLETE" not in top:
+        sys.exit(f"no score for {f.name}: {top.strip() or 'submission not found'}")
     score = float(top.split()[-1])
+    shutil.copy(f, UMUD / "submissions" / f.name)  # permanent record of every submitted CSV
     args = (OUT / f"{name}.args").read_text() if (OUT / f"{name}.args").exists() else ""
     s = load()
     new_best = score < s["best_score"]

@@ -1,0 +1,7 @@
+utc,name,score,new_best,args,message
+2026-09-26 00:10,d5_S5_pa20_a08,0.31995,1,--w 0.56 0.27 1.0 --clip-mt 4 --pa-offset 2.0 --alpha 0.8,d5 S5
+2026-09-27 00:07,d6_S1_a10,0.31903,1,--w 0.56 0.27 1.0 --clip-mt 4 --pa-offset 2.0 --alpha 1.0,d6 S1: alpha 1.0
+2026-09-27 00:08,d6_S2_flclip35,0.31904,0,--w 0.56 0.27 1.0 --clip-mt 4 --pa-offset 2.0 --alpha 1.0 --w-clip 0.56 0.35 1.0,d6 S2: FL 0.35 on clip rows
+2026-09-27 00:09,d6_S3_mtclip6,0.32119,0,--w 0.56 0.27 1.0 --clip-mt 6 --pa-offset 2.0 --alpha 1.0,d6 S3: MT clip 6
+2026-09-27 00:09,d6_S4_mtclip3,0.31795,1,--w 0.56 0.27 1.0 --clip-mt 3 --pa-offset 2.0 --alpha 1.0,d6 S4: MT clip 3
+2026-09-27 00:10,d6_S5_pa050,0.31957,0,--w 0.5 0.27 1.0 --clip-mt 3 --pa-offset 2.0 --alpha 1.0,d6 S5: PA weight 0.5

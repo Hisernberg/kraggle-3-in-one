@@ -1,0 +1,19 @@
+{
+ "best_score": 0.31795,
+ "best_name": "d6_S4_mtclip3",
+ "best_args": ["--w", "0.56", "0.27", "1.0", "--clip-mt", "3", "--pa-offset", "2.0", "--alpha", "1.0"],
+ "settled": [
+  "FL weight 0.27 linear; FL clip/tail hurt; FL weight on clip rows flat 0.27-0.35",
+  "MT weight 1.0, MT offset 0 (sharp minimum); MT clip 6 > 4 > 3 got better (one public row)",
+  "PA offset ~2.0 (quadratic fit); PA weight 0.5 worse than 0.56",
+  "clip smoothing alpha 0.6 < 0.8 < 1.0",
+  "public LB is ~1/3 of test rows (~103); single-row probes have little private value"
+ ],
+ "queue": [
+  "--w 0.62 0.27 1.0  (PA weight above 0.56)",
+  "--pa-offset 1.8 / 2.2 retest at alpha 1.0 + clip-mt 3",
+  "--w 0.56 0.24 1.0 / 0.30  (FL weight retest after full smoothing)",
+  "--clip-pa 6  (PA outlier clip, untested)",
+  "--clip-mt 2.5  (public probe, low priority)"
+ ]
+}
