@@ -76,6 +76,51 @@ def build_panel(panel: str, seed: int = 0) -> None:
     print(f"{panel}: {len(X)} pseudo cells, {time.time() - t0:.0f}s", flush=True)
 
 
+def build_train_rows(panel: str, rounds: int = 3, n_per_round: int = 30_000, seed: int = 1) -> None:
+    """Transductive training rows: observed, eligible, non-target, non-blackout cells of the test months, disjoint
+    from the evaluation pseudo cells. Each round hides its own cells (about 5% of the observed cells, so the neighbour
+    pattern stays close to a real target's), builds their features, and restores the panel. Columns match the feat
+    tables (load_train adds FD / ramp columns), kind 'reg', flagged `pseudo`."""
+    f = OUT / f"{panel}_trainrows.parquet"
+    if f.exists():
+        return
+    t0 = time.time()
+    P = train_blackout_panel(panel)
+    ev = pd.read_parquet(OUT / f"{panel}.parquet", columns=["t", "j"])
+    ev_key = set(zip(ev.t.to_numpy().tolist(), ev.j.to_numpy().tolist()))
+    orig = {c: P.X[c].copy() for c in P.X}
+    rng = np.random.default_rng(seed + 31 * PANELS.index(panel))
+    parts = []
+    for split in ("validation", "private"):
+        a, b = SPLIT_DAYS[split]
+        sl = slice(a * SLOTS, b * SLOTS)
+        ok = (np.isfinite(orig["speed"][sl]) & np.isfinite(orig["flow"][sl]) & P.elig[sl] & (P.target[sl] == 0)
+              & ~P.dark[sl][:, None])
+        tt, ll = np.nonzero(ok); tt = tt + a * SLOTS
+        keep = np.array([(int(t), int(l)) not in ev_key for t, l in zip(tt, ll)])
+        tt, ll = tt[keep], ll[keep]
+        order = rng.permutation(len(tt))
+        for r in range(rounds):
+            s = order[r * n_per_round:(r + 1) * n_per_round]
+            t_r, l_r = tt[s], ll[s]
+            for c in P.X:
+                P.X[c] = orig[c].copy()
+                P.X[c][t_r, l_r] = np.nan
+            P._interp()
+            F = P.features(t_r, l_r)
+            m = pd.DataFrame({"panel": panel, "t": t_r.astype(np.int32), "j": l_r.astype(np.int16), "kind": "reg",
+                              "day": (t_r // SLOTS).astype(np.int16), "treg": P.regime_day[t_r // SLOTS].astype(np.int8),
+                              "y_speed": orig["speed"][t_r, l_r], "y_flow": orig["flow"][t_r, l_r]})
+            f64 = F.select_dtypes("float64").columns
+            F[f64] = F[f64].astype(np.float32)
+            parts.append(pd.concat([m, F], axis=1))
+    for c in P.X:
+        P.X[c] = orig[c]
+    X = pd.concat(parts, ignore_index=True)
+    X.to_parquet(f)
+    print(f"{panel}: {len(X)} transductive rows, {time.time() - t0:.0f}s", flush=True)
+
+
 def predict(tags, panels=PANELS, threads: int = 4) -> None:
     import lightgbm as lgb
     for tag in tags:
@@ -153,7 +198,12 @@ if __name__ == "__main__":
     if cmd == "build":
         for p in (sys.argv[2:] or PANELS):
             build_panel(p); gc.collect()
+    elif cmd == "trainrows":
+        for p in (sys.argv[2:] or PANELS):
+            build_train_rows(p); gc.collect()
     elif cmd == "predict":
         predict(sys.argv[2].split(","), sys.argv[3:] or PANELS)
-    elif cmd == "score":
-        score()
+    elif cmd == "score":  # score ['{"name": [["tag", w], ...], ...}']  (default: SCHEMES; the first is the reference)
+        import json
+        spec = json.loads(sys.argv[2]) if len(sys.argv) > 2 else None
+        score({k: [(t, float(w)) for t, w in v] for k, v in spec.items()} if spec else SCHEMES)

@@ -92,7 +92,10 @@ def feat_panel(panel: str, seed: int = 0):
     print(f"{panel}: feat done in {time.time() - t0:.0f}s, origins={len(origins)}", flush=True)
 
 
-NON_FEAT = {"panel", "t", "j", "kind", "day", "treg", "y_speed", "y_flow", "link_id", "y_dens"}
+NON_FEAT = {"panel", "t", "j", "kind", "day", "treg", "y_speed", "y_flow", "link_id", "y_dens", "pseudo"}
+# TFB_PSEUDO=1: append the transductive rows of the test months (t1_pseudo.build_train_rows) to the regular training
+# data; they always train and never enter the early-stopping validation set
+USE_PSEUDO = os.environ.get("TFB_PSEUDO", "0") == "1"
 USE_FD = os.environ.get("TFB_FD", "0") == "1"
 _FD_CACHE: dict = {}
 
@@ -230,6 +233,10 @@ def load_train(panels, kind, seed=0):
         ctr, cho = CAP[kind]
         tr = rng.choice(tr, min(ctr, len(tr)), replace=False); ho = rng.choice(ho, min(cho, len(ho)), replace=False)
         d = d.iloc[np.sort(np.concatenate([tr, ho]))]
+        d = d.assign(pseudo=False)
+        if USE_PSEUDO and kind == "reg":
+            pr = pd.read_parquet(WORK / "pseudo" / f"{p}_trainrows.parquet").assign(pseudo=True)
+            d = pd.concat([d, pr[[c for c in d.columns if c in pr.columns]]], ignore_index=True)
         f64 = d.select_dtypes("float64").columns
         d[f64] = d[f64].astype(np.float32)
         dfs.append(d)
@@ -291,8 +298,8 @@ def train(panels, holdout: bool, tag: str, rounds: dict | None = None):
             continue
         d = load_train(panels, kind, seed=SEED)
         feats = [c for c in d.columns if c not in NON_FEAT]
-        tr = d.day < HOLD if holdout else np.ones(len(d), bool)
-        va = d.day >= HOLD
+        tr = ((d.day < HOLD) | d.pseudo) if holdout else np.ones(len(d), bool)
+        va = (d.day >= HOLD) & ~d.pseudo
         for c in targets:
             name = f"{kind}_{c}"
             if (mdir / f"{name}.txt").exists() and (not holdout or (mdir / f"hold_{name}.npy").exists()):
