@@ -577,3 +577,38 @@ plus dark2. Evaluation is set 1's evaluation half, as before.
 | **mean(fullPD, fullPD2)** | **6.27 / 5.75** | **75.3 / 62.3** |
 
 H13P = H12P with blackout rows = mean(fullPD, fullPD2): about 2.5% lower blackout speed RMSE than H12P, worth about +0.0001.
+
+## Month-specific speed level and density checks on the pseudo-holdout (2026-09-28 afternoon)
+Residuals of the H11P regular scheme (0.5·fullP2 + 0.5·fullP3) on the 400k pseudo cells, corrections cross-fitted by
+day parity (estimated on even days, applied to odd days, and vice versa), shrunk by n/(n+30):
+
+| correction | 0.35·ΔS_state March / April | panels up | density L1 error |
+|---|---|---|---|
+| per (link, month), speed and flow shifted | +0.00008 / +0.00009 | 10 / 9 | – (flow correction hurts) |
+| per (link, month), speed only | +0.00010 / +0.00011 | 10 / 10 | +0.3% / +0.2% |
+| per (link, month, speed band), speed only | +0.00011 / +0.00013 | 10 / 10 | +0.3% / +0.2% |
+| **per (link, month, speed band), log-speed, flow scaled with it (q/v fixed)** | **+0.00010 / +0.00012** | **10 / 10** | **unchanged** |
+| per (day) or (link, day) | −0.00001 / −0.00004 | 0–4 | – |
+| second-stage LightGBM on residuals (link, month, v/v_f, tod, neighbours) | +0.00011 / +0.00016 | 10 / 10 | +1.7% / +1.6% |
+
+- The transductive members pool both test months with train, so a link's month-specific speed level (bias std about
+  0.2 km/h) is left over. Day-level offsets are already captured by the temporal neighbours.
+- Speed-only corrections raise the density error: the flow and speed errors are correlated, and moving one breaks the
+  cancellation in q/v. At isolated target cells the LWR error is 2·|N error|, so +0.3% density error costs about
+  0.10·0.42·0.003 ≈ 0.00013 on S_LWR, as much as the S_state gain. Scaling speed and flow together keeps q/v exact.
+- `trafficflow/t1_bias.py` (`check`, `apply`) implements the q/v-preserving correction for the regular rows of a state
+  file; dark rows are untouched. Expected LB about +0.0001 (S_state only; density unchanged).
+
+**Density model vs q/v on the test-month cells (bands of predicted v/v_f):**
+
+| v/v_f | cells | L1 error q/v | L1 error density model |
+|---|---|---|---|
+| < 0.4 | 11.0k | 1.73 | **1.28** |
+| 0.4–0.6 | 3.9k | 1.44 | **1.30** |
+| 0.6–0.8 | 0.9k | **2.18** | 2.37 |
+| 0.8–0.95 | 4.6k | **0.42** | 0.51 |
+| ≥ 0.95 | 380k | 0.195 | 0.197 |
+
+The gate at 0.6·v_f is still right for the transductive members. Partial reconciliation above the gate (any share,
+any speed/flow split) changes the score proxy 0.35·ΔS_state − 0.10·0.42·Δ(relative N error) by at most +0.00007:
+the reconciliation lever is used up.
