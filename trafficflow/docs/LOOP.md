@@ -132,6 +132,14 @@ ongoing 0.843).
    - Δ ≤ −0.001: a third March loss for ongoing label/capacity changes. Treat the pseudo-holdout as biased for this
      change type and keep v5 ongoing in both finals.
 
+**Fallbacks for the 29 Sep chain** (each later file is built on the one before):
+- H14P not adopted: rebuild H15P on H13P. Regenerate its state (deleted for disk) with `t1_pipeline enskind --tag
+  ens_H13P --reg fullP2:0.5 fullP3:0.5 --dark fullPD:0.5 fullPD2:0.5`, then run `t1_bias apply
+  fullP2:0.5,fullP3:0.5 ens_H13P ens_H15b`, `make_submission --state-tag ens_H15b ...` and `loop pack`.
+- H15P not adopted: build H16P on the then-best state (`make_submission --state-tag <best ens> --queue
+  /home/user/work/t2/lgb_v8og_v7v11.csv ...`).
+- Every candidate: `loop diff` against the file it follows must show state rows only (H16P: ongoing queue rows only).
+
 **Private-optimized line (for the final pick).** Current best plus the pseudo-holdout's best Task 2. Candidates:
 v7 ongoing (hybrid labels; pseudo +0.0069 March / +0.0102 April, about +0.0015 on the private score) and online
 adaptation of the April forecasts on March windows (`trafficflow/t2/adapt.py`; March data is ≤ T for every April
