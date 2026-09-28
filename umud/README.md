@@ -6,7 +6,7 @@ predict pennation angle (PA, °), fascicle length (FL, mm) and muscle thickness 
 
 Metric: `mean(MAE_PA/6, MAE_FL/12, MAE_MT/3)`, lower is better.
 
-## Status (2026-09-27)
+## Status (2026-09-28)
 Best public LB **0.31581 (rank 6)**: `submissions/d7_S2_fl031.csv`. Full log with every submission: [`RESULTS.md`](RESULTS.md).
 Reproduce it with `scripts/blend_v2.py --w 0.56 0.31 1.0 --clip-mt 3 --pa-offset 2.0 --alpha 1.0`, using the pipeline predictions in
 `submissions/s17_Ahyb_pipeline.csv` and the public Vera CSV as reference. The pipeline alone (`configs/a_raw.json`, re-runnable
