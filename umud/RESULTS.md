@@ -142,3 +142,15 @@ Reproduce: `blend_v2.py ... --w 0.56 0.27 1.0 --clip-mt 4 --pa-offset 2.0 --alph
 Reproduce best: `blend_v2.py ... --w 0.56 0.27 1.0 --clip-mt 3 --pa-offset 2.0 --alpha 1.0`. Leaderboard moved overnight:
 0.31795 is rank 6 (3rd 0.29358, 5th 0.30537). Next: PA weight 0.62; MT clip 2.5/2 changes only 2–3 rows (public-probe, low
 private value); a larger step needs a better pipeline FL (FL carries most of the remaining error).
+
+## Day 7 (2026-09-28), first run with the `daily/` loop
+| Shot | Change vs d6 S4 | Public LB |
+|---|---|---|
+| d7 S1 | PA weight 0.62 | 0.31861 (PA weight fit 0.5/0.56/0.62 → optimum ≈ 0.57, flat) |
+| **d7 S2** | **FL weight 0.31 (was 0.27)** | **0.31581 (best; full smoothing averages FL noise, so FL takes more weight)** |
+| d7 S3 | FL weight 0.36 | 0.31705 (quadratic optimum ≈ 0.32) |
+| d7 S4 | S2 + PA residual clip 6° | 0.31740 (PA outliers are mostly right, like FL) |
+| d7 S5 | S2 + MT weight 1.1 | 0.31837 (MT weight 1.0 stays) |
+
+Reproduce best: `blend_v2.py ... --w 0.56 0.31 1.0 --clip-mt 3 --pa-offset 2.0 --alpha 1.0` (or `daily/run.py build`).
+Rank 6 (5th 0.29518, 3rd 0.28263).

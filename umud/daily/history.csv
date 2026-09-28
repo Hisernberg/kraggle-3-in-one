@@ -5,3 +5,8 @@ utc,name,score,new_best,args,message
 2026-09-27 00:09,d6_S3_mtclip6,0.32119,0,--w 0.56 0.27 1.0 --clip-mt 6 --pa-offset 2.0 --alpha 1.0,d6 S3: MT clip 6
 2026-09-27 00:09,d6_S4_mtclip3,0.31795,1,--w 0.56 0.27 1.0 --clip-mt 3 --pa-offset 2.0 --alpha 1.0,d6 S4: MT clip 3
 2026-09-27 00:10,d6_S5_pa050,0.31957,0,--w 0.5 0.27 1.0 --clip-mt 3 --pa-offset 2.0 --alpha 1.0,d6 S5: PA weight 0.5
+2026-09-28 12:41,d7_S1_pa062,0.31861,0,--w 0.62 0.27 1.0 --clip-mt 3 --pa-offset 2.0 --alpha 1.0,d7 S1: best + PA weight 0.62
+2026-09-28 12:41,d7_S2_fl031,0.31581,1,--w 0.56 0.31 1.0 --clip-mt 3 --pa-offset 2.0 --alpha 1.0,d7 S2: best + FL weight 0.31 (retest after full smoothing)
+2026-09-28 12:42,d7_S3_fl036,0.31705,0,--w 0.56 0.36 1.0 --clip-mt 3 --pa-offset 2.0 --alpha 1.0,d7 S3: FL weight 0.36
+2026-09-28 12:43,d7_S4_clippa6,0.3174,0,--w 0.56 0.31 1.0 --clip-mt 3 --pa-offset 2.0 --alpha 1.0 --clip-pa 6,d7 S4: FL 0.31 best + PA residual clip 6 deg
+2026-09-28 12:44,d7_S5_mt110,0.31837,0,--w 0.56 0.31 1.1 --clip-mt 3 --pa-offset 2.0 --alpha 1.0,d7 S5: FL 0.31 best + MT weight 1.1 (retest after full smoothing)
