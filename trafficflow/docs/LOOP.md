@@ -59,16 +59,17 @@ Background agents and jobs wake the session when they finish, so work continues 
 
 Build:
 ```
-python3 -m trafficflow.make_submission --state-tag ens345w7 --recon-a 0.75 --gate 0.6 \
+python3 -m trafficflow.make_submission --state-tag ens_H7_reg9 --recon-a 0.75 --gate 0.6 \
   --smooth "free=0.0075,free_a=0.001,gate=0.02,gate_a=0.005,dark=0.05" \
   --queue /home/user/work/t2/lgb_v8_seeds9_stack03.csv --odme /home/user/work/t4/t4_l2proj.csv \
   --out /home/user/work/subs/<ID>.csv --note "<ID>: ..."
 python3 -m trafficflow.loop pack /home/user/work/subs/<ID>.csv
 ```
 
-- **Task 1:** regular rows = mean of `full3`, `full4`, `full5`, `full7`; blackout rows = `full7`.
-  - FD features; `TFB_SEED` 0 / 1 / 2 / 4. `full7` adds ramp-flow features (`TFB_RAMP=1`).
-  - `state_ens345w7.parquet` comes from `t1_pipeline ensw --tag ens345w7 --new full7 --members full3 full4 full5 --w-reg 0.25 --w-dark 1.0`.
+- **Task 1:** regular rows = 0.5·`full9` + 0.125·(`full3`, `full4`, `full5`, `full7`); blackout rows = `full7`.
+  - FD features; `TFB_SEED` 0 / 1 / 2 / 4 / 6. `full7` adds ramp-flow features (`TFB_RAMP=1`).
+  - `full9` is the boosted regular member: `TFB_KINDS=reg`, 300k rows per panel, lr 0.05.
+  - `state_ens_H7_reg9.parquet` comes from `t1_pipeline enskind --tag ens_H7_reg9 --reg full9:0.5 full3:0.125 full4:0.125 full5:0.125 full7:0.125 --dark full7`.
   - Density reconciliation where v < 0.6·v_f (a = 0.75), then TV smoothing.
 - **Task 2:** `lgb_v8_seeds9_stack03`.
   - Onset v8: stacking + 9 seeds on hybrid labels.
