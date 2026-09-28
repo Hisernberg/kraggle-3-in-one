@@ -76,6 +76,21 @@ productive than the public cluster (eggs/geese, wheat, wool pricing).
    vs duel openers 54%, vs cha22-family 86%. P06 (tetsutani base) vs duel openers 91%, vs cha22-family 62%.
    Neither reaches P03's 2370. The next gain has to come from beating the family we are weak against, not from
    more mirror micro-edges. (The P07 validation game on one seed: P05 beat fb20 by $4.9k; locally fb20 vs P05 86/120.)
+10. (09-28 11:45) **Opponent-adaptive switcher.**
+    - Our two bases emit identical actions for steps 0-90. The first difference is at step 91: the cha22 base
+      sells 3 wheat, the tetsutani base does not. The ladder's families do the same (cha22 family sells at 91 in
+      34/39 games, tetsutani lineage doesn't in 67/69).
+    - Rule: rival money rises at step 92 → play the P05 (cha22) base, else the P06/P07 (tetsutani) base.
+    - Ladder split: vs "sold at 91" P05 86% / P06 67%; vs "didn't sell" P05 56% / P06 88%. The projected
+      switcher win rate is ≈87%, vs P06 81%.
+    - Where the base losses come from: P05 loses the last-day liquidation (690-718) to tetsutani, which sells
+      milk/wool/eggs a turn earlier. P06 loses days 22-28 to the cha22 family.
+    - The switcher (`agents/edge/build_switch.py`; both agents exec'd in separate namespaces; `switch_agent` last)
+      scored, both seats:
+      - seeds 11000-11059: P05 105/120, P06 60/120, tets 117/120, cha22 114/120, m4 112/120.
+      - my check, seeds 12000-12007: P03 16/16, P05 15/16, P06 8/16.
+    - With P07 as the tetsutani half (`sw_p05p07`, seeds 12100-12111): P03 23/24, P05 23/24, P06 15/24,
+      P07 12/24, sw_p05p06 15/24, tets 23/24, m4 19/24. Official games DONE; worst turn 0.24 s.
 
 ## Plan: automatic 5 slots per UTC day (09-28 → 09-30)
 
@@ -111,6 +126,7 @@ Agents are built from `agents/edge/bases/base_sb.py` / `base_tsb.py` with the v_
 - S1 00:05: **P05 = d_sb_s150a0**. It passed 2 official games (DONE, won both; worst turn 0.07 s).
 - S2 04:50 (**decided 04:20: submit t_sb_s150**, see lesson 7): if P05 is ≥ 2400 with ≥ 40 games, submit **t_sb_s150** (a different base, as a diversity probe; worst
   turn about 0.5 s, within the 1 s limit). If P05 is under 2300, re-submit P03 as the anchor and study P05's losses.
+- **S4 14:20: submit submissions/cand_sw_p05p07** (switcher, lesson 10). Pair becomes P07 + switcher (P06 displaced).
 - S3 09:35 rule: if P06 ≥ 2250 (or still climbing above P05's pace) → submit **submissions/cand_t6_fb20** (P06 +
   sa_full_below 2.0; official game DONE, worst turn 0.14 s); pair becomes P06 + fb20. Else → re-submit P03 (2370 anchor).
 - (earlier notes) S3-S5: driven by P05's ladder losses (ladder_review). The planned knob deltas were tested at 23:00 on seeds

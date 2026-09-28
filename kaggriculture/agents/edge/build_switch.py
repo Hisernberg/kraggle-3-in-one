@@ -1,6 +1,8 @@
 """Build a two-base "switcher" agent: agents/edge/<NAME>/main.py.
 
-    python agents/edge/build_switch.py NAME [--a A_MAIN] [--b B_MAIN] [--default a|b] [--decide 92]
+    python agents/edge/build_switch.py NAME [--a A_MAIN] [--b B_MAIN] [--default A|B] [--decide 92]
+                                            [--last-market-from A|B] [--unknown A|B]
+    Recommended (agents/edge/sw_p05p06): --default A --last-market-from B --unknown B
 
 A = cha22-lineage agent (default submissions/p05_d_sb_s150a0/main.py, P05)
 B = tetsutani-lineage agent (default submissions/cand_t_sb_s150/main.py, P06)
@@ -9,8 +11,10 @@ Each complete agent file (base + edge layer) is embedded zlib/base64-compressed 
 namespace dict, so module globals never collide. Both are fed every observation (identical actions on
 the ladder until step 91) until the opponent is classified from the observation at step `decide`:
 the rival's public money rose during turn decide-1 (= step 91: the cha22 family sells 3 wheat there, the
-tetsutani lineage does not) -> A, otherwise -> B. After the decision only the chosen agent runs.
-`switch_agent` is the last callable in the file (Kaggle loads the last callable).
+tetsutani lineage does not) -> A, otherwise -> B (`--unknown` if the step-91 money is missing).
+Before the decision the `--default` agent's action is emitted; with `--last-market-from B`, turn 91 uses
+B's market list (no wheat sale) when both agents have agreed on every action so far. After the decision
+only the chosen agent runs and the other one is dropped. `switch_agent` is the last callable in the file.
 """
 import argparse
 import base64
@@ -27,11 +31,12 @@ TEMPLATE = r'''# Kaggriculture two-base switcher (built by agents/edge/build_swi
 # step {DECIDE} (rival money rose during turn {DECIDE_M1} -> A, else B); then only the chosen one runs.
 import base64 as _sw_b64
 import copy as _sw_copy
+import gc as _sw_gc
 import zlib as _sw_zlib
 
 _SW_SRC = {{'A': {A_SRC!r}, 'B': {B_SRC!r}}}
 _SW_FILE = {{'A': {A_NAME!r}, 'B': {B_NAME!r}}}
-_SW_CFG = dict(default={DEFAULT!r}, decide={DECIDE!r}, last_market_from={LMF!r})
+_SW_CFG = dict(default={DEFAULT!r}, decide={DECIDE!r}, last_market_from={LMF!r}, unknown={UNK!r})
 
 
 def _sw_load(key):
@@ -62,7 +67,7 @@ def switch_agent(observation, configuration=None):
     st['step'] = step
     decide = _SW_CFG['decide']
     if st['choice'] is None and step >= decide:
-        choice = _SW_CFG['default']
+        choice = _SW_CFG['unknown']
         try:
             if st['m_prev'] is not None and st['m_prev'][0] == decide - 1:
                 delta = _sw_opp_money(observation) - st['m_prev'][1]
@@ -72,17 +77,35 @@ def switch_agent(observation, configuration=None):
             _SW_REPORT['errors'] += 1
         st['choice'] = choice
         _SW_REPORT.update(choice=choice, decided_at=step)
+        if len(_SW_STATE) == 1:
+            # Free the unused agent's module state (smaller heap -> shorter GC pauses later).
+            try:
+                _SW_AGENTS['B' if choice == 'A' else 'A'] = None
+                _sw_gc.collect()
+            except Exception:
+                _SW_REPORT['errors'] += 1
     try:
         st['m_prev'] = (step, _sw_opp_money(observation))
     except Exception:
         st['m_prev'] = None
     if st['choice'] is not None:
-        return _SW_AGENTS[st['choice']](observation, configuration)
+        try:
+            return _SW_AGENTS[st['choice']](observation, configuration)
+        except Exception:
+            _SW_REPORT['errors'] += 1
+            return {{'farmer': ['PASS'], 'hands': [], 'market': []}}
     main = _SW_CFG['default']
     other = 'B' if main == 'A' else 'A'
     shadow_obs = _sw_copy.deepcopy(observation)
-    act = _SW_AGENTS[main](observation, configuration)
     try:
+        act = _SW_AGENTS[main](observation, configuration)
+    except Exception:
+        _SW_REPORT['errors'] += 1
+        act = None
+    try:
+        if act is None:
+            st['choice'] = other
+            return _SW_AGENTS[other](shadow_obs, configuration)
         alt = _SW_AGENTS[other](shadow_obs, configuration)
         clean = st.get('clean', True)
         if alt != act:
@@ -97,17 +120,17 @@ def switch_agent(observation, configuration=None):
             _SW_REPORT['market_swapped'] = step
     except Exception:
         _SW_REPORT['errors'] += 1
-    return act
+    return act if act is not None else {{'farmer': ['PASS'], 'hands': [], 'market': []}}
 
 
 switch_agent.telemetry = _SW_REPORT
 '''
 
 
-def build(name, a, b, default, decide, lmf=None):
+def build(name, a, b, default, decide, lmf=None, unknown='B'):
     enc = lambda p: base64.b64encode(zlib.compress(open(p, 'rb').read(), 9)).decode('ascii')
     src = TEMPLATE.format(A_NAME=os.path.relpath(a, ROOT), B_NAME=os.path.relpath(b, ROOT), A_SRC=enc(a), B_SRC=enc(b),
-                          DEFAULT=default, DECIDE=decide, DECIDE_M1=decide - 1, LMF=lmf)
+                          DEFAULT=default, DECIDE=decide, DECIDE_M1=decide - 1, LMF=lmf, UNK=unknown)
     d = os.path.join(HERE, name)
     os.makedirs(d, exist_ok=True)
     out = os.path.join(d, 'main.py')
@@ -124,5 +147,6 @@ if __name__ == '__main__':
     ap.add_argument('--default', default='B', choices=['A', 'B'])
     ap.add_argument('--decide', type=int, default=92)
     ap.add_argument('--last-market-from', default=None, choices=['A', 'B'])
+    ap.add_argument('--unknown', default='B', choices=['A', 'B'])
     x = ap.parse_args()
-    print(build(x.name, os.path.abspath(x.a), os.path.abspath(x.b), x.default, x.decide, x.last_market_from))
+    print(build(x.name, os.path.abspath(x.a), os.path.abspath(x.b), x.default, x.decide, x.last_market_from, x.unknown))
