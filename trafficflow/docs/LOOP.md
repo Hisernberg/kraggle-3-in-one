@@ -122,11 +122,16 @@ ongoing 0.843).
    (133k state rows; queue and ODME identical). Adopt if Δ vs H12P ≥ +0.0001.
 3. **H14P** (`H14P_transductive4.zip`, `/home/user/work/build_H14P.sh`): H13P with regular rows = the best
    mix of fullP2/P3/P4 on the pseudo-holdout. It is built only if a mix beats H11P's there.
+   **Built 15:46**, 65/65: regular rows = 0.25·fullP2 + 0.375·fullP3 + 0.375·fullP4 (pseudo +0.00012 March / +0.00010
+   April, 9/10 panels each). `loop diff` vs H13P: state rows only (6.61M, mean |Δv| 0.06 km/h).
+   Expected about +0.0002 (transductive steps give about 2× the S_state-only pseudo figure). Adopt if Δ ≥ +0.0001.
 4. **H15P** (`H15P_monthbias.zip`): H14P (or H13P) with the month-specific speed level of `t1_bias.py`. Cross-fitted
    +0.0001, 10/10 panels in both months. Adopt if Δ ≥ +0.0001, or if Δ ≥ 0 matches the local estimate.
+   **Built 15:49** on H14P, 65/65. Correction on the P234w scheme: +0.00009 March / +0.00012 April, 10/10 panels.
+   `loop diff` vs H14P: state rows only (6.58M regular rows, mean |Δv| 0.17 km/h).
 5. **H16P** (`H16P_og_v7v11.zip`, `/home/user/work/queue_H16_adapt.sh`): H15P with ongoing = the v7+v11 mix
    (Task 2 pseudo-holdout best: +0.0089 March / +0.0107 April on 3,000 windows, +0.0138 / +0.0067 on official-style
-   windows). It is a probe of pseudo-holdout vs LB, not a candidate for the public main line.
+   windows). **Built 15:53** on H15P, 65/65; `loop diff` vs H15P: 193 queue rows only (105 March, 88 April). It is a probe of pseudo-holdout vs LB, not a candidate for the public main line.
    - LB Δ vs H15P ≥ +0.0005 (ongoing ≥ +0.003): the pseudo-holdout is confirmed on March; adopt.
    - Δ within ±0.0005: noise, as predicted for 40 windows. It stays the private-optimized hedge.
    - Δ ≤ −0.001: a third March loss for ongoing label/capacity changes. Treat the pseudo-holdout as biased for this
