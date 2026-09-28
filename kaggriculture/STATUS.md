@@ -13,8 +13,9 @@ submission, read the ladder, learn, then submit the next.
 | P03 | 09-27 06:26 | cha22_edge_arm | cha22 + market layer (sell-ahead-1, order search, on-sight switch) | 2377 after 48 games (09:37); 2372 after 78 (11:46) |
 | P04 | 09-27 11:50 | router r3_cg | tape router (280 tapes, day-start switching) + cash guard (fixes P02) + lazy per-tape decode (load 8 s → 0.1 s) | 1291 after 54 games (17:05); 1309 after 64 (23:00) — **failed** |
 | (ext) | 09-27 13:50 | SB18 Macro-1 (not from this session) | tetsutani + turn-0 wheat duel | 1860 after 54 games (17:05), 34/40 wins; 1947 after 93 (23:00) |
-| P05 | 09-28 00:08 | d_sb_s150a0 (id 56623202) | cha22 + SB18 opener + armed sell-ahead-2 (sell sub-1.3×-base stock first from step 150) | 1926/17 games (01:13) · 2231/39 (02:14) · 2310/56 (03:15) · 2282/71 (04:16) · 2273/82 (04:51) — plateau ≈ 2280, below P03 |
-| P06 | 09-28 04:51 | t_sb_s150 (id 56629305) | tetsutani base + SB18 opener + armed sell-ahead-2 from step 150 (targets the duel-opener wheat route) | 1440/12 (05:22) · 1961/30 (06:30): 21/27, vs duel openers 11/12 (+5560) |
+| P05 | 09-28 00:08 | d_sb_s150a0 (id 56623202) | cha22 + SB18 opener + armed sell-ahead-2 (sell sub-1.3×-base stock first from step 150) | 1926/17 games (01:13) · 2231/39 (02:14) · 2310/56 (03:15) · 2282/71 (04:16) · 2273/82 (04:51) · 2293/98 (09:36) — plateau ≈ 2280-2295, below P03 |
+| P06 | 09-28 04:51 | t_sb_s150 (id 56629305) | tetsutani base + SB18 opener + armed sell-ahead-2 from step 150 (targets the duel-opener wheat route) | 1440/12 (05:22) · 1961/30 (06:30) · 2289/81 (09:36): 63/78; duel 91%, buy5 (cha22 family) 62% |
+| P07 | 09-28 09:39 | t6_fb20 (id 56636707) | P06 with sell-first threshold 2.0× base (mirror tie-breaks) | pending (active pair P06 + P07; P05 2293 displaced) |
 
 ## What the ladder taught us
 
@@ -71,6 +72,10 @@ productive than the public cluster (eggs/geese, wheat, wool pricing).
    slightly better vs P05/tets/cha22/metav4 (+6..+30 margin, same win counts). Harmful settings: l2 off, arm_k=2,
    sa_from=216, and adding WHEAT to sell-ahead (−20k, catastrophic). Local wheat output of P05 ≈ P06 ≈ tetsutani
    (552 harvested/game), so the ladder wheat gap comes from ladder opponents' own variants, not from the base.
+9. (09-28 S3) **The two bases have opposite weaknesses on the ladder and the same rating (≈2290).** P05 (cha22 base)
+   vs duel openers 54%, vs cha22-family 86%. P06 (tetsutani base) vs duel openers 91%, vs cha22-family 62%.
+   Neither reaches P03's 2370. The next gain has to come from beating the family we are weak against, not from
+   more mirror micro-edges. (The P07 validation game on one seed: P05 beat fb20 by $4.9k; locally fb20 vs P05 86/120.)
 
 ## Plan: automatic 5 slots per UTC day (09-28 → 09-30)
 
