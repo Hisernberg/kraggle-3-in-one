@@ -125,17 +125,21 @@ def build_train_rows(panel: str, rounds: int = 3, n_per_round: int = 30_000, see
     print(f"{panel}: {len(X)} transductive rows, {time.time() - t0:.0f}s", flush=True)
 
 
-def build_dark_panel(panel: str, spacing: int = 36, seed: int = 0) -> None:
+def build_dark_panel(panel: str, spacing: int = 36, seed: int = 0, name: str = "dark", per_month: int = 40) -> None:
     """Transductive blackout rows. Queue-like origins T are found in the observed March/April data (the Task 2
     selector replica on the masked view; hidden cells count as not queued) away from the real blackouts. Rows T+1..T+18
     are blanked at every origin, exactly like a released blackout, and features are built for the eligible observed
     cells in those rows (labels = the observed values). Origins alternate between an evaluation set (`split` ending
     in `_eval`) and a training set, so the two are disjoint events. -> WORK/pseudo/<panel>_dark.parquet"""
-    f = OUT / f"{panel}_dark.parquet"
+    f = OUT / f"{panel}_{name}.parquet"
     if f.exists():
         return
     t0 = time.time()
     P = train_blackout_panel(panel)
+    used = set()                                        # origins of earlier sets (set 1 keeps the evaluation half)
+    if name != "dark":
+        for g in sorted(OUT.glob(f"{panel}_dark*.parquet")):
+            used |= set(pd.read_parquet(g, columns=["origin"]).origin.unique().tolist())
     a0 = SPLIT_DAYS["validation"][0] * SLOTS
     P.tspeed[a0:] = P.X["speed"][a0:]                    # the selector replica reads tspeed; test months: masked view
     real_dark = P.dark.copy()
@@ -143,12 +147,15 @@ def build_dark_panel(panel: str, spacing: int = 36, seed: int = 0) -> None:
     for split in ("validation", "private"):
         a, b = SPLIT_DAYS[split]
         for T, cond in P.select_origins(a, b, spacing=spacing):
-            if not real_dark[T - 12:T + 20].any():         # keep clear of the released blackouts
-                orig.append((T, cond, split))
+            if not real_dark[T - 12:T + 20].any() and all(abs(T - u) > 18 for u in used):
+                orig.append((T, cond, split))            # clear of released blackouts and earlier sets
     rng = np.random.default_rng(seed + 7 * PANELS.index(panel))
     orig = [o for sp in ("validation", "private") for o in
-            (lambda xs: [xs[i] for i in sorted(rng.choice(len(xs), min(40, len(xs)), replace=False))])(
+            (lambda xs: [xs[i] for i in sorted(rng.choice(len(xs), min(per_month, len(xs)), replace=False))])(
                 [o for o in orig if o[2] == sp])]                # at most 40 blackouts per month (disk)
+    if not orig:
+        print(f"{panel}: no free queue-like origins left for {name}", flush=True)
+        return
     keep = {c: P.X[c].copy() for c in P.X}
     for T, _, _ in orig:
         for c in P.X:
@@ -160,7 +167,8 @@ def build_dark_panel(panel: str, spacing: int = 36, seed: int = 0) -> None:
         ok = np.isfinite(keep["speed"][rr]) & np.isfinite(keep["flow"][rr]) & P.elig[rr]
         tt, ll = np.nonzero(ok); tt = rr[tt]
         rows.append(pd.DataFrame({"t": tt.astype(np.int32), "j": ll.astype(np.int16),
-                                  "split": split + ("_eval" if i % 2 == 0 else "_train"), "cond": cond, "origin": T}))
+                                  "split": split + ("_eval" if (i % 2 == 0 and name == "dark") else "_train"),
+                                  "cond": cond, "origin": T}))
     R = pd.concat(rows, ignore_index=True)
     tt, ll = R.t.to_numpy(), R.j.to_numpy().astype(np.int64)
     F = P.features(tt, ll)
@@ -305,9 +313,12 @@ if __name__ == "__main__":
             build_train_rows(p, seed=sd, name=name); gc.collect()
     elif cmd == "predict":
         predict(sys.argv[2].split(","), sys.argv[3:] or PANELS)
-    elif cmd == "dark":          # simulated test-month blackouts
-        for p in (sys.argv[2:] or PANELS):
-            build_dark_panel(p); gc.collect()
+    elif cmd == "dark":          # simulated test-month blackouts: dark [name [seed per_month]]
+        name = sys.argv[2] if len(sys.argv) > 2 else "dark"
+        sd = int(sys.argv[3]) if len(sys.argv) > 3 else 0
+        pm = int(sys.argv[4]) if len(sys.argv) > 4 else 40
+        for p in PANELS:
+            build_dark_panel(p, seed=sd, name=name, per_month=pm); gc.collect()
     elif cmd == "dpredict":
         predict_dark(sys.argv[2].split(","), sys.argv[3:] or PANELS)
     elif cmd == "dscore":        # dscore '{"name": [["tag", w], ...]}'

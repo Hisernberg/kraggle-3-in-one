@@ -239,10 +239,13 @@ def load_train(panels, kind, seed=0):
             for name in os.environ.get("TFB_PSEUDO_FILES", "trainrows").split(","):
                 pr = pd.read_parquet(WORK / "pseudo" / f"{p}_{name}.parquet").assign(pseudo=True)
                 d = pd.concat([d, pr[[c for c in d.columns if c in pr.columns]]], ignore_index=True)
-        if USE_PSEUDO_DARK and kind == "dark":  # simulated test-month blackouts, training half only (t1_pseudo dark)
-            pr = pd.read_parquet(WORK / "pseudo" / f"{p}_dark.parquet")
-            pr = pr[pr.split.str.endswith("_train")].assign(pseudo=True)
-            d = pd.concat([d, pr[[c for c in d.columns if c in pr.columns]]], ignore_index=True)
+        if USE_PSEUDO_DARK and kind == "dark":  # simulated test-month blackouts, training rows only (t1_pseudo dark)
+            for name in os.environ.get("TFB_PSEUDO_DARK_FILES", "dark").split(","):
+                if not (WORK / "pseudo" / f"{p}_{name}.parquet").exists():   # a panel may have no free origins
+                    continue
+                pr = pd.read_parquet(WORK / "pseudo" / f"{p}_{name}.parquet")
+                pr = pr[pr.split.str.endswith("_train")].assign(pseudo=True)
+                d = pd.concat([d, pr[[c for c in d.columns if c in pr.columns]]], ignore_index=True)
         f64 = d.select_dtypes("float64").columns
         d[f64] = d[f64].astype(np.float32)
         dfs.append(d)
