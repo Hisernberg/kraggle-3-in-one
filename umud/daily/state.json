@@ -1,0 +1,32 @@
+{
+ "best_score": 0.31581,
+ "best_name": "d7_S2_fl031",
+ "best_args": [
+  "--w",
+  "0.56",
+  "0.31",
+  "1.0",
+  "--clip-mt",
+  "3",
+  "--pa-offset",
+  "2.0",
+  "--alpha",
+  "1.0"
+ ],
+ "settled": [
+  "FL weight: 0.27 -> 0.31 gained 0.0021 after full smoothing; 0.36 worse; quadratic optimum ~0.32 (+0.0001). FL clip/tail hurt",
+  "PA weight: 0.5 / 0.56 / 0.62 -> optimum ~0.57 (flat). PA residual clip 6 hurt (+0.0016): PA outliers are mostly right",
+  "MT weight 1.0 (0.9, 1.1, 1.25 all worse), MT offset 0; MT clip 3 best (6 and 4 worse, one public row)",
+  "PA offset ~2.0 (fit at alpha 0.8)",
+  "clip smoothing alpha 0.6 < 0.8 < 1.0 (full median)",
+  "public LB is ~1/3 of test rows (~103); single-row probes have little private value",
+  "metric is additive per target: tune one target per shot"
+ ],
+ "queue": [
+  "--pa-offset 1.8 / 2.2 retest at alpha 1.0",
+  "--w 0.56 0.32 1.0  (FL quadratic optimum; ~+0.0001)",
+  "clip aggregation mean vs median (needs a blend_v2 flag)",
+  "--clip-mt 2.5 (public probe, last resort)",
+  "bigger step needs better pipeline FL (FL carries most remaining error)"
+ ]
+}

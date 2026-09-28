@@ -6,14 +6,14 @@ predict pennation angle (PA, °), fascicle length (FL, mm) and muscle thickness 
 
 Metric: `mean(MAE_PA/6, MAE_FL/12, MAE_MT/3)`, lower is better.
 
-## Status (2026-09-25)
-Best public LB **0.32182 (rank 4/293)**: `submissions/d4_S2_mt10.csv`. Full log with every submission: [`RESULTS.md`](RESULTS.md).
-Reproduce it with `scripts/blend_v2.py --w 0.56 0.27 1.0 --clip-mt 4`, using the pipeline predictions in
+## Status (2026-09-28)
+Best public LB **0.31581 (rank 6)**: `submissions/d7_S2_fl031.csv`. Full log with every submission: [`RESULTS.md`](RESULTS.md).
+Reproduce it with `scripts/blend_v2.py --w 0.56 0.31 1.0 --clip-mt 3 --pa-offset 2.0 --alpha 1.0`, using the pipeline predictions in
 `submissions/s17_Ahyb_pipeline.csv` and the public Vera CSV as reference. The pipeline alone (`configs/a_raw.json`, re-runnable
 end-to-end via `kaggle/build_kernel.py --mode submit`) is the prize-eligible part. Blends with the hard-coded Vera CSV are not.
 
 Layout: `umud/` package (scale, seg, geometry, predict) · `scripts/` (blends, OSF benchmark, diagnostics) ·
-`configs/` · `kaggle/` (kernel builder) · `submissions/` (every submitted CSV) · `RESULTS.md`.
+`configs/` · `kaggle/` (kernel builder) · `submissions/` (every submitted CSV) · `daily/` (5-per-day submission loop, see `daily/RUNBOOK.md`) · `RESULTS.md`.
 
 ## Method
 1. **Scale / FOV** (`umud/scale.py`): per-device tick-mark parser → px/mm and B-mode crop box.

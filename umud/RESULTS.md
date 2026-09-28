@@ -118,3 +118,39 @@ S2b MT 0.9, S3 FL clip 15 mm, S4 PA offset 0.8, and F (old pipeline with only th
 
 Reproduce S2: `python scripts/blend_v2.py --ref vera.csv --groups test_groups.npy --pipeline submissions/s17_Ahyb_pipeline.csv
 --features features_hyb.csv --w 0.56 0.27 1.0 --clip-mt 4 --out S2.csv`.
+
+## Day 5 (2026-09-26)
+| Shot | Change vs S2 | Public LB |
+|---|---|---|
+| d5 S1 | PA offset 2.4 | 0.32180 (flat; PA-offset optimum ≈ 2.0 by quadratic fit) |
+| d5 S2 | PA 2.0 + FL tail weight 0.6 beyond 15 mm | 0.32533 (a single linear FL weight 0.27 is optimal; clipping and tail-boosting both hurt) |
+| d5 S3 | PA 2.0 + MT +0.3 mm | 0.33771 |
+| d5 S4 | PA 2.0 + MT −0.35 mm | 0.33599 (MT has a sharp minimum at 0: no bias; many MT predictions already very close) |
+| **d5 S5** | **PA 2.0 + clip smoothing 0.8 (was 0.6)** | **0.31995 (rank 5, 0.001 behind 4th)** |
+
+Reproduce: `blend_v2.py ... --w 0.56 0.27 1.0 --clip-mt 4 --pa-offset 2.0 --alpha 0.8`. Next: alpha 1.0 (full clip median).
+
+## Day 6 (2026-09-27)
+| Shot | Change vs d5 S5 | Public LB |
+|---|---|---|
+| **d6 S1** | clip smoothing alpha 1.0 (full 5-frame median) | **0.31903** (−0.0009; stronger smoothing keeps paying) |
+| d6 S2 | S1 + FL weight 0.35 on cine-clip rows only (`--w-clip`) | 0.31904 (flat: FL weight curve on clip rows is flat 0.27–0.35) |
+| d6 S3 | S1 + MT clip 6 (was 4) | 0.32119 (one row moved 2 mm → +0.0022 ⇒ public split ≈ 103 rows; that row's truth sits on the ref side) |
+| **d6 S4** | **S1 + MT clip 3** | **0.31795 (best; exactly the 1 mm gained on that row)** |
+| d6 S5 | S4 + PA weight 0.5 | 0.31957 (PA weight optimum ≥ 0.56 at offset 2.0) |
+
+Reproduce best: `blend_v2.py ... --w 0.56 0.27 1.0 --clip-mt 3 --pa-offset 2.0 --alpha 1.0`. Leaderboard moved overnight:
+0.31795 is rank 6 (3rd 0.29358, 5th 0.30537). Next: PA weight 0.62; MT clip 2.5/2 changes only 2–3 rows (public-probe, low
+private value); a larger step needs a better pipeline FL (FL carries most of the remaining error).
+
+## Day 7 (2026-09-28), first run with the `daily/` loop
+| Shot | Change vs d6 S4 | Public LB |
+|---|---|---|
+| d7 S1 | PA weight 0.62 | 0.31861 (PA weight fit 0.5/0.56/0.62 → optimum ≈ 0.57, flat) |
+| **d7 S2** | **FL weight 0.31 (was 0.27)** | **0.31581 (best; full smoothing averages FL noise, so FL takes more weight)** |
+| d7 S3 | FL weight 0.36 | 0.31705 (quadratic optimum ≈ 0.32) |
+| d7 S4 | S2 + PA residual clip 6° | 0.31740 (PA outliers are mostly right, like FL) |
+| d7 S5 | S2 + MT weight 1.1 | 0.31837 (MT weight 1.0 stays) |
+
+Reproduce best: `blend_v2.py ... --w 0.56 0.31 1.0 --clip-mt 3 --pa-offset 2.0 --alpha 1.0` (or `daily/run.py build`).
+Rank 6 (5th 0.29518, 3rd 0.28263).
