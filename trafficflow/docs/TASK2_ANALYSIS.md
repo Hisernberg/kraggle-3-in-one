@@ -1949,3 +1949,30 @@ P(LB Δ ≤ −0.0013) = 0.10. Small Task 2 LB deltas are mostly noise.
 - It disagrees with the LB only on v11 and v7, whose LB deltas are within LB noise.
 - **Consequence:** the pseudo-holdout, not the 40-window March LB, is the Task 2 gate from now on. v7 (+0.010 on
   April, about +0.0015 on the private score) is the strongest ongoing candidate for the final pick.
+
+### 21b. Official-style windows (selector replay) and the joint LB check (28 Sep afternoon)
+`T2_PSEUDO_MODE=sim` replays the official greedy selector from every start day of the month: chronological, 5 per
+condition, 360 min between any two picks. The ongoing windows are then mostly the first established queue after a
+gap. This gives 332 / 334 ongoing and about 210 onset windows per month (`/home/user/work/t2/pseudo3`). The ongoing
+level (v5: 0.825 March) is close to the official 0.843; the every-6th-candidate set gave 0.867.
+
+| ongoing scheme (vs v5) | sim March | sim April | all-windows March / April |
+|---|---|---|---|
+| v7 (G7 recipe, all four components on hybrid labels) | +0.0103 | +0.0025 | – |
+| v11 (G8) | +0.0032 | +0.0012 | +0.0020 / +0.0022 |
+| **v7+v11 mix** (0.175 each of v7/v11 og_v3 and noloc, 0.15 each v7 og_v2 / og_v2_noloc) | **+0.0138** | **+0.0067** | – |
+| v7+v11 with logit shift ±0.25 | +0.011 | +0.005 | – |
+| v9 stacking (G3) | −0.0046 | +0.0032 | −0.0048 / −0.0006 |
+
+Onset (hybrid-profile tables, `/home/user/work/t2h/pseudo2`, 233 / 224 windows): seeds9 0.728 March (official 0.732)
+/ 0.747 April. v6 −0.002 / 0.000; logit shifts −0.25…+0.5 all within ±0.004 and mostly negative (F1's +0.5 lost on
+the LB too). Onset decoding stays.
+
+**Joint LB check.** 20,000 draw-weighted draws of 5 sim windows per panel (the official design) put the 40-window
+March deltas at v7 +0.0095 ± 0.0078 and v11 +0.0026 ± 0.0045 (correlation −0.06). The observed LB pair (v7 −0.0013,
+v11 −0.0027) has probability 0.085 and 0.118 separately, but **0.011 jointly**. Either March was a 1-in-90 draw, or
+the pseudo-holdout is biased for ongoing label/capacity changes in a way not yet found. The G3 result shows it still
+catches failures that plain CV misses. Draw-weighted April: v7v11 +0.005 ± 0.010, P(< 0) = 0.29.
+
+**Decision.** The v7+v11 ongoing is a hedge, not an adoption: at the final pick, one file keeps the v5 ongoing and
+one carries the pseudo-best Task 2. Kaggle scores the better of the two on private.

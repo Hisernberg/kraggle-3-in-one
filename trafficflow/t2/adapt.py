@@ -35,8 +35,8 @@ def pseudo_rows(cols: list[str], split: str):
         pc = PANELS8.index(p)
         M = pd.read_parquet(PSEUDO / f"meta_{p}.parquet").set_index("w")
         ws = M.index[(M.condition == COND) & (M.split == split)].to_numpy()
-        F = pd.read_parquet(PSEUDO / f"feat_{p}.parquet", columns=[c for c in cols if c != "pcode"] + ["w", "k", "link"],
-                            filters=[("w", "in", ws.tolist())])
+        read = list(dict.fromkeys([c for c in cols if c != "pcode"] + ["w", "k", "link"]))   # k / link are also features
+        F = pd.read_parquet(PSEUDO / f"feat_{p}.parquet", columns=read, filters=[("w", "in", ws.tolist())])
         z = np.load(PSEUDO / f"windows_{p}.npz")
         w = F.w.to_numpy().astype(np.int64); k = F.k.to_numpy().astype(np.int64) - 1; li = F.link.to_numpy().astype(np.int64)
         known = z["known"][w, k, li]

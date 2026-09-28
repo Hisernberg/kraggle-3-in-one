@@ -167,11 +167,10 @@ def build(panels=PANELS8) -> None:
 
 def load_cond(cond: str, p: str):
     """Feature rows, window meta and (labels, known) of one panel and condition."""
-    X = pd.read_parquet(OUT / f"feat_{p}.parquet")
     M = pd.read_parquet(OUT / f"meta_{p}.parquet").set_index("w")
+    X = pd.read_parquet(OUT / f"feat_{p}.parquet", filters=[("w", "in", M.index[M.condition == cond].tolist())])
     X["pcode"] = np.float32(PANELS8.index(p))
     X["window_id"] = X.w.map(M.window_id)
-    X = X[X.w.map(M.condition) == cond].reset_index(drop=True)
     if cond == "queue_onset":            # onset-prior columns, as pipeline.load_split adds them
         from .oprior import COLS as OP_COLS, OnsetPrior
         ws = np.unique(X.w)
@@ -204,6 +203,13 @@ def _booster(m: str, cond: str) -> lgb.Booster:
     return lgb.Booster(model_file=f"{d}/model_{n}_{cond}.txt")
 
 
+def _predict(b: lgb.Booster, X: pd.DataFrame, chunk: int = 200_000) -> np.ndarray:
+    """Chunked prediction: a full float copy of a large panel's table per model does not fit next to other jobs."""
+    cols = b.feature_name()
+    return np.concatenate([b.predict(X.iloc[i:i + chunk][cols].to_numpy(np.float32), num_threads=4)
+                           for i in range(0, len(X), chunk)])
+
+
 def score(cond: str, schemes: dict, panels=PANELS8) -> pd.DataFrame:
     """schemes: name -> [(saved model name, weight), ...]; probabilities are the weighted mean (as robust_pipeline).
     One panel at a time (the ongoing tables of all panels do not fit in memory next to their copies)."""
@@ -212,7 +218,7 @@ def score(cond: str, schemes: dict, panels=PANELS8) -> pd.DataFrame:
     out = []
     for p in panels:
         X, M, Ys = load_cond(cond, p)
-        P = {m: b.predict(X[b.feature_name()].to_numpy(np.float32), num_threads=4) for m, b in B.items()}
+        P = {m: _predict(b, X) for m, b in B.items()}
         key = X[["window_id", "panel", "k", "link"]].copy()
         del X
         gc.collect()
@@ -264,8 +270,7 @@ def score_v9(w_stack: float = 0.8, tag: str = "v9_ogstack08", seeds=(0, 1, 2), p
     out = []
     for p in panels:
         X, M, Ys = load_cond(cond, p)
-        p1 = sum(w * b.predict(X[b.feature_name()].to_numpy(np.float32), num_threads=4) for (m, w), b
-                 in zip(V5, B1.values())) / sum(w for _, w in V5)
+        p1 = sum(w * _predict(b, X) for (m, w), b in zip(V5, B1.values())) / sum(w for _, w in V5)
         R = X[["window_id", "k", "link"]].assign(p=p1)
         Fr = X[["window_id", "k", "link"] + [c for c in og.CTX if c != "pq_k"]]
         del X
