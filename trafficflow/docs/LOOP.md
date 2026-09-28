@@ -122,9 +122,10 @@ the maximum score; H6 was below the +0.0001 adoption bar, so the base for single
    - Expected LB with the refined proxy: +0.00013 to +0.00026 vs H7. Adopt if Δ ≥ +0.0001.
    - Submit only after H7 has scored and landed within 0.0002 of its local ΔJ (the H7 → H8 step is regular rows only).
    - If the container restarts, re-run the same command: training skips models already saved.
-3. **H9** (third boosted seed `hold11/full11`, seed 8, density model up to 15000 rounds). Starts automatically after H8's
-   pipeline (`/home/user/work/chain_hold11.sh`, log `/home/user/work/H9_reg11.log`); ETA about 10:00.
-   - Gated against the two-seed scheme (b3 = equal thirds, b3w = hold11 at 0.5).
+3. ~~H9 (third boosted seed)~~: **cancelled 28 Sep 03:05** after H8 (+0.00004). Capacity gains don't transfer, so a third
+   boosted seed would add about +0.00003.
+   Replaced by the **test-month pseudo-holdout** (backlog 1): hide observed non-target cells of March/April and predict
+   them, which measures generalization to the independent test-month draws directly.
 4. **Remaining slots:** only probes that answer an open question.
 
 **Paused lines (27 Sep evidence):**
