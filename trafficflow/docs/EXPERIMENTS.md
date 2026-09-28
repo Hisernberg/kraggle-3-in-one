@@ -478,3 +478,29 @@ Only released data is used; the cells are about 1% of the observed cells.
 - The train holdout overstated both steps.
 - March regular-cell RMSE: speed 1.87 → 1.86, flow per lane 31.9 → 31.7 (H5w → H7).
 - **Gate from now on for Task 1 regular-cell changes:** the pseudo-holdout on both months, not the train holdout.
+
+## Transductive Task 1 member fullP (2026-09-28)
+Training rows are the usual train rows plus 90k observed cells per month and panel from March and April
+(`t1_pseudo.build_train_rows`, `TFB_PSEUDO=1`). They are sampled disjoint from the 40k evaluation cells. Features are
+built in rounds of 30k hidden cells (about 5% extra masking), and the labels are the released observed values.
+Config: standard regular models (lr 0.1, 150k train rows per panel, rounds from hold7), seed 11, no ramp features.
+
+Pseudo-holdout S_state (regular rows, gated reconciliation), mean over 10 panels:
+
+| scheme | March | April | 0.35·Δ vs H7 (March / April) | panels up vs full3 |
+|---|---|---|---|---|
+| full3 / full4 / full5 (single standard models) | 0.93368 / 0.93376 / 0.93377 | 0.93211 / 0.93259 / 0.93274 | – | – |
+| H7 (0.5·full9 + 0.125·full3/4/5/7) | 0.93522 | 0.93406 | 0 | 10 / 10 |
+| **fullP alone** | **0.94069** | **0.93943** | **+0.0019 / +0.0019** | **10 / 10** |
+| 0.5·full9 + 0.5·fullP | 0.93928 | 0.93812 | +0.0014 / +0.0014 | 10 / 10 |
+| H7 with fullP added at 0.1 | 0.93625 | 0.93508 | +0.0004 / +0.0004 | 10 / 10 |
+
+- A single transductive model beats every train-only ensemble by a wide margin, in both months and on every panel.
+- This is the first Task 1 change of this size since the FD features (E1).
+- Leakage checks:
+  - evaluation cells are excluded from the training rows;
+  - evaluation cells are hidden when their own features are built;
+  - no feature carries the absolute date or day index, so the model can only learn the test months' general
+    relations (demand level, neighbour structure), not memorise cells.
+- Task 1 is offline reconstruction; the ≤ T rule is Task 2's.
+- H9P = H7 with regular rows = fullP; blackout rows stay full7.

@@ -122,7 +122,11 @@ the maximum score; H6 was below the +0.0001 adoption bar, so the base for single
    - Expected LB with the refined proxy: +0.00013 to +0.00026 vs H7. Adopt if Δ ≥ +0.0001.
    - Submit only after H7 has scored and landed within 0.0002 of its local ΔJ (the H7 → H8 step is regular rows only).
    - If the container restarts, re-run the same command: training skips models already saved.
-3. ~~H9 (third boosted seed)~~: **cancelled 28 Sep 03:05** after H8 (+0.00004). Capacity gains don't transfer, so a third
+3. **H9P (transductive Task 1 member fullP; EXPERIMENTS.md).** The pseudo-holdout gives +0.0019 S_total over H7 from
+   S_state alone, 10/10 panels, both months. Building (log `/home/user/work/H9P_build.log`).
+   - Pre-registered: adopt if Δ vs H7 ≥ +0.0005; a large miss against +0.0019 means re-checking for a transfer problem
+     before stacking more on it.
+4. ~~H9 (third boosted seed)~~: **cancelled 28 Sep 03:05** after H8 (+0.00004). Capacity gains don't transfer, so a third
    boosted seed would add about +0.00003.
    Replaced by the **test-month pseudo-holdout** (backlog 1): hide observed non-target cells of March/April and predict
    them, which measures generalization to the independent test-month draws directly.
