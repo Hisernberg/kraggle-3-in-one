@@ -462,3 +462,19 @@ gains in full.
 
 **Consequence for the protocol:** a holdout that is an independent draw would measure transfer directly. None
 exists in train, but the observed (non-target) cells of March/April could serve as a transductive check (backlog).
+
+## Test-month pseudo-holdout (2026-09-28, `t1_pseudo.py`)
+In each panel, 20k observed, eligible, non-target, non-blackout cells of March and 20k of April are hidden. They are
+predicted the way a regular target is: panel built as for the test rows, features recomputed with the cells hidden.
+Each scheme's regular rows are scored with the official S_state formula (gated reconciliation, no TV smoothing).
+Only released data is used; the cells are about 1% of the observed cells.
+
+| step | train holdout, local ΔJ | pseudo March, 0.35·ΔS_state | pseudo April | LB (March) |
+|---|---|---|---|---|
+| H5w → H7 | +0.00053 | +0.00013 (9/10 panels) | +0.00010 (9/10) | +0.00026 |
+| H7 → H8 | +0.00026 | −0.00001 | 0.00000 | +0.00004 |
+
+- The pseudo-holdout gets both steps right. It measures the S_state part only, which is about half of H7's LB gain; the rest is LWR/smoothing.
+- The train holdout overstated both steps.
+- March regular-cell RMSE: speed 1.87 → 1.86, flow per lane 31.9 → 31.7 (H5w → H7).
+- **Gate from now on for Task 1 regular-cell changes:** the pseudo-holdout on both months, not the train holdout.
