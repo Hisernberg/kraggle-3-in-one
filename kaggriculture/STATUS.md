@@ -14,7 +14,7 @@ submission, read the ladder, learn, then submit the next.
 | P04 | 09-27 11:50 | router r3_cg | tape router (280 tapes, day-start switching) + cash guard (fixes P02) + lazy per-tape decode (load 8 s → 0.1 s) | 1291 after 54 games (17:05); 1309 after 64 (23:00) — **failed** |
 | (ext) | 09-27 13:50 | SB18 Macro-1 (not from this session) | tetsutani + turn-0 wheat duel | 1860 after 54 games (17:05), 34/40 wins; 1947 after 93 (23:00) |
 | P05 | 09-28 00:08 | d_sb_s150a0 (id 56623202) | cha22 + SB18 opener + armed sell-ahead-2 (sell sub-1.3×-base stock first from step 150) | 1926/17 games (01:13) · 2231/39 (02:14) · 2310/56 (03:15) · 2282/71 (04:16) · 2273/82 (04:51) — plateau ≈ 2280, below P03 |
-| P06 | 09-28 04:51 | t_sb_s150 (id 56629305) | tetsutani base + SB18 opener + armed sell-ahead-2 from step 150 (targets the duel-opener wheat route) | pending (active pair P05 + P06; SB18 1993 displaced) |
+| P06 | 09-28 04:51 | t_sb_s150 (id 56629305) | tetsutani base + SB18 opener + armed sell-ahead-2 from step 150 (targets the duel-opener wheat route) | 1440/12 (05:22) · 1961/30 (06:30): 21/27, vs duel openers 11/12 (+5560) |
 
 ## What the ladder taught us
 
@@ -66,6 +66,11 @@ productive than the public cluster (eggs/geese, wheat, wool pricing).
    (public tetsutani) is weaker than the ladder's duel players, so local tests overrated the cha22 base. Next:
    the tetsutani base with our armed edge (t_sb_s150). Locally it beats tetsutani 24/24 and P05 34/48; an official
    game vs P05 won by +621, worst turn 0.18 s.
+8. (09-28 06:30) Edge knobs DO matter on the tetsutani base, unlike on cha22. Local test, seeds 10000-10059:
+   sa_full_below=2.0 (t6_fb20) beats P06 78/120 (+23), mostly by breaking exact mirror ties. It is equal or
+   slightly better vs P05/tets/cha22/metav4 (+6..+30 margin, same win counts). Harmful settings: l2 off, arm_k=2,
+   sa_from=216, and adding WHEAT to sell-ahead (−20k, catastrophic). Local wheat output of P05 ≈ P06 ≈ tetsutani
+   (552 harvested/game), so the ladder wheat gap comes from ladder opponents' own variants, not from the base.
 
 ## Plan: automatic 5 slots per UTC day (09-28 → 09-30)
 
@@ -101,7 +106,9 @@ Agents are built from `agents/edge/bases/base_sb.py` / `base_tsb.py` with the v_
 - S1 00:05: **P05 = d_sb_s150a0**. It passed 2 official games (DONE, won both; worst turn 0.07 s).
 - S2 04:50 (**decided 04:20: submit t_sb_s150**, see lesson 7): if P05 is ≥ 2400 with ≥ 40 games, submit **t_sb_s150** (a different base, as a diversity probe; worst
   turn about 0.5 s, within the 1 s limit). If P05 is under 2300, re-submit P03 as the anchor and study P05's losses.
-- S3-S5: driven by P05's ladder losses (ladder_review). The planned knob deltas were tested at 23:00 on seeds
+- S3 09:35 rule: if P06 ≥ 2250 (or still climbing above P05's pace) → submit **submissions/cand_t6_fb20** (P06 +
+  sa_full_below 2.0; official game DONE, worst turn 0.14 s); pair becomes P06 + fb20. Else → re-submit P03 (2370 anchor).
+- (earlier notes) S3-S5: driven by P05's ladder losses (ladder_review). The planned knob deltas were tested at 23:00 on seeds
   9900-9907, both seats. They are flat: sa_from=100 and arm_before=720 play identically to P05. fb1.4 goes 9/16 vs
   P05 (+$1), fb1.2 goes 7/16, and sa_from=200 goes 3/16. So P05's knobs sit at a local optimum and won't be
   submitted. P05 on these fresh seeds: v_sa2 15/16 (+777), P03 15/16, tetsutani 14/16, metav4 14/16, cha22 16/16,
