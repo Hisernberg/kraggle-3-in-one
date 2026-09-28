@@ -76,18 +76,22 @@ def build_panel(panel: str, seed: int = 0) -> None:
     print(f"{panel}: {len(X)} pseudo cells, {time.time() - t0:.0f}s", flush=True)
 
 
-def build_train_rows(panel: str, rounds: int = 3, n_per_round: int = 30_000, seed: int = 1) -> None:
+def build_train_rows(panel: str, rounds: int = 3, n_per_round: int = 30_000, seed: int = 1,
+                     name: str = "trainrows") -> None:
     """Transductive training rows: observed, eligible, non-target, non-blackout cells of the test months, disjoint
     from the evaluation pseudo cells. Each round hides its own cells (about 5% of the observed cells, so the neighbour
     pattern stays close to a real target's), builds their features, and restores the panel. Columns match the feat
     tables (load_train adds FD / ramp columns), kind 'reg', flagged `pseudo`."""
-    f = OUT / f"{panel}_trainrows.parquet"
+    f = OUT / f"{panel}_{name}.parquet"
     if f.exists():
         return
     t0 = time.time()
     P = train_blackout_panel(panel)
     ev = pd.read_parquet(OUT / f"{panel}.parquet", columns=["t", "j"])
-    ev_key = set(zip(ev.t.to_numpy().tolist(), ev.j.to_numpy().tolist()))
+    used = [ev] + [pd.read_parquet(g, columns=["t", "j"]) for g in sorted(OUT.glob(f"{panel}_trainrows*.parquet"))]
+    ev_key = set()          # evaluation cells and cells of earlier row sets are excluded
+    for u in used:
+        ev_key |= set(zip(u.t.to_numpy().tolist(), u.j.to_numpy().tolist()))
     orig = {c: P.X[c].copy() for c in P.X}
     rng = np.random.default_rng(seed + 31 * PANELS.index(panel))
     parts = []
@@ -198,9 +202,11 @@ if __name__ == "__main__":
     if cmd == "build":
         for p in (sys.argv[2:] or PANELS):
             build_panel(p); gc.collect()
-    elif cmd == "trainrows":
-        for p in (sys.argv[2:] or PANELS):
-            build_train_rows(p); gc.collect()
+    elif cmd == "trainrows":  # trainrows [name seed] -> WORK/pseudo/<panel>_<name>.parquet (default trainrows, seed 1)
+        name = sys.argv[2] if len(sys.argv) > 2 else "trainrows"
+        sd = int(sys.argv[3]) if len(sys.argv) > 3 else 1
+        for p in PANELS:
+            build_train_rows(p, seed=sd, name=name); gc.collect()
     elif cmd == "predict":
         predict(sys.argv[2].split(","), sys.argv[3:] or PANELS)
     elif cmd == "score":  # score ['{"name": [["tag", w], ...], ...}']  (default: SCHEMES; the first is the reference)

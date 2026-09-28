@@ -234,9 +234,10 @@ def load_train(panels, kind, seed=0):
         tr = rng.choice(tr, min(ctr, len(tr)), replace=False); ho = rng.choice(ho, min(cho, len(ho)), replace=False)
         d = d.iloc[np.sort(np.concatenate([tr, ho]))]
         d = d.assign(pseudo=False)
-        if USE_PSEUDO and kind == "reg":
-            pr = pd.read_parquet(WORK / "pseudo" / f"{p}_trainrows.parquet").assign(pseudo=True)
-            d = pd.concat([d, pr[[c for c in d.columns if c in pr.columns]]], ignore_index=True)
+        if USE_PSEUDO and kind == "reg":  # TFB_PSEUDO_FILES: comma list of row sets (default: trainrows)
+            for name in os.environ.get("TFB_PSEUDO_FILES", "trainrows").split(","):
+                pr = pd.read_parquet(WORK / "pseudo" / f"{p}_{name}.parquet").assign(pseudo=True)
+                d = pd.concat([d, pr[[c for c in d.columns if c in pr.columns]]], ignore_index=True)
         f64 = d.select_dtypes("float64").columns
         d[f64] = d[f64].astype(np.float32)
         dfs.append(d)
