@@ -255,8 +255,8 @@ def rank():
 
 
 BACKUP = Path("/home/user/backup/tfb-work")
-BACKUP_GLOBS = [  # components of the current best (H9P) and their inputs; see trafficflow/docs/LOOP.md "Current best"
-    "/home/user/work/t1/pred/state_ens_H9P.parquet", "/home/user/work/t1/models/fullP/*",
+BACKUP_GLOBS = [  # components of the current best (H10P) and their inputs; see trafficflow/docs/LOOP.md "Current best"
+    "/home/user/work/t1/pred/state_ens_H10P.parquet", "/home/user/work/t1/models/fullP/*", "/home/user/work/t1/models/fullP2/*",
     "/home/user/work/t1/models/full7/*", "/home/user/work/subs/H9P_transductive.checks.json",
     "/home/user/work/subs/H9P_transductive.zip", "/home/user/work/subs/H7_reg9.zip", "/home/user/work/t2/lgb_v8_seeds9_stack03.csv",
     "/home/user/work/t2/probs_lgb_v5.parquet", "/home/user/work/t2h/probs_v8_seeds9_stack03_onset.parquet",

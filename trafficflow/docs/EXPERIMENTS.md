@@ -89,6 +89,7 @@ That compares with the best post-rebuild public score of 0.879. Our previous bes
 | 2026-09-28 00:10 | **H7** `H7_reg9.zip` | H5w with Task 1 regular rows = 0.5·full9 (boosted regular member) + 0.5·mean(full3, 4, 5, 7) | **0.86864** | – | **+0.00026** vs H5w (local +0.00053). Adopted, base → H7. Transfer about 50%: the S_state part (+0.00022) came through, the LWR part (+0.00031, a better density model in congested cells) mostly did not |
 | 2026-09-28 03:05 | H8 `H8_reg10.zip` | H7 with regular rows = 0.5·full9 + 0.5·full10 (two boosted seeds, old members dropped) | 0.86868 | – | **+0.00004** vs H7 (local +0.00026: S_state +0.00013, LWR +0.00013). Not adopted (bar +0.0001). Even the S_state part did not transfer |
 | 2026-09-28 05:05 | **H9P** `H9P_transductive.zip` | H7 with Task 1 regular rows = fullP (transductive member: train + observed March/April cells) | **0.87093** | 14/post-rebuild | **+0.00229** vs H7 (pseudo-holdout +0.0019 from S_state alone). Adopted, base → H9P. The largest Task 1 step since E1 |
+| 2026-09-28 06:48 | **H10P** `H10P_transductive2.zip` | H9P with regular rows = 0.35·fullP + 0.65·fullP2 (2× transductive rows) | **0.87202** | – | **+0.00109** vs H9P (pseudo-holdout +0.00054 from S_state). Adopted, base → H10P. The LB gain is about 2× the S_state-only pseudo figure, as for H9P |
 
 ### Decomposition of A (0.85204), exact from the probes
 | Task | Weighted | Task score | Local estimate |
