@@ -505,3 +505,17 @@ Pseudo-holdout S_state (regular rows, gated reconciliation), mean over 10 panels
     relations (demand level, neighbour structure), not memorise cells.
 - Task 1 is offline reconstruction; the ≤ T rule is Task 2's.
 - H9P = H7 with regular rows = fullP; blackout rows stay full7.
+
+### More transductive data (fullP2: 2× the test-month rows, seed 12)
+Pseudo-holdout, 0.35·ΔS_state vs fullP alone (March / April, panels up):
+
+| scheme | March | April |
+|---|---|---|
+| fullP2 alone | +0.00043 (10) | +0.00056 (9) |
+| mean(fullP, fullP2) | +0.00050 (10) | +0.00061 (10) |
+| **0.35·fullP + 0.65·fullP2** | **+0.00054 (10)** | **+0.00067 (10)** |
+
+- More test-month rows keep helping (1× → 2×: about +0.0005), and averaging adds a little.
+- H10P = H9P with the weighted pair.
+- A third disjoint set is built; fullP3 (3×, seed 13) is chained after H10P (`/home/user/work/chain_H11P.sh`).
+- 733 MB were freed by deleting `/home/user/work/t2/_xev_11368.npy`, a temp file the killed p4 CV left behind.
