@@ -55,7 +55,7 @@ Background agents and jobs wake the session when they finish, so work continues 
    (**Backup** below).
 
 ## Current best
-**`H5w_t1ramp_dark.zip` = 0.86838** (2026-09-27). #1 KTK 0.90038.
+**`H7_reg9.zip` = 0.86864** (2026-09-28). #1 KTK 0.90085.
 
 Build:
 ```
@@ -117,7 +117,8 @@ the maximum score; H6 was below the +0.0001 adoption bar, so the base for single
 2. **H8** (second boosted seed `hold10/full10`, seed 7, `boost_member.sh`, density model up to 10000 rounds).
    - Restarted 27 Sep 21:15 after the container restart; log `/home/user/work/H8_reg10.log`; ETA about 03:30.
    - Gated against the H7 scheme (b2half / b2heavy / b2only). **Gate passed 23:19: b2only (0.5·hold9 + 0.5·hold10) +0.00026 on 4/4.**
-     full10 is training; `H8_reg10.zip` should be ready around 03:00. Adopt if Δ vs H7 ≥ +0.0001 and within 0.0002 of +0.00026.
+     full10 is training; `H8_reg10.zip` should be ready around 03:00.
+   - Expected LB with the refined proxy: +0.00013 to +0.00026 vs H7. Adopt if Δ ≥ +0.0001.
    - Submit only after H7 has scored and landed within 0.0002 of its local ΔJ (the H7 → H8 step is regular rows only).
    - If the container restarts, re-run the same command: training skips models already saved.
 3. **H9** (third boosted seed `hold11/full11`, seed 8, density model up to 15000 rounds). Starts automatically after H8's
@@ -156,6 +157,7 @@ the maximum score; H6 was below the +0.0001 adoption bar, so the base for single
 | 09-27 | **H5w: ramp member, blackout-weighted** (state rows only) | **0.86838 (+0.00039)** | Local J +0.00081, so the LB gave half. **Adopted: new best.** Blackout-only gains need a haircut: 2 of 10 panels (D12_I405) have no test blackouts, and the holdout overstates the rest |
 | 09-27 | H6: H5w with blackout rows = mean(full7, full8) | 0.86839 (+0.00001) | Local +0.00016. Rescoring without blackout cells: H5w's non-blackout part is only +0.00008, so its blackout part transferred about 50% and H6's about 5%. **Blackout ΔJ rests on 10 blackouts per panel and is noisy; discount it to ~1/3.** Pause blackout-model work |
 | 09-27 | G8: H5w with ongoing v11 (capacity p3) | 0.86798 (−0.00041) | Passed plain CV (+0.005), shift-weighted CV (+0.005 both months) and the footprint check, then lost on March (ongoing −0.0027). **4 of the last 5 ongoing changes failed on March. Ongoing is paused: no local test predicts it.** Robust list for the final pick |
+| 09-28 | **H7: boosted regular member at 0.5** (regular rows only) | **0.86864 (+0.00026)** | Local +0.00053; its S_state part (+0.00022) transferred, its density-driven LWR part (+0.00031) mostly didn't. **Adopted: new best.** Proxy refined (EXPERIMENTS.md) |
 | 09-26 | **H2: G2 + Task 1 seed ensemble** (state rows only) | **0.86777 (+0.00066)** | local J +0.00077. **Adopted: new best** |
 | 09-26 | H1b: H2 + ongoing v10 (stage 2 may only remove cells, recurrence ≥ 0.05) | 0.86629 (−0.00148) | Passed the new Task 2 gate and still failed (ongoing −0.010). **Ongoing stacking line dropped, final pick included.** Ongoing changes are LB probes first from now on |
 | 09-26 | P5 probe: H2 + TV smoothing ×3 | 0.86736 (−0.00041) | local −0.00062. The official Task 3 truth behaves like the train truth, and the smoothing strength is at or near its optimum |

@@ -86,6 +86,7 @@ That compares with the best post-rebuild public score of 0.879. Our previous bes
 | 2026-09-27 09:48 | **H5w** `H5w_t1ramp_dark.zip` | H3 with Task 1 regular rows = mean(full3, 4, 5, 7), blackout rows = full7 (ramp-flow member) | **0.86838** | – | **+0.00039** (local J +0.00081). Adopted, base → H5w. First Task 1 change where the proxy is off by more than 0.0002: the holdout gives blackouts to D12_I405_N, which has none in the test, and the blackout part of the gain transferred at about half |
 | 2026-09-27 09:58 | H6 `H6_dark8.zip` | H5w with blackout rows = mean(full7, full8) (dark-only booster) | 0.86839 | – | **+0.00001** (local +0.00016). Not adopted. Blackout-row gains transfer unreliably (below) |
 | 2026-09-27 11:10 | G8 `G8_ongoing_v11.zip` | H5w with ongoing = v11 (v5 blend, og_v3 / og_v3_noloc at capacity p3; +32/−45 cells in 28/40 validation windows) | 0.86798 | – | **−0.00041 → March ongoing −0.0027**, against CV +0.0053 ± 0.0005, shift-weighted +0.0050 (validation) / +0.0052 (private), footprint clean. Passed the full Task 2 gate and lost. Not adopted; robust list for the final pick |
+| 2026-09-28 00:10 | **H7** `H7_reg9.zip` | H5w with Task 1 regular rows = 0.5·full9 (boosted regular member) + 0.5·mean(full3, 4, 5, 7) | **0.86864** | – | **+0.00026** vs H5w (local +0.00053). Adopted, base → H7. Transfer about 50%: the S_state part (+0.00022) came through, the LWR part (+0.00031, a better density model in congested cells) mostly did not |
 
 ### Decomposition of A (0.85204), exact from the probes
 | Task | Weighted | Task score | Local estimate |
@@ -425,3 +426,17 @@ Holdout J, blackout rows fixed (= hold7), reference = the H7 scheme:
 - The old 150k-row members no longer add anything once there are two boosted seeds.
 - Next: a third boosted seed, and the density model beyond 10000 rounds.
 - H8 = H5w with regular rows = 0.5·full9 + 0.5·full10 (blackout rows full7). Local ΔJ vs H7 +0.00026; vs H5w about +0.0008.
+
+### Why H7 transferred at ~50% (local ΔJ split into its S_state and LWR parts)
+
+| change | local ΔJ | from S_state (0.35·ΔS) | from LWR (0.10·ΔLWR) | LB Δ | reading |
+|---|---|---|---|---|---|
+| H2 (seed averaging) | +0.00077 | +0.00024 | +0.00053 | +0.00066 | the LWR part transferred at about 80% |
+| H7 (boosted member, better density model) | +0.00053 | +0.00022 | +0.00031 | +0.00026 | the LWR part transferred at about 15% |
+| H8 (second boosted seed), prediction | +0.00026 | +0.00013 | +0.00013 | +0.00013 to +0.00026 | mixed: seed averaging plus density |
+
+- LWR gains from variance reduction or smoothing (H2, G1) transfer.
+- LWR gains from a more accurate density model in congested (gated) cells mostly don't. The February holdout is more
+  congested than March on some panels (D12_I5_N, D12_I5_S), and the gated cells are where the density model acts.
+- **Proxy rule from now on:** predict Task 1 LB Δ as 0.35·ΔS_state plus the LWR part discounted to about 15% when it
+  comes from density accuracy.
