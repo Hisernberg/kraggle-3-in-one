@@ -32,11 +32,11 @@
   "metric is additive per target: tune one target per shot"
  ],
  "queue": [
-  "d9 S1: --fam-w telemed_644 0 0.31 1.0 (PA from Vera only on the 50 Telemed_644 rows): every pipeline PA estimator is ~5 deg below Vera/AnatomyNet/Variational there (other families agree within ~1 deg); +-0.015 expected either way",
-  "d9 S2 (if S1 helps): lumify extra pipeline PA offset -1.5 (--fam-pa-offset lumify -1.5; blend is 1 deg above Vera there) or left_ticks PA weight 0.3; if S1 hurts: telemed PA weight 0.8",
-  "multi-scale TTA pipeline (ready): --pipeline daily/inputs/pipeline_a5ms.csv --features daily/inputs/features_ms.csv --pa-offset 1.53 (configs/a5ms.json; expert sets: PA/MT better on all sets, FL mixed; vs best only 0.14 deg PA / 0.6 mm FL mean change)",
+  "d9 S1: build d9_S1_telemedpa --fam-w telemed_644 0 0.31 1.0  (PA from Vera only on the 50 Telemed_644 rows, +2.2 deg there). All pipeline PA estimators are ~4-5 deg below Vera/AnatomyNet/Variational on that device; other families agree within ~1-2 deg",
+  "d9 S2: if S1 helps -> --famcal pa (each device family's pipeline PA shifted to the reference's family median: telemed +2.3, lumify/h512 -1.1, juniper -0.7 vs best); if S1 hurts -> --fam-w telemed_644 0.8 0.31 1.0",
+  "d9 S3: --famcal fl (pipeline FL scaled per device to the reference's family median: Telemed families x0.90-0.91, Lumify x1.09, gray853 x1.12), then try a higher FL weight if it helps",
+  "multi-scale TTA pipeline (ready): --pipeline daily/inputs/pipeline_a5ms.csv --features daily/inputs/features_ms.csv --pa-offset 1.53 (configs/a5ms.json; expert sets: PA/MT better on all sets, FL mixed)",
   "FL weight 0.27 / 0.25 around 0.31 with the averaged FL (0.45 lost 0.0168)",
-  "second fascicle model (efficientnet-b3, kernel umud-seg-fasc2, GPU slot permitting) averaged with resnet34 probs",
-  "FL per device: pipeline FL is 11% above Vera on Telemed families, 7% below on Lumify (follow the PA result)"
+  "second fascicle model: Kaggle CPU kernel umud-seg-fasc-r18-cpu (resnet18 384x576, running) and GPU kernel umud-seg-fasc2 (effnet-b3, waiting for a slot); average fasc probs with scripts/avg_probs.py, validate on external sets first"
  ]
 }

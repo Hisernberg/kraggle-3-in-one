@@ -39,6 +39,9 @@ ap.add_argument("--fam-w", nargs=4, action="append", default=[], metavar=("FAMIL
                 help="per-device weights for rows whose features.family starts with FAMILY (repeatable)")
 ap.add_argument("--fam-pa-offset", nargs=2, action="append", default=[], metavar=("FAMILY", "DEG"),
                 help="extra pipeline PA offset for one device family (repeatable)")
+ap.add_argument("--famcal", nargs="+", default=[], choices=["pa", "fl", "mt"],
+                help="per-device calibration of the pipeline to the reference: PA/MT shifted, FL scaled so that each "
+                     "device family's median matches the reference's (family = features.family without the depth suffix)")
 ap.add_argument("--no-anchors", action="store_true",
                 help="do not pin IMG_00001/2 to the sample_submission values (host, topic 743111: they are made up)")
 ap.add_argument("--out", required=True)
@@ -55,6 +58,17 @@ for fp, off in a.fam_pa_offset:
     p.loc[fam.str.startswith(fp), "pa_deg"] += float(off)
 failed = feat["ok"] != 1
 p.loc[failed, list(T)] = r.loc[failed, list(T)]
+if a.famcal:
+    fam0 = fam.str.replace(r"_\d+$", "", regex=True)
+    okr = ~failed
+    for t in a.famcal:
+        col = {"pa": "pa_deg", "fl": "fl_mm", "mt": "mt_mm"}[t]
+        for fv in fam0[okr].unique():
+            m = okr & (fam0 == fv)
+            if t == "fl":
+                p.loc[fam0 == fv, col] *= float((r[col][m] / p[col][m]).median())
+            else:
+                p.loc[fam0 == fv, col] += float((r[col][m] - p[col][m]).median())
 clips = {"pa_deg": a.clip_pa, "fl_mm": a.clip_fl, "mt_mm": a.clip_mt}
 out = pd.DataFrame(index=p.index)
 in_clip = g.map(g.value_counts()) > 1
