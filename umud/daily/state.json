@@ -37,6 +37,7 @@
   "d9 S3: --famcal fl (pipeline FL scaled per device to the reference's family median: Telemed families x0.90-0.91, Lumify x1.09, gray853 x1.12), then try a higher FL weight if it helps",
   "multi-scale TTA pipeline (ready): --pipeline daily/inputs/pipeline_a5ms.csv --features daily/inputs/features_ms.csv --pa-offset 1.53 (configs/a5ms.json; expert sets: PA/MT better on all sets, FL mixed)",
   "two-model fascicle ensemble (ready): --pipeline daily/inputs/pipeline_ens.csv --features daily/inputs/features_ens.csv --pa-offset 1.57 (mean probs of resnet34 + efficientnet-b3 (kernel umud-seg-fasc2, val dice 0.308); expert sets: PA NeuAge 2.58->2.37, OSF FL 3.70->3.62 deb.)",
+  "full ensemble (ready): --pipeline daily/inputs/pipeline_ens_ms.csv --features daily/inputs/features_ens_ms.csv --pa-offset 1.54 (resnet34 + efficientnet-b3 fascicle probs, both multi-scale TTA; MS apo/MT). Expert sets debiased: PA GM 0.90 / NeuAge 2.41 / OSF 0.92; FL NeuAge 14.2 (best), OSF 3.76; MT OSF 0.44. Pick ens vs ens_ms vs a5ms by LB",
   "FL weight 0.27 / 0.25 around 0.31 with the averaged FL (0.45 lost 0.0168)",
   "second fascicle model: Kaggle CPU kernel umud-seg-fasc-r18-cpu (resnet18 384x576, running) and GPU kernel umud-seg-fasc2 (effnet-b3, waiting for a slot); average fasc probs with scripts/avg_probs.py, validate on external sets first"
  ]
