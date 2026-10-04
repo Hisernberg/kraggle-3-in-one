@@ -35,6 +35,10 @@ ap.add_argument("--fl-scale", type=float, default=1.0, help="global factor on th
 ap.add_argument("--w-clip", type=float, nargs=3, default=None, metavar=("PA", "FL", "MT"),
                 help="weights for rows in 5-frame cine clips (clip median averages pipeline noise away)")
 ap.add_argument("--alpha", type=float, default=0.6, help="cine-loop smoothing strength")
+ap.add_argument("--fam-w", nargs=4, action="append", default=[], metavar=("FAMILY", "PA", "FL", "MT"),
+                help="per-device weights for rows whose features.family starts with FAMILY (repeatable)")
+ap.add_argument("--fam-pa-offset", nargs=2, action="append", default=[], metavar=("FAMILY", "DEG"),
+                help="extra pipeline PA offset for one device family (repeatable)")
 ap.add_argument("--no-anchors", action="store_true",
                 help="do not pin IMG_00001/2 to the sample_submission values (host, topic 743111: they are made up)")
 ap.add_argument("--out", required=True)
@@ -46,6 +50,9 @@ feat = pd.read_csv(a.features).set_index("image_id").loc[p.index]
 g = pd.Series(np.load(a.groups), index=p.index)
 p = p.copy()
 p["pa_deg"] += a.pa_offset
+fam = feat["family"].astype(str) if "family" in feat else pd.Series("", index=p.index)
+for fp, off in a.fam_pa_offset:
+    p.loc[fam.str.startswith(fp), "pa_deg"] += float(off)
 failed = feat["ok"] != 1
 p.loc[failed, list(T)] = r.loc[failed, list(T)]
 clips = {"pa_deg": a.clip_pa, "fl_mm": a.clip_fl, "mt_mm": a.clip_mt}
@@ -54,6 +61,10 @@ in_clip = g.map(g.value_counts()) > 1
 for i, (t, w) in enumerate(zip(T, a.w)):
     if a.w_clip is not None:
         w = pd.Series(np.where(in_clip, a.w_clip[i], w), index=p.index)
+    if a.fam_w:
+        w = pd.Series(w, index=p.index, dtype=float) if np.isscalar(w) else w.astype(float)
+        for fw in a.fam_w:
+            w[fam.str.startswith(fw[0])] = float(fw[1 + i])
     d = p[t] - r[t]
     if clips[t] is not None:
         d = d.clip(-clips[t], clips[t])

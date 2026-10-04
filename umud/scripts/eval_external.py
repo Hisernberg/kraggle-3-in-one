@@ -33,9 +33,9 @@ def main():
     lab = pd.read_csv(ext / "labels.csv").set_index("image_id")
     df = f.join(lab, how="inner")
     cands = {
-        "pa_deg": [c for c in df.columns if c.startswith("pa_") or c.startswith("v2_pa_")],
+        "pa_deg": [c for c in df.columns if c.startswith("pa_") or c.startswith("v2_pa_") or c.startswith("v2b_pa_")],
         "fl_mm": [c for c in df.columns if c.startswith("fl_") and c not in ("fl_mm", "fl_px")]
-        + [c for c in df.columns if c.startswith("v2_fl_")],
+        + [c for c in df.columns if c.startswith("v2_fl_") or c.startswith("v2b_fl_")],
         "mt_mm": [c for c in df.columns if (c.startswith("mt_") or c.startswith("v2_mt_")) and c != "mt_mm"],
     }
     cands["pa_deg"] = [c for c in cands["pa_deg"] if c not in ("pa_deg", "v2_pa_slope")]

@@ -320,7 +320,9 @@ def fascicles_v2(fasc_prob: np.ndarray, apo: dict, px_per_mm: float, thr: float 
         xl = int(np.clip(round(lo[0]), 0, W - 1))
         dlo = (lo[1] - y_sup[xl]) / max(y_deep[xl] - y_sup[xl], 1)
         rel_s = ((ang - sup_ang + 90) % 180) - 90
-        R.append((rel, rel_s, dc, dlo, length, float(w.mean()), mu[0]))
+        axis = (1 - min(max(dc, 0), 1)) * sup_ang + min(max(dc, 0), 1) * deep_ang  # local muscle axis
+        rel_ax = ((ang - axis + 90) % 180) - 90
+        R.append((rel, rel_s, dc, dlo, length, float(w.mean()), mu[0], rel_ax))
     out = {"v2_n": len(R)}
     if len(R) < 2:
         return out
@@ -349,7 +351,80 @@ def fascicles_v2(fasc_prob: np.ndarray, apo: dict, px_per_mm: float, thr: float 
         out["v2_fl_chord_mid"] = float(th / px_per_mm / math.sin(math.radians(max(a + 0.5 * b, 3))))
         out["v2_fl_chord_deep"] = float(th / px_per_mm / math.sin(math.radians(max(a + b, 3))))
     out["v2_fasc_span"] = float(np.ptp(dc))
+    if ab is not None:
+        out.update(streamline_fl(fasc_prob, apo, px_per_mm, a, b, sign))
+    # v2b: angles relative to the local muscle axis (interpolated between both aponeuroses by depth), so that
+    # diverging aponeuroses do not bend the extrapolated fascicle towards the superficial one
+    pax = np.abs(R[:, 7])
+    abx = _wfit(dc, pax, wt)
+    if abx is not None:
+        ax_, bx_ = float(abx[0]), float(np.clip(abx[1], -20, 20))
+        out.update(v2b_pa_fit1=ax_ + bx_, v2b_pa_fitmid=ax_ + 0.5 * bx_)
+        out.update({k.replace("v2_", "v2b_"): v for k, v in
+                    streamline_fl(fasc_prob, apo, px_per_mm, ax_, bx_, sign, axis_rel=True).items()})
+        xm = W / 2
+        th = (np.polyval(deep_line, xm) - np.polyval(sup_line, xm)) * math.cos(math.radians(0.5 * (deep_ang + sup_ang)))
+        out["v2b_fl_chord_mid"] = float(th / px_per_mm / math.sin(math.radians(max(ax_ + 0.5 * bx_, 3))))
     return out
+
+
+def streamline_fl(fasc_prob: np.ndarray, apo: dict, px_per_mm: float, a: float, b: float, sign: float,
+                  seeds=(0.3, 0.4, 0.5, 0.6, 0.7), axis_rel: bool = False) -> dict:
+    """FL along traced fascicle paths (the raters' segmented line), extrapolated straight outside the frame.
+
+    From seeds on the deep aponeurosis (central x) a path is stepped towards the superficial aponeurosis. The
+    step direction blends the local fascicle orientation (structure tensor of the fascicle map, weighted by its
+    coherence and probability) with the depth-fitted angle model a + b d; outside the image the last direction is
+    kept (linear extrapolation). FL = median path length over seeds.
+    """
+    H, W = fasc_prob.shape
+    s, d = apo["sup"], apo["deep"]
+    sup_line = s["bot"] if s["bot"] is not None else s["cen"]
+    deep_line = d["top"] if d["top"] is not None else d["cen"]
+    deep_ang = math.degrees(math.atan(deep_line[0]))
+    sup_ang = math.degrees(math.atan(sup_line[0]))
+    f = fasc_prob.astype(np.float32)
+    gx = cv2.Sobel(f, cv2.CV_32F, 1, 0, ksize=3)
+    gy = cv2.Sobel(f, cv2.CV_32F, 0, 1, ksize=3)
+    sig = max(1.0, 1.5 * px_per_mm)
+    jxx = cv2.GaussianBlur(gx * gx, (0, 0), sig)
+    jyy = cv2.GaussianBlur(gy * gy, (0, 0), sig)
+    jxy = cv2.GaussianBlur(gx * gy, (0, 0), sig)
+    theta = np.degrees(0.5 * np.arctan2(2 * jxy, jxx - jyy)) + 90.0
+    coh = np.sqrt((jxx - jyy) ** 2 + 4 * jxy ** 2) / (jxx + jyy + 1e-6)
+    wf = coh * cv2.GaussianBlur(f, (0, 0), sig)
+    rel_field = ((theta - deep_ang + 90) % 180) - 90  # relative to the deep aponeurosis (axis_rel: corrected below)
+    wmax = float(np.percentile(wf, 99)) + 1e-6
+    lens = []
+    for fr in seeds:
+        x, y = fr * W, np.polyval(deep_line, fr * W) - 1.0
+        length, n = 0.0, 0
+        dvec = None
+        while n < 6 * (H + W):
+            n += 1
+            ys, yd = np.polyval(sup_line, x), np.polyval(deep_line, x)
+            if y <= ys:
+                break
+            dpt = float(np.clip((y - ys) / max(yd - ys, 1.0), 0, 1))
+            phi = a + b * dpt
+            base = (1 - dpt) * sup_ang + dpt * deep_ang if axis_rel else deep_ang
+            xi, yi = int(round(x)), int(round(y))
+            if 0 <= xi < W and 0 <= yi < H:
+                rf = rel_field[yi, xi] - (base - deep_ang)
+                ok = np.sign(rf) == sign and 2 <= abs(rf) <= 60 and abs(abs(rf) - phi) < 8.0
+                w = min(wf[yi, xi] / wmax, 1.0) if ok else 0.0
+                phi = (w * abs(rf) + 0.5 * phi) / (w + 0.5)
+                ang = math.radians(base + sign * phi)
+                dvec = np.array([math.cos(ang), math.sin(ang)])
+                if dvec[1] > 0:
+                    dvec = -dvec
+            elif dvec is None:
+                break
+            x, y = x + 2 * dvec[0], y + 2 * dvec[1]  # 2 px steps
+            length += 2.0
+        if 0 < length and n < 6 * (H + W):
+            lens.append(length / px_per_mm)
+    return {"v2_fl_stream": float(np.median(lens))} if lens else {}
 
 
 def mt_variants(apo: dict, px_per_mm: float) -> dict:

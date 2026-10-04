@@ -37,19 +37,25 @@ def load():
 
 
 def merge_args(base, extra):
-    """Override base flags with extra flags (flag followed by its values)."""
+    """Override base flags with extra flags (flag followed by its values).
+
+    Repeatable per-device flags (--fam-w FAMILY ..., --fam-pa-offset FAMILY ...) are keyed by flag + family, so an
+    override replaces only that family's entry.
+    """
+    multi = {"--fam-w", "--fam-pa-offset"}
+
     def parse(tokens):
-        out, cur = {}, None
-        for t in tokens:
-            if t.startswith("--"):
-                cur = t
-                out[cur] = []
+        groups, cur = [], None
+        for tok in tokens:
+            if tok.startswith("--"):
+                cur = [tok]
+                groups.append(cur)
             else:
-                out[cur].append(t)
-        return out
+                cur.append(tok)
+        return {(g[0], g[1]) if g[0] in multi else (g[0],): g for g in groups}
     b, e = parse(base), parse(extra)
     b.update(e)
-    return [x for k, v in b.items() for x in [k, *v]]
+    return [x for g in b.values() for x in g]
 
 
 def status():

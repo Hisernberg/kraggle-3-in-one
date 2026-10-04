@@ -151,11 +151,22 @@ class SegDS(torch.utils.data.Dataset):
 
 
 ENCODER = "resnet34"
+ENCODERS: dict = {}  # per-model override, e.g. {"fasc": "efficientnet-b3"}
 
 
-def make_model(weights: str | None = "imagenet"):
+def make_model(weights: str | None = "imagenet", kind: str | None = None, wdir: Path | None = None):
+    """U-Net; the encoder is ENCODERS[kind], else <wdir>/<kind>.encoder if present, else ENCODER."""
     import segmentation_models_pytorch as smp
-    return smp.Unet(ENCODER, encoder_weights=weights, in_channels=3, classes=1)
+    enc = ENCODERS.get(kind, ENCODER)
+    if kind not in ENCODERS and wdir is not None and (Path(wdir) / f"{kind}.encoder").exists():
+        enc = (Path(wdir) / f"{kind}.encoder").read_text().strip()
+    return smp.Unet(enc, encoder_weights=weights, in_channels=3, classes=1)
+
+
+def load_model(wdir: Path, kind: str, dev: str = "cpu"):
+    m = make_model(None, kind, wdir)
+    m.load_state_dict(torch.load(Path(wdir) / f"{kind}.pt", map_location="cpu"))
+    return m.to(dev).eval()
 
 
 def dice_loss(logits, y, eps=1.0):
@@ -166,6 +177,7 @@ def dice_loss(logits, y, eps=1.0):
 
 
 INIT_DIR = None
+FRESH = False  # with --init: train from ImageNet anyway, only copy the untouched models over
 LR = 3e-4
 
 
@@ -182,9 +194,10 @@ def train_kind(data: Path, out: Path, kind: str, epochs: int, bs: int, dev: str)
     dl = torch.utils.data.DataLoader(SegDS(X, Y, tr, True), batch_size=bs, shuffle=True, num_workers=WORKERS,
                                      drop_last=True, pin_memory=True, persistent_workers=WORKERS > 0)
     dv = torch.utils.data.DataLoader(SegDS(X, Y, va, False), batch_size=bs, num_workers=min(2, WORKERS))
-    model = make_model(None if INIT_DIR else "imagenet")
-    if INIT_DIR:  # fine-tune from earlier weights
+    model = make_model(None if INIT_DIR and not FRESH else "imagenet", kind)
+    if INIT_DIR and not FRESH:  # fine-tune from earlier weights
         model.load_state_dict(torch.load(Path(INIT_DIR) / f"{kind}.pt", map_location="cpu"))
+    (out / f"{kind}.encoder").write_text(ENCODERS.get(kind, ENCODER))
     model = model.to(dev)
     opt = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=1e-4)
     sched = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=LR, total_steps=epochs * len(dl), pct_start=0.1)
@@ -221,8 +234,19 @@ def train_kind(data: Path, out: Path, kind: str, epochs: int, bs: int, dev: str)
 
 
 @torch.no_grad()
-def predict(model, g: np.ndarray, dev: str) -> np.ndarray:
-    x, meta = letterbox(g)
+def predict_ms(model, g: np.ndarray, dev: str, scales=(0.875, 1.0, 1.125)) -> np.ndarray:
+    """Multi-scale + hflip TTA: mean of predict() at network inputs scaled by each factor (multiples of 32)."""
+    out = None
+    for sc in scales:
+        h, w = int(round(IN_H * sc / 32)) * 32, int(round(IN_W * sc / 32)) * 32
+        p = predict(model, g, dev, h, w)
+        out = p if out is None else out + p
+    return out / len(scales)
+
+
+@torch.no_grad()
+def predict(model, g: np.ndarray, dev: str, h: int | None = None, w: int | None = None) -> np.ndarray:
+    x, meta = letterbox(g, h, w)
     xt = torch.from_numpy(x).float().div(255).sub(0.45).div(0.225)[None, None].repeat(1, 3, 1, 1).to(dev)
     xt = torch.cat([xt, xt.flip(-1)])
     p = torch.sigmoid(model(xt)).float()
@@ -231,11 +255,7 @@ def predict(model, g: np.ndarray, dev: str) -> np.ndarray:
 
 
 def infer_test(data: Path, out: Path, wdir: Path, dev: str) -> None:
-    models = {}
-    for k in ("apo", "fasc"):
-        m = make_model(None)
-        m.load_state_dict(torch.load(wdir / f"{k}.pt", map_location="cpu"))
-        models[k] = m.to(dev).eval()
+    models = {k: load_model(wdir, k, dev) for k in ("apo", "fasc")}
     pdir = out / "probs"
     pdir.mkdir(parents=True, exist_ok=True)
     files = sorted(glob.glob(str(data / "test_images_v2" / "*" / "IMG_*")))
@@ -272,9 +292,14 @@ def main():
     ap.add_argument("--init", default=None, help="dir with apo.pt/fasc.pt to fine-tune from")
     ap.add_argument("--lr", type=float, default=3e-4)
     ap.add_argument("--kinds", default="apo,fasc", help="which models to train")
+    ap.add_argument("--encoder-fasc", default=None, help="encoder of the fascicle model (default --encoder)")
+    ap.add_argument("--fresh", action="store_true", help="with --init: train from ImageNet, copy untouched models")
     a, _ = ap.parse_known_args()
-    global ENCODER, IN_H, IN_W, WORKERS, INIT_DIR, LR
+    global ENCODER, IN_H, IN_W, WORKERS, INIT_DIR, LR, FRESH
     ENCODER = a.encoder
+    FRESH = a.fresh
+    if a.encoder_fasc:
+        ENCODERS["fasc"] = a.encoder_fasc
     IN_H, IN_W = (int(v) for v in a.size.split("x"))
     WORKERS = a.workers
     INIT_DIR, LR = a.init, a.lr
@@ -294,6 +319,8 @@ def main():
             elif a.init:  # untouched model: carry the old weights over for inference
                 import shutil
                 shutil.copy(Path(INIT_DIR) / f"{k}.pt", out / f"{k}.pt")
+                enc = Path(INIT_DIR) / f"{k}.encoder"
+                (out / f"{k}.encoder").write_text(enc.read_text() if enc.exists() else "resnet34")
     infer_test(data, out, Path(a.weights) if a.weights else out, dev)
 
 

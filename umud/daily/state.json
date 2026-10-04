@@ -32,10 +32,11 @@
   "metric is additive per target: tune one target per shot"
  ],
  "queue": [
-  "FL: third independent estimator family (ridge-traced fascicle paths = the raters' segmented line; per-fragment local-thickness chord near the image centre); average into fl_cols",
-  "FL: weight 0.27 / 0.35 around 0.31 with the new FL to locate the optimum",
-  "PA: more estimator averaging (pa_wmed, lowhalf, fitmid, top5) with re-matched offset",
-  "segmentation: second fascicle model (different encoder / resolution, small GPU run) ensembled with the current one -> less noisy fragments",
-  "prize track: pure pipeline A5 with LB-free hand-set offsets, to measure the re-runnable score"
+  "d9 S1: --fam-w telemed_644 0 0.31 1.0 (PA from Vera only on the 50 Telemed_644 rows): every pipeline PA estimator is ~5 deg below Vera/AnatomyNet/Variational there (other families agree within ~1 deg); +-0.015 expected either way",
+  "d9 S2 (if S1 helps): lumify extra pipeline PA offset -1.5 (--fam-pa-offset lumify -1.5; blend is 1 deg above Vera there) or left_ticks PA weight 0.3; if S1 hurts: telemed PA weight 0.8",
+  "multi-scale TTA probs (work/ms, seg.predict_ms) -> features -> pipeline a5 config; submit only if external expert sets improve",
+  "FL weight 0.27 / 0.25 around 0.31 with the averaged FL (0.45 lost 0.0168)",
+  "second fascicle model (efficientnet-b3, kernel umud-seg-fasc2, GPU slot permitting) averaged with resnet34 probs",
+  "FL per device: pipeline FL is 11% above Vera on Telemed families, 7% below on Lumify (follow the PA result)"
  ]
 }

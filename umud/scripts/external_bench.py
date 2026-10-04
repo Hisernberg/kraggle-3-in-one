@@ -66,22 +66,26 @@ def infer(a):
     import torch
     from umud import seg
     torch.set_num_threads(4)
-    models = {}
-    for k in ("apo", "fasc"):
-        m = seg.make_model(None)
-        m.load_state_dict(torch.load(Path(a.weights) / f"{k}.pt", map_location="cpu"))
-        models[k] = m.eval()
+    models = {k: seg.load_model(Path(a.weights), k) for k in ("apo", "fasc")}
     out = Path(a.out)
     (out / "probs").mkdir(parents=True, exist_ok=True)
     rows = []
-    its = items(Path(a.osf), Path(a.neuage_csv) if a.neuage_csv else None)
+    its = items(Path(a.osf), Path(a.neuage_csv) if a.neuage_csv else None) if a.osf != "none" else []
+    if a.test_data:
+        from PIL import Image
+        from umud.scale import detect_scale
+        for f in sorted(glob.glob(str(Path(a.test_data) / "test_images_v2" / "*" / "IMG_*"))):
+            name = Path(f).name
+            with Image.open(f) as im:
+                sc = detect_scale(np.asarray(im), name.rsplit(".", 1)[-1])
+            its.append((name, "test", Path(f), sc.px_per_mm, (sc.l, sc.t, sc.r, sc.b)))
     for i, (iid, s, p, ppm, (l, t, r, b)) in enumerate(its):
         rows.append((iid, ppm, l, t, r, b, s))
         if (out / "probs" / f"{iid}_fasc.png").exists():
             continue
         g = seg.read_gray(str(p))[t:b, l:r]
         for k, m in models.items():
-            pr = seg.predict(m, g, "cpu")
+            pr = seg.predict_ms(m, g, "cpu") if a.ms else seg.predict(m, g, "cpu")
             cv2.imwrite(str(out / "probs" / f"{iid}_{k}.png"), np.clip(pr * 255, 0, 255).astype(np.uint8))
         if i % 25 == 0:
             print(f"{i}/{len(its)} {iid}", flush=True)
@@ -127,6 +131,8 @@ def main():
     ap.add_argument("--neuage-csv", default=None)
     ap.add_argument("--weights", default=None)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--ms", action="store_true", help="multi-scale TTA (0.875 / 1 / 1.125)")
+    ap.add_argument("--test-data", default=None, help="also infer the competition test images (B-mode crop) into out")
     a = ap.parse_args()
     Path(a.out).mkdir(parents=True, exist_ok=True)
     infer(a) if a.cmd == "infer" else labels(a)
