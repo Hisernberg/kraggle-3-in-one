@@ -1,0 +1,16 @@
+{
+ "_doc": "Shot A5ms: A5 on multi-scale (0.875/1/1.125) + hflip TTA probabilities (seg.predict_ms); fl_scale re-matched to A5's test mean. Expert sets: PA MAE OSF 0.96->0.95, NeuAge 2.59->2.53, GM 0.96->0.91 (debiased); MT OSF 0.50->0.45.",
+ "mt_col": "mt_inner",
+ "fl_cols": [
+  "fl_med",
+  "v2_fl_chord_mid"
+ ],
+ "fl_scale": 0.9945,
+ "fl_geo_weight": 1.0,
+ "temporal_alpha": 0.6,
+ "pa_cols": [
+  "pa_wmed",
+  "v2_pa_lowhalf"
+ ],
+ "pa_fallback": "pa_wmed"
+}
