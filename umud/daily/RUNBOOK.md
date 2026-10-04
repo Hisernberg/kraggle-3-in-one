@@ -12,5 +12,5 @@ A routine fires into the Claude session at 00:05 UTC each day. Each run:
    then commit and push.
 
 Inputs (`daily/inputs/`) are the frozen pipeline predictions, features, clip groups and the public reference CSV,
-so a fresh container needs only the repo plus Kaggle credentials (`~/.kaggle/kaggle.json`, or the
+so a fresh container needs only the repo plus Kaggle credentials (`~/.kaggle/access_token` for KGAT_ tokens, `~/.kaggle/kaggle.json`, or the
 `KAGGLE_USERNAME`/`KAGGLE_KEY` environment variables). Never commit credentials.

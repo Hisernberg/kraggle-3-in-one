@@ -6,11 +6,13 @@ predict pennation angle (PA, °), fascicle length (FL, mm) and muscle thickness 
 
 Metric: `mean(MAE_PA/6, MAE_FL/12, MAE_MT/3)`, lower is better.
 
-## Status (2026-09-28)
-Best public LB **0.31581 (rank 6)**: `submissions/d7_S2_fl031.csv`. Full log with every submission: [`RESULTS.md`](RESULTS.md).
-Reproduce it with `scripts/blend_v2.py --w 0.56 0.31 1.0 --clip-mt 3 --pa-offset 2.0 --alpha 1.0`, using the pipeline predictions in
-`submissions/s17_Ahyb_pipeline.csv` and the public Vera CSV as reference. The pipeline alone (`configs/a_raw.json`, re-runnable
-end-to-end via `kaggle/build_kernel.py --mode submit`) is the prize-eligible part. Blends with the hard-coded Vera CSV are not.
+## Status (2026-10-04)
+Best public LB **0.30718 (rank 12)**: `submissions/d8_S5_paavg.csv`. Full log with every submission: [`RESULTS.md`](RESULTS.md).
+Reproduce it with `python daily/run.py build NAME` (args in `daily/state.json`): pipeline `configs/a5_pa_avg.json`
+(FL = mean of extrapolated-fragment FL and depth-fitted chord FL; PA = mean of all-fragment and deep-half PA) blended
+per target with the public Vera CSV. The pipeline alone (`kaggle/build_kernel.py --mode submit`) is the prize-eligible
+part. Blends with the hard-coded Vera CSV are not. External validation on the public UMUD expert sets:
+`scripts/external_bench.py` + `scripts/eval_external.py`.
 
 Layout: `umud/` package (scale, seg, geometry, predict) · `scripts/` (blends, OSF benchmark, diagnostics) ·
 `configs/` · `kaggle/` (kernel builder) · `submissions/` (every submitted CSV) · `daily/` (5-per-day submission loop, see `daily/RUNBOOK.md`) · `RESULTS.md`.

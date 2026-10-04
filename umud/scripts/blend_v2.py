@@ -35,6 +35,8 @@ ap.add_argument("--fl-scale", type=float, default=1.0, help="global factor on th
 ap.add_argument("--w-clip", type=float, nargs=3, default=None, metavar=("PA", "FL", "MT"),
                 help="weights for rows in 5-frame cine clips (clip median averages pipeline noise away)")
 ap.add_argument("--alpha", type=float, default=0.6, help="cine-loop smoothing strength")
+ap.add_argument("--no-anchors", action="store_true",
+                help="do not pin IMG_00001/2 to the sample_submission values (host, topic 743111: they are made up)")
 ap.add_argument("--out", required=True)
 a = ap.parse_args()
 
@@ -65,8 +67,9 @@ out["mt_mm"] = out["mt_mm"] * a.mt_scale + a.mt_offset
 out["fl_mm"] *= a.fl_scale
 for t in T:
     out[t] = (1 - a.alpha) * out[t] + a.alpha * out.groupby(g)[t].transform("median")
-for k, v in ANCHORS.items():
-    out.loc[k] = v
+if not a.no_anchors:
+    for k, v in ANCHORS.items():
+        out.loc[k] = v
 for t, (lo, hi) in RANGES.items():
     out[t] = out[t].clip(lo, hi)
 out.round(3).reset_index().to_csv(a.out, index=False)

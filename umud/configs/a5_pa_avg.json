@@ -1,0 +1,16 @@
+{
+ "_doc": "Shot A5: A4 (FL mean(fl_med, chord_mid)) with PA = mean(pa_wmed, v2_pa_lowhalf) (fallback pa_wmed); on the expert sets PA MAE 1.04->0.94 (OSF), 2.73->2.58 (NeuAge), 1.02->0.96 (GM video).",
+ "mt_col": "mt_inner",
+ "fl_cols": [
+  "fl_med",
+  "v2_fl_chord_mid"
+ ],
+ "fl_scale": 0.9912,
+ "fl_geo_weight": 1.0,
+ "temporal_alpha": 0.6,
+ "pa_cols": [
+  "pa_wmed",
+  "v2_pa_lowhalf"
+ ],
+ "pa_fallback": "pa_wmed"
+}

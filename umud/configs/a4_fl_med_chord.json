@@ -1,0 +1,12 @@
+{
+ "_doc": "Shot A4: as A (a_raw: PA pa_wmed, MT mt_inner) but FL = mean of fl_med (fragment lines extrapolated to both aponeuroses) and v2_fl_chord_mid (mid-image thickness / sin of the depth-fitted mid-depth fascicle angle); independent errors average out: on the OSF expert benchmark (same FIJI protocol as the labels) FL MAE 8.47 -> 4.83 mm (debiased 5.30 -> 3.70). fl_scale keeps the test-set mean of fl_med so the LB-tuned blend weight stays comparable.",
+ "pa_col": "pa_wmed",
+ "mt_col": "mt_inner",
+ "fl_cols": [
+  "fl_med",
+  "v2_fl_chord_mid"
+ ],
+ "fl_scale": 0.9912,
+ "fl_geo_weight": 1.0,
+ "temporal_alpha": 0.6
+}

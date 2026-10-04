@@ -154,3 +154,27 @@ private value); a larger step needs a better pipeline FL (FL carries most of the
 
 Reproduce best: `blend_v2.py ... --w 0.56 0.31 1.0 --clip-mt 3 --pa-offset 2.0 --alpha 1.0` (or `daily/run.py build`).
 Rank 6 (5th 0.29518, 3rd 0.28263).
+
+## Day 8 (2026-10-04): new estimators validated on expert sets, best 0.30718
+Research: the host confirmed (topic 743111) that the two sample_submission values are made up, so pinning IMG_00001/2
+to them was a bug. The host also allows declared external data and manual test-set measurements for calibration
+(topic 690868). New local validation (`scripts/external_bench.py`, `scripts/eval_external.py`) on three public
+expert-labelled UMUD OSF sets (osf.io/xbawc, CC-BY-4.0): the 35-image benchmark (7 raters, same FIJI protocol as the
+labels), 180 NeuAge VL images with the expert's drawn lines, and 84 analysed frames of the GM calf-raise video.
+New geometry estimators (`geometry.fascicles_v2`): fragment angle vs normalised depth (raters measure PA at insertions
+into the deep aponeurosis; fascicles steepen towards it) and a curved/chord FL from the depth-fitted angle and the
+mid-image thickness.
+
+| Shot | Change vs previous best | Public LB |
+|---|---|---|
+| d8 S1 | d7 best without the made-up anchor rows (`--no-anchors`) | 0.31560 |
+| d8 S2 | S1 + PA from deep-half fragments (`v2_pa_lowhalf`), offset re-matched (1.05) | 0.31846 (better on all 3 expert sets, worse on test) |
+| **d8 S3** | **S1 + pipeline FL = mean(`fl_med`, `v2_fl_chord_mid`)** (`configs/a4_fl_med_chord.json`) | **0.30738 (-0.0082)** |
+| d8 S4 | S3 + FL weight 0.45 | 0.32416 (optimum stays ~0.31) |
+| **d8 S5** | **S3 + PA = mean(`pa_wmed`, `v2_pa_lowhalf`)**, offset 1.52 (`configs/a5_pa_avg.json`) | **0.30718** |
+
+External expert sets, MAE (debiased): FL `fl_med` 8.47 (5.30) -> mean with chord 4.83 (3.70) mm on OSF; PA `pa_wmed`
+1.05 -> mean with lowhalf 0.96 deg on OSF, 2.74 -> 2.59 on NeuAge. Their biases do not transfer to the test labels.
+Reproduce best: `daily/run.py build` with state args (`--pipeline daily/inputs/pipeline_a5.csv --features
+daily/inputs/features_v2.csv --w 0.56 0.31 1.0 --clip-mt 3 --pa-offset 1.52 --alpha 1.0 --no-anchors`).
+Leaderboard: rank 12 (1st 0.24071, 3rd 0.25482, 11th 0.29413).

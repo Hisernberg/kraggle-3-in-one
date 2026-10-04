@@ -32,3 +32,6 @@ red_tape_raccoon/vendor/
 red_tape_raccoon/runs/
 **/managed-care-operations-handbook/
 *.jsonl.zst
+
+# umud daily loop input (cine-loop groups of the test images) must be committed
+!umud/daily/inputs/test_groups.npy
