@@ -310,6 +310,11 @@ def main():
         print("init weights from", INIT_DIR, flush=True)
     dev = "cuda" if torch.cuda.is_available() else "cpu"
     data, out = Path(a.data), Path(a.out)
+    if not (data / "fasc_imgs_v1").exists():  # Kaggle mounts competition data at varying depths
+        hits = sorted(glob.glob(str(Path("/kaggle/input") / "**" / "fasc_imgs_v1"), recursive=True))
+        if hits:
+            data = Path(hits[0]).parent
+    print("data dir", data, flush=True)
     out.mkdir(parents=True, exist_ok=True)
     if not a.infer_only:
         kinds = a.kinds.split(",")
