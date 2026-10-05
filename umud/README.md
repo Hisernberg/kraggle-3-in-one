@@ -6,8 +6,8 @@ predict pennation angle (PA, °), fascicle length (FL, mm) and muscle thickness 
 
 Metric: `mean(MAE_PA/6, MAE_FL/12, MAE_MT/3)`, lower is better.
 
-## Status (2026-10-04)
-Best public LB **0.30718 (rank 12)**: `submissions/d8_S5_paavg.csv`. Full log with every submission: [`RESULTS.md`](RESULTS.md).
+## Status (2026-10-05)
+Best public LB **0.30706**: `submissions/d9_S4_ens.csv` (two fascicle models, resnet34 + efficientnet-b3). Full log with every submission: [`RESULTS.md`](RESULTS.md).
 Reproduce it with `python daily/run.py build NAME` (args in `daily/state.json`): pipeline `configs/a5_pa_avg.json`
 (FL = mean of extrapolated-fragment FL and depth-fitted chord FL; PA = mean of all-fragment and deep-half PA) blended
 per target with the public Vera CSV. The pipeline alone (`kaggle/build_kernel.py --mode submit`) is the prize-eligible

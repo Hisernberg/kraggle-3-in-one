@@ -1,6 +1,6 @@
 {
- "best_score": 0.30718,
- "best_name": "d8_S5_paavg",
+ "best_score": 0.30706,
+ "best_name": "d9_S4_ens",
  "best_args": [
   "--w",
   "0.56",
@@ -9,36 +9,34 @@
   "--clip-mt",
   "3",
   "--pa-offset",
-  "1.52",
+  "1.57",
   "--alpha",
   "1.0",
   "--no-anchors",
   "--pipeline",
-  "daily/inputs/pipeline_a5.csv",
+  "daily/inputs/pipeline_ens.csv",
   "--features",
-  "daily/inputs/features_v2.csv"
+  "daily/inputs/features_ens.csv"
  ],
  "settled": [
-  "FL weight ~0.31 also with the improved FL (mean(fl_med, chord_mid)): 0.45 lost 0.0168 (quadratic optimum ~0.30); FL clip/tail hurt (d4/d5)",
-  "FL estimator: averaging fl_med with v2_fl_chord_mid (independent error) gained 0.0082 at the same weight (d8 S3); external OSF FL MAE 8.5->4.8mm",
-  "PA: deep-half fragments alone (v2_pa_lowhalf) lost 0.0029 even though better on all 3 external expert sets; mean(wmed, lowhalf) +offset 1.52 = -0.0002 (flat)",
-  "external expert sets (OSF/NeuAge/GM) rank estimators but calibrations/biases do not transfer to the test labels (A2, d8 S2)",
+  "PA per device: Telemed_644 PA is calibrated in the blend: +2.16 deg (Vera only) lost 0.0141, -1.71 deg (pipeline only) lost 0.0115 (~0.0066/deg both ways = max slope) -> do not calibrate devices to the reference's family medians (--famcal pa would be wrong)",
+  "FL weight optimum ~0.31 for the averaged FL (0.27: +0.0011, 0.45: +0.0168; quadratic vertex 0.307)",
+  "fascicle model ensemble (resnet34 + efficientnet-b3 probs) gains only -0.0001 at the blend level (d9 S4)",
+  "failure fallback inside cine clips is fragile: one more failed frame in clip IMG_00186-190 flipped the clip median to Vera values (+0.026, d9 S3); the truth there is near the pipeline-based values",
+  "FL estimator: averaging fl_med with v2_fl_chord_mid (independent error) gained 0.0082 at the same weight (d8 S3); FL clip/tail hurt (d4/d5)",
+  "PA: deep-half fragments alone (v2_pa_lowhalf) lost 0.0029; mean(wmed, lowhalf) +offset ~1.5 is flat-to-better",
+  "external expert sets (OSF/NeuAge/GM) rank estimators but their biases do not transfer to the test labels (A2, d8 S2)",
   "PA weight: 0.5 / 0.56 / 0.62 -> optimum ~0.57 (flat). PA residual clip 6 hurt (+0.0016): PA outliers are mostly right",
-  "MT weight 1.0 (0.9, 1.1, 1.25 all worse), MT offset 0; MT clip 3 best (6 and 4 worse, one public row)",
-  "PA offset tuned to keep mean pipeline PA (pa_wmed + 2.0); re-match it whenever the PA estimator changes",
-  "clip smoothing alpha 0.6 < 0.8 < 1.0 (full median)",
-  "anchors IMG_00001/2 are made up (host topic 743111): never pin them (--no-anchors, d8 S1 -0.0002)",
-  "public LB is ~1/3 of test rows (~103); single-row probes have little private value",
-  "metric is additive per target: tune one target per shot"
+  "MT weight 1.0 (0.9, 1.1, 1.25 all worse), MT offset 0; MT clip 3 best",
+  "PA offset re-matched whenever the PA estimator changes (keeps mean pipeline PA = pa_wmed + 2.0)",
+  "clip smoothing alpha 1.0 (full 5-frame median); anchors never pinned (--no-anchors)",
+  "public LB ~103 rows (~1/3); metric additive per target: tune one target per shot"
  ],
  "queue": [
-  "d9 S1: build d9_S1_telemedpa --fam-w telemed_644 0 0.31 1.0  (PA from Vera only on the 50 Telemed_644 rows, +2.2 deg there). All pipeline PA estimators are ~4-5 deg below Vera/AnatomyNet/Variational on that device; other families agree within ~1-2 deg",
-  "d9 S2: if S1 helps -> --famcal pa (each device family's pipeline PA shifted to the reference's family median: telemed +2.3, lumify/h512 -1.1, juniper -0.7 vs best); if S1 hurts -> --fam-w telemed_644 0.8 0.31 1.0",
-  "d9 S3: --famcal fl (pipeline FL scaled per device to the reference's family median: Telemed families x0.90-0.91, Lumify x1.09, gray853 x1.12), then try a higher FL weight if it helps",
-  "multi-scale TTA pipeline (ready): --pipeline daily/inputs/pipeline_a5ms.csv --features daily/inputs/features_ms.csv --pa-offset 1.53 (configs/a5ms.json; expert sets: PA/MT better on all sets, FL mixed)",
-  "two-model fascicle ensemble (ready): --pipeline daily/inputs/pipeline_ens.csv --features daily/inputs/features_ens.csv --pa-offset 1.57 (mean probs of resnet34 + efficientnet-b3 (kernel umud-seg-fasc2, val dice 0.308); expert sets: PA NeuAge 2.58->2.37, OSF FL 3.70->3.62 deb.)",
-  "full ensemble (ready): --pipeline daily/inputs/pipeline_ens_ms.csv --features daily/inputs/features_ens_ms.csv --pa-offset 1.54 (resnet34 + efficientnet-b3 fascicle probs, both multi-scale TTA; MS apo/MT). Expert sets debiased: PA GM 0.90 / NeuAge 2.41 / OSF 0.92; FL NeuAge 14.2 (best), OSF 3.76; MT OSF 0.44. Pick ens vs ens_ms vs a5ms by LB",
-  "FL weight 0.27 / 0.25 around 0.31 with the averaged FL (0.45 lost 0.0168)",
-  "second fascicle model: Kaggle CPU kernel umud-seg-fasc-r18-cpu (resnet18 384x576, running) and GPU kernel umud-seg-fasc2 (effnet-b3, waiting for a slot); average fasc probs with scripts/avg_probs.py, validate on external sets first"
+  "clip-aware failure fill in blend_v2: a failed frame takes its clip-mates' pipeline values (only no-clip failures fall back to the reference); then re-test the multi-scale aponeurosis/MT (a5ms / ens_ms) with it",
+  "guard MT jumps: when two apo runs disagree by >2 mm (e.g. IMG_00042 multi-scale picks another deep band), keep the single-scale MT",
+  "PA weight 0.62 on the ensemble pipeline (better PA estimator -> maybe higher optimal weight)",
+  "3-model fascicle ensemble (+ resnet18, kernel umud-seg-fasc-r18-cpu): expert sets mixed (NeuAge PA 2.25 best, OSF FL worse) -> low priority",
+  "bigger step needed for top-3 (gap ~0.05): new independent FL/PA estimator families; per-image estimator weighting by fascicle evidence (n fragments, coherence)"
  ]
 }

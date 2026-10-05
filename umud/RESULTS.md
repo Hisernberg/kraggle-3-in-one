@@ -178,3 +178,23 @@ External expert sets, MAE (debiased): FL `fl_med` 8.47 (5.30) -> mean with chord
 Reproduce best: `daily/run.py build` with state args (`--pipeline daily/inputs/pipeline_a5.csv --features
 daily/inputs/features_v2.csv --w 0.56 0.31 1.0 --clip-mt 3 --pa-offset 1.52 --alpha 1.0 --no-anchors`).
 Leaderboard: rank 12 (1st 0.24071, 3rd 0.25482, 11th 0.29413).
+
+## Day 9 (2026-10-05): device calibration tests, best 0.30706
+| Shot | Change vs best (d8 S5) | Public LB |
+|---|---|---|
+| d9 S1 | PA from Vera only on the 50 Telemed_644 rows (+2.16 deg there) | 0.32131 |
+| d9 S2 | pipeline-only PA on Telemed_644 (-1.71 deg there) | 0.31863 |
+| d9 S3 | full ensemble: resnet34 + efficientnet-b3 fascicle probs, multi-scale TTA, multi-scale apo | 0.33333 |
+| **d9 S4** | **two-model fascicle ensemble (resnet34 + efficientnet-b3, single scale), apo unchanged** | **0.30706** |
+| d9 S5 | S4 with FL weight 0.27 | 0.30820 |
+
+- Our pipeline PA is 4-5 deg below Vera/AnatomyNet/Variational on the Telemed_644 device, but the blend is already
+  calibrated there: both directions lose ~0.0066 per degree, the maximum slope for ~12 public rows. Per-device
+  calibration to the reference (`--famcal pa`) is therefore not used.
+- S3's loss is a failure-handling artifact: the multi-scale aponeurosis model failed on one more frame of clip
+  IMG_00186-190 (the frames with the anonymisation box), so 3 of 5 frames fell back to Vera and the clip median moved
+  to Vera's values (FL -19 mm, PA +2.7 deg, MT -1 mm on all 5 rows). Next: fill failed frames from clip-mates.
+- Second fascicle model: efficientnet-b3 U-Net (Kaggle GPU kernel `umud-seg-fasc2`, val Dice 0.308), averaged with
+  the resnet34 probabilities (`scripts/avg_probs.py`, `configs` a5 on `daily/inputs/features_ens.csv`).
+- FL weight optimum for the averaged FL stays ~0.31 (quadratic vertex 0.307).
+Rank 13 (1st 0.24071, 3rd 0.25209).
