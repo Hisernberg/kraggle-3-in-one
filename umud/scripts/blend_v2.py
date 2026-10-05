@@ -45,6 +45,9 @@ ap.add_argument("--famcal", nargs="+", default=[], choices=["pa", "fl", "mt"],
 ap.add_argument("--fail-fill", choices=["ref", "clip"], default="ref",
                 help="pipeline failures: 'ref' uses the reference; 'clip' uses the median pipeline values of the "
                      "frame's cine-clip mates (reference only when the whole clip failed)")
+ap.add_argument("--sanity", action="store_true",
+                help="also treat rows as pipeline failures when MT is outside the host's 10-50 mm range or no fascicle "
+                     "angle was measured (pipeline values there are prior constants or from a wrong aponeurosis)")
 ap.add_argument("--no-anchors", action="store_true",
                 help="do not pin IMG_00001/2 to the sample_submission values (host, topic 743111: they are made up)")
 ap.add_argument("--out", required=True)
@@ -60,6 +63,8 @@ fam = feat["family"].astype(str) if "family" in feat else pd.Series("", index=p.
 for fp, off in a.fam_pa_offset:
     p.loc[fam.str.startswith(fp), "pa_deg"] += float(off)
 failed = feat["ok"] != 1
+if a.sanity:
+    failed |= ~feat["mt_inner"].between(10.0, 50.0) | feat["pa_wmed"].isna()
 if a.fail_fill == "clip":
     okp = p[list(T)].where(~failed)
     clip_med = okp.groupby(g).transform("median")  # NaN when every frame of the clip failed
