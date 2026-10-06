@@ -198,3 +198,21 @@ Leaderboard: rank 12 (1st 0.24071, 3rd 0.25482, 11th 0.29413).
   the resnet34 probabilities (`scripts/avg_probs.py`, `configs` a5 on `daily/inputs/features_ens.csv`).
 - FL weight optimum for the averaged FL stays ~0.31 (quadratic vertex 0.307).
 Rank 13 (1st 0.24071, 3rd 0.25209).
+
+## Day 10 (2026-10-06): gated protocol, best 0.30498
+One shot at a time, each with a written hypothesis and local evidence; 2 slots left unused (no shot with evidence).
+
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| **d10 S1** | **`--sanity`: IMG_00305 pipeline failure (MT 5.4 mm < 10 mm host minimum, no fascicles) -> reference values** | **0.30498 (-0.0021; the row is public)** |
+| d10 S2 | S1 + Lumify PA from the pipeline per image, Lumify median preserved | 0.30837 (refuted) |
+| d10 S3 | S1 on multi-scale fascicle probs of both models (apo single-scale) | 0.30789 (refuted) |
+
+Research behind the shots (all offline, no submission spent):
+- My visual PA reading is ~6-7 deg low versus the OSF experts, so visual QA gives direction only.
+- Scale audit: per-device MT ratios pipeline/Vera 1.00-1.05, no scale errors; one physiological failure (IMG_00305).
+- Expert FL / (MT/sin PA) on OSF: median 1.07 (IQR 0.99-1.09); Vera violates the expert 5-95% band on 25% of rows,
+  the pipeline on 9%.
+- Blend simulation on OSF with DLTrack (Vera's lineage): errors nearly uncorrelated; PA blend optimum 0.56, the same as
+  the LB optimum; FL spread gating and raw-texture PA rejected.
+Rank 13 (1st 0.23908, 3rd 0.25209).

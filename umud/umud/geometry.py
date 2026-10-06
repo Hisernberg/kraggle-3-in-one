@@ -427,6 +427,58 @@ def streamline_fl(fasc_prob: np.ndarray, apo: dict, px_per_mm: float, a: float, 
     return {"v2_fl_stream": float(np.median(lens))} if lens else {}
 
 
+def raw_texture_pa(gray: np.ndarray, apo: dict, px_per_mm: float) -> dict:
+    """PA from the raw B-mode texture (no fascicle segmentation): an estimator family with independent errors.
+
+    Structure-tensor orientation of the image intensity between the aponeuroses (1 mm margin), weighted by
+    coherence x local energy; the dominant orientation relative to the deep aponeurosis is read from a smoothed
+    histogram, overall and for the deep half of the muscle (where raters measure the insertion angle).
+    Also returns the chord FL (mid-image thickness / sin of that angle) as a texture-based FL.
+    """
+    g = gray.astype(np.float32)
+    H, W = g.shape
+    s, d = apo["sup"], apo["deep"]
+    sup_line = s["bot"] if s["bot"] is not None else s["cen"]
+    deep_line = d["top"] if d["top"] is not None else d["cen"]
+    xs = np.arange(W)
+    y_sup, y_deep = np.polyval(sup_line, xs), np.polyval(deep_line, xs)
+    yy = np.arange(H)[:, None]
+    m = px_per_mm
+    region = (yy > y_sup[None] + m) & (yy < y_deep[None] - m)
+    depth = (yy - y_sup[None]) / np.maximum(y_deep[None] - y_sup[None], 1)
+    g = cv2.GaussianBlur(g, (0, 0), max(0.5, 0.15 * m))
+    gx = cv2.Sobel(g, cv2.CV_32F, 1, 0, ksize=3)
+    gy = cv2.Sobel(g, cv2.CV_32F, 0, 1, ksize=3)
+    sig = max(1.0, 1.0 * m)
+    jxx = cv2.GaussianBlur(gx * gx, (0, 0), sig)
+    jyy = cv2.GaussianBlur(gy * gy, (0, 0), sig)
+    jxy = cv2.GaussianBlur(gx * gy, (0, 0), sig)
+    root = np.sqrt((jxx - jyy) ** 2 + 4 * jxy ** 2)
+    coh = root / (jxx + jyy + 1e-6)
+    theta = np.degrees(0.5 * np.arctan2(2 * jxy, jxx - jyy)) + 90.0  # line direction
+    deep_ang = math.degrees(math.atan(deep_line[0]))
+    sup_ang = math.degrees(math.atan(sup_line[0]))
+    rel = ((theta - deep_ang + 90) % 180) - 90
+    w = coh * root
+    out = {}
+    for name, sel in (("all", region), ("deep", region & (depth >= 0.5))):
+        if sel.sum() < 200:
+            continue
+        r_, w_ = rel[sel], w[sel]
+        keep = (np.abs(r_) >= 2) & (np.abs(r_) <= 60)  # drop aponeurosis-parallel texture
+        if keep.sum() < 100:
+            continue
+        hist, edges = np.histogram(r_[keep], bins=120, range=(-60, 60), weights=w_[keep])
+        hist = np.convolve(hist, np.ones(5) / 5, mode="same")
+        i = int(np.argmax(hist))
+        out[f"v3_pa_tex_{name}"] = float(abs(0.5 * (edges[i] + edges[i + 1])))
+    if "v3_pa_tex_all" in out:
+        xm = W / 2
+        th = (np.polyval(deep_line, xm) - np.polyval(sup_line, xm)) * math.cos(math.radians(0.5 * (deep_ang + sup_ang)))
+        out["v3_fl_tex_chord"] = float(th / m / math.sin(math.radians(max(out["v3_pa_tex_all"], 3))))
+    return out
+
+
 def mt_variants(apo: dict, px_per_mm: float) -> dict:
     """Vertical inner-edge MT on the raw (unfitted) aponeurosis edges at left/middle/right positions.
 
