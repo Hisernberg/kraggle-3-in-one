@@ -1,0 +1,25 @@
+Third-party attribution
+
+Route library, original public-state router, and observation packing:
+Yusuke Hayashi (Kaggle: yhay81), Shop Router 0908
+https://www.kaggle.com/code/yhay81/shop-router-0908
+Public notebook/artifact retrieved 2026-09-08.
+
+router_base.py is the original main.py, retained with its docstrings.
+actions.json, model.json and observation.py are the original public artifacts.
+
+New work by Mason Cao's experiment: public opponent/farm/market features,
+paired counterfactual evaluation against reactive agents, 5-fold GroupKFold
+training, equal LightGBM/XGBoost blend, conservative late-game selection,
+portable tree export, reproducible tests, and package manifest.
+
+Evaluation opponents (not included in this archive):
+tetsu2131: Shape the Shop Work the Pasture
+https://www.kaggle.com/code/tetsutani/shape-the-shop-work-the-pasture-kaggriculture
+Boatlee: V16-RC5 recovery controller
+https://www.kaggle.com/code/boatlee/v16-rc5-r5a-high-score-8c-4s-recovery
+Original baseline: COK-ZhangZiliang/Kaggriculture V7
+https://github.com/COK-ZhangZiliang/Kaggriculture
+
+This submission uses only currently observable game state at inference.
+It does not use hidden seeds, future shops, identity, replay lookup, or network.

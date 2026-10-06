@@ -9,6 +9,7 @@ Stages (python -m trafficflow.t1_pipeline <stage> ...):
   predict write WORK/pred/state_<tag>.parquet keyed like the Task 1 templates.
   rounds  print the --rounds JSON of a full fit from holdout tag <tag> (full_rounds).
   ens     state_<tag>.parquet = element-wise mean of state_<m>.parquet, --members m1 m2 ...
+  enskind per-kind mean: --reg m1 m2 ... on regular rows, --dark m1 ... on blackout rows
 TFB_SEED=s (default 0) trains seed-ensemble member s: other CAP row sample and LightGBM seeds.
 """
 from __future__ import annotations
@@ -91,7 +92,11 @@ def feat_panel(panel: str, seed: int = 0):
     print(f"{panel}: feat done in {time.time() - t0:.0f}s, origins={len(origins)}", flush=True)
 
 
-NON_FEAT = {"panel", "t", "j", "kind", "day", "treg", "y_speed", "y_flow", "link_id", "y_dens"}
+NON_FEAT = {"panel", "t", "j", "kind", "day", "treg", "y_speed", "y_flow", "link_id", "y_dens", "pseudo"}
+# TFB_PSEUDO=1: append the transductive rows of the test months (t1_pseudo.build_train_rows) to the regular training
+# data; they always train and never enter the early-stopping validation set
+USE_PSEUDO = os.environ.get("TFB_PSEUDO", "0") == "1"
+USE_PSEUDO_DARK = os.environ.get("TFB_PSEUDO_DARK", "0") == "1"
 USE_FD = os.environ.get("TFB_FD", "0") == "1"
 _FD_CACHE: dict = {}
 
@@ -136,6 +141,86 @@ def add_fd(d: pd.DataFrame) -> pd.DataFrame:
     return pd.concat([d, pd.DataFrame(new, index=d.index)], axis=1)
 
 
+USE_RAMP = os.environ.get("TFB_RAMP", "0") == "1"
+_RAMP_CACHE: dict = {}
+
+
+def ramp_arrays(panel: str):
+    """On- and off-ramp flow [T, L] per mainline link in milepost order (column j), valid released ramp
+    observations only (NaN where the link has no ramp or no valid value). Ramp flows are released even
+    inside the Task 2 blackout rows, where the mainline is blank; Task 1 may use them (offline task)."""
+    if panel not in _RAMP_CACHE:
+        from .data import load
+        from .t1 import mileposts
+        d = load(panel)
+        links = list(d["links"])
+        o = np.argsort(mileposts(panel, links))
+        j_of = {links[o[j]]: j for j in range(len(o))}
+        meta = d["net"]["ramps"].drop_duplicates("ramp_link_id").set_index("ramp_link_id")
+        rf = np.where(d["rvalid"], d["rflow"], np.nan).astype(np.float32)
+        T = rf.shape[0]
+        on = np.full((T, len(links)), np.nan, np.float32)
+        off = np.full((T, len(links)), np.nan, np.float32)
+        for ri, r in enumerate(d["ramps"]):
+            if r not in meta.index:
+                continue
+            m = meta.loc[r]
+            j = j_of.get(str(m.nearest_mainline_link_id))
+            kind = str(m.ramp_type).upper()
+            tgt = on if kind in ("OR", "ON") else off if kind in ("FR", "OFF") else None
+            if j is None or tgt is None:
+                continue
+            col = rf[:, ri]
+            tgt[:, j] = np.where(np.isnan(tgt[:, j]), col, tgt[:, j] + np.nan_to_num(col))
+        _RAMP_CACHE[panel] = (on, off)
+    return _RAMP_CACHE[panel]
+
+
+def _band_sum(a: np.ndarray, t: np.ndarray, j: np.ndarray, lo: int, hi: int) -> np.ndarray:
+    """nan-sum of a[t, j+lo .. j+hi] (links outside the corridor ignored); NaN if every value is NaN."""
+    L = a.shape[1]
+    acc = np.zeros(len(t), np.float32); n = np.zeros(len(t), np.int16)
+    for o in range(lo, hi + 1):
+        jj = j + o
+        ok = (jj >= 0) & (jj < L)
+        v = np.full(len(t), np.nan, np.float32)
+        v[ok] = a[t[ok], jj[ok]]
+        fin = np.isfinite(v)
+        acc[fin] += v[fin]; n += fin
+    return np.where(n > 0, acc, np.nan).astype(np.float32)
+
+
+def add_ramp(d: pd.DataFrame) -> pd.DataFrame:
+    """Ramp-flow features from the rows' panel, slot t and link j (TFB_RAMP=1): on/off-ramp flow at the
+    link, in the 3 links on either side (milepost order, so the tree learns the direction per panel),
+    at t-1 / t+1, and for blackout rows the change of the local net injection since the last visible slot."""
+    t_all = d["t"].to_numpy(np.int64); j_all = d["j"].to_numpy(np.int64)
+    cols = ["rp_on0", "rp_off0", "rp_on_lo3", "rp_on_hi3", "rp_off_lo3", "rp_off_hi3", "rp_on0_prev",
+            "rp_on0_next", "rp_off0_prev", "rp_off0_next", "rp_net3", "rp_net3_gap"]
+    new = {c: np.full(len(d), np.nan, np.float32) for c in cols}
+    dp = d["dark_pos"].to_numpy(np.float64) if "dark_pos" in d else np.zeros(len(d))
+    for p, idx in d.groupby("panel").indices.items():
+        on, off = ramp_arrays(p)
+        T = on.shape[0]
+        t = t_all[idx]; j = j_all[idx]
+        tp = np.clip(t - 1, 0, T - 1); tn = np.clip(t + 1, 0, T - 1)
+        new["rp_on0"][idx] = on[t, j]; new["rp_off0"][idx] = off[t, j]
+        new["rp_on0_prev"][idx] = on[tp, j]; new["rp_on0_next"][idx] = on[tn, j]
+        new["rp_off0_prev"][idx] = off[tp, j]; new["rp_off0_next"][idx] = off[tn, j]
+        new["rp_on_lo3"][idx] = _band_sum(on, t, j, -3, -1); new["rp_on_hi3"][idx] = _band_sum(on, t, j, 1, 3)
+        new["rp_off_lo3"][idx] = _band_sum(off, t, j, -3, -1); new["rp_off_hi3"][idx] = _band_sum(off, t, j, 1, 3)
+        net = _band_sum(on, t, j, -3, 3) - np.nan_to_num(_band_sum(off, t, j, -3, 3))
+        new["rp_net3"][idx] = net
+        pos = dp[idx]
+        g = np.isfinite(pos) & (pos > 0)
+        if g.any():
+            tr = np.clip(t[g] - pos[g].astype(np.int64), 0, T - 1)
+            ref = _band_sum(on, tr, j[g], -3, 3) - np.nan_to_num(_band_sum(off, tr, j[g], -3, 3))
+            v = np.full(len(idx), np.nan, np.float32); v[g] = net[g] - ref
+            new["rp_net3_gap"][idx] = v
+    return pd.concat([d, pd.DataFrame(new, index=d.index)], axis=1)
+
+
 CAP = {"reg": (int(os.environ.get("TFB_NREG", 150_000)), 100_000), "dark": (int(os.environ.get("TFB_NDARK", 150_000)), 60_000)}  # (train rows, holdout rows) per panel
 
 
@@ -149,6 +234,18 @@ def load_train(panels, kind, seed=0):
         ctr, cho = CAP[kind]
         tr = rng.choice(tr, min(ctr, len(tr)), replace=False); ho = rng.choice(ho, min(cho, len(ho)), replace=False)
         d = d.iloc[np.sort(np.concatenate([tr, ho]))]
+        d = d.assign(pseudo=False)
+        if USE_PSEUDO and kind == "reg":  # TFB_PSEUDO_FILES: comma list of row sets (default: trainrows)
+            for name in os.environ.get("TFB_PSEUDO_FILES", "trainrows").split(","):
+                pr = pd.read_parquet(WORK / "pseudo" / f"{p}_{name}.parquet").assign(pseudo=True)
+                d = pd.concat([d, pr[[c for c in d.columns if c in pr.columns]]], ignore_index=True)
+        if USE_PSEUDO_DARK and kind == "dark":  # simulated test-month blackouts, training rows only (t1_pseudo dark)
+            for name in os.environ.get("TFB_PSEUDO_DARK_FILES", "dark").split(","):
+                if not (WORK / "pseudo" / f"{p}_{name}.parquet").exists():   # a panel may have no free origins
+                    continue
+                pr = pd.read_parquet(WORK / "pseudo" / f"{p}_{name}.parquet")
+                pr = pr[pr.split.str.endswith("_train")].assign(pseudo=True)
+                d = pd.concat([d, pr[[c for c in d.columns if c in pr.columns]]], ignore_index=True)
         f64 = d.select_dtypes("float64").columns
         d[f64] = d[f64].astype(np.float32)
         dfs.append(d)
@@ -158,6 +255,8 @@ def load_train(panels, kind, seed=0):
     d["y_dens"] = d.y_flow / np.maximum(d.y_speed, 1.0)
     if USE_FD:
         d = add_fd(d)
+    if USE_RAMP:
+        d = add_ramp(d)
     return d
 
 
@@ -180,20 +279,36 @@ def lgb_seeds(seed: int) -> dict:
                 bagging_seed=100 * seed + 3)
 
 
-PARAMS = dict(objective="regression", learning_rate=float(os.environ.get("TFB_LR", 0.1)), num_leaves=255,
-              min_data_in_leaf=100, feature_fraction=0.5, bagging_fraction=0.7, bagging_freq=1, lambda_l2=2.0, max_bin=63,
+# diversity knobs for ensemble members (defaults = the original models bit-for-bit):
+# TFB_LEAVES, TFB_FF (feature_fraction), TFB_MINDATA, TFB_L2, TFB_EXTRA (extra_trees 0/1), TFB_DARK_LEAVES
+PARAMS = dict(objective="regression", learning_rate=float(os.environ.get("TFB_LR", 0.1)),
+              num_leaves=int(os.environ.get("TFB_LEAVES", 255)),
+              min_data_in_leaf=int(os.environ.get("TFB_MINDATA", 100)),
+              feature_fraction=float(os.environ.get("TFB_FF", 0.5)), bagging_fraction=0.7, bagging_freq=1,
+              lambda_l2=float(os.environ.get("TFB_L2", 2.0)), max_bin=63,
               num_threads=int(os.environ.get("TFB_THREADS", "3")), verbose=-1, **lgb_seeds(SEED))
+if os.environ.get("TFB_EXTRA", "0") == "1":
+    PARAMS["extra_trees"] = True
+# TFB_KINDS=dark trains / predicts only the blackout models (a dark-only member; its regular rows stay NaN
+# and the per-kind ensemble `enskind` takes regular rows from other members)
+KINDS = tuple(os.environ.get("TFB_KINDS", "reg,dark").split(","))
+MAXR = int(os.environ.get("TFB_MAXR", 3000))
 
 
 def train(panels, holdout: bool, tag: str, rounds: dict | None = None):
     mdir = WORK / "models" / tag; mdir.mkdir(parents=True, exist_ok=True)
+    if SEED:  # the hold_*.npy rows follow load_train(..., seed=SEED); t1_holdout.score reads this
+        json.dump({"seed": SEED}, open(mdir / "seed.json", "w"))
+    json.dump({k: v for k, v in PARAMS.items() if k != "num_threads"}, open(mdir / "params.json", "w"), indent=1)
     report = {}
     print(f"train {tag}: seed {SEED}, lgb seeds {lgb_seeds(SEED) or 'default'}", flush=True)
     for kind, targets in (("reg", ("speed", "flow", "dens")), ("dark", ("speed", "flow", "dens"))):
+        if kind not in KINDS:
+            continue
         d = load_train(panels, kind, seed=SEED)
         feats = [c for c in d.columns if c not in NON_FEAT]
-        tr = d.day < HOLD if holdout else np.ones(len(d), bool)
-        va = d.day >= HOLD
+        tr = ((d.day < HOLD) | d.pseudo) if holdout else np.ones(len(d), bool)
+        va = (d.day >= HOLD) & ~d.pseudo
         for c in targets:
             name = f"{kind}_{c}"
             if (mdir / f"{name}.txt").exists() and (not holdout or (mdir / f"hold_{name}.npy").exists()):
@@ -209,12 +324,12 @@ def train(panels, holdout: bool, tag: str, rounds: dict | None = None):
                 p.update(objective="huber", alpha=float(os.environ.get("TFB_HUBER", 1.0)),
                          num_leaves=int(os.environ.get("TFB_DENS_LEAVES", p["num_leaves"])))
             if kind == "dark":
-                p.update(num_leaves=63, min_data_in_leaf=200,
+                p.update(num_leaves=int(os.environ.get("TFB_DARK_LEAVES", 63)), min_data_in_leaf=200,
                          learning_rate=float(os.environ.get("TFB_DARK_LR", 0.05)))
             t0 = time.time()
             if holdout:
                 dva = lgb.Dataset(d.loc[va & ok, feats], y[va & ok], weight=None if w is None else w[va & ok], reference=dtr)
-                m = lgb.train(p, dtr, int(os.environ.get("TFB_MAXR", 3000)), valid_sets=[dva],
+                m = lgb.train(p, dtr, MAXR, valid_sets=[dva],
                               callbacks=[lgb.early_stopping(100, verbose=False),
                                                                         lgb.log_evaluation(250)])
                 pred = m.predict(d.loc[va, feats], num_iteration=m.best_iteration) + base_of(d[va], c)
@@ -234,17 +349,19 @@ def train(panels, holdout: bool, tag: str, rounds: dict | None = None):
 def predict(panels, tag: str):
     mdir = WORK / "models" / tag
     out = WORK / "pred"; out.mkdir(parents=True, exist_ok=True)
-    models = {n: lgb.Booster(model_file=str(mdir / f"{n}.txt")) for n in
-              ("reg_speed", "reg_flow", "reg_dens", "dark_speed", "dark_flow", "dark_dens")}
+    models = {f"{k}_{c}": lgb.Booster(model_file=str(mdir / f"{k}_{c}.txt")) for k in KINDS
+              for c in ("speed", "flow", "dens")}
     frames = []
     for p in panels:
         d = pd.read_parquet(WORK / "feat" / f"{p}_test.parquet")
         d["panel_id"] = np.int16(PANELS.index(p))
         if USE_FD:
             d = add_fd(d)
-        feats = models["reg_speed"].feature_name()
-        sp = np.empty(len(d)); fl = np.empty(len(d)); dn = np.empty(len(d))
-        for kind in ("reg", "dark"):
+        if USE_RAMP:
+            d = add_ramp(d)
+        feats = models[f"{KINDS[0]}_speed"].feature_name()
+        sp = np.full(len(d), np.nan); fl = np.full(len(d), np.nan); dn = np.full(len(d), np.nan)
+        for kind in KINDS:
             m = (d.kind == kind).to_numpy()
             if m.any():
                 X = d.loc[m, feats]
@@ -260,7 +377,7 @@ def predict(panels, tag: str):
     return res
 
 
-def full_rounds(report: dict, maxr: int = 3000) -> dict:
+def full_rounds(report: dict, maxr: int = MAXR) -> dict:
     """Rounds of a full-data fit from a holdout report (the rule behind full3): 1.1 x the best iteration,
     rounded to 10; a model whose early stopping ran into the round cap (best >= maxr - 20) gets 1.1 x maxr."""
     return {k: int(round(1.1 * (maxr if v["best_iter"] >= maxr - 20 else v["best_iter"]), -1))
@@ -294,6 +411,66 @@ def ensemble(tag: str, members) -> None:
     print(f"state_{tag}: mean of {list(members)}, {base.num_rows} rows, NaN in members {nan}", flush=True)
 
 
+def ensemble_kinds(tag: str, reg, dark) -> None:
+    """WORK/pred/state_<tag>.parquet: regular rows = mean of the `reg` members, blackout ("dark") rows = mean
+    of the `dark` members (a dark-only member, TFB_KINDS=dark, can only be a `dark` member). A member may carry a
+    weight as `tag:w` (default 1); each kind's weights are normalised to sum to 1."""
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+    out = WORK / "pred"
+    vals = ("speed", "flow_lane", "dens_lane")
+    def parse(ms):
+        pairs = [(m.split(":")[0], float(m.split(":")[1]) if ":" in m else 1.0) for m in ms]
+        tot = sum(w for _, w in pairs)
+        return [(m, w / tot) for m, w in pairs]
+    reg_w, dark_w = parse(reg), parse(dark)
+    base = pq.read_table(out / f"state_{reg_w[0][0]}.parquet")
+    isd = base.column("kind").to_numpy(zero_copy_only=False) == "dark"
+    acc = {c: np.zeros(base.num_rows) for c in vals}
+    for members, rows in ((reg_w, ~isd), (dark_w, isd)):
+        for m, wgt in members:
+            t = pq.read_table(out / f"state_{m}.parquet")
+            for c in base.column_names:
+                if c not in vals:
+                    assert t.column(c).equals(base.column(c)), f"{m}: column {c} differs from {reg_w[0][0]}"
+            for c in vals:
+                x = t.column(c).to_numpy()[rows]
+                assert np.isfinite(x).all(), f"{m}: {c} has non-finite values on its rows"
+                acc[c][rows] += wgt * x
+            del t
+    for c in vals:
+        base = base.set_column(base.column_names.index(c), c, pa.array(acc[c]))
+    pq.write_table(base, out / f"state_{tag}.parquet")
+    print(f"state_{tag}: regular rows = {[(m, round(w, 4)) for m, w in reg_w]}, dark rows ({int(isd.sum())}) = "
+          f"{[(m, round(w, 4)) for m, w in dark_w]}", flush=True)
+
+
+def ensemble_weighted(tag: str, new: str, others, w_reg: float, w_dark: float) -> None:
+    """WORK/pred/state_<tag>.parquet: member `new` weighted w_reg on regular rows and w_dark on blackout
+    ("dark") rows; the `others` share the remaining weight equally (trafficflow/t1_weighted_eval.py)."""
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+    out = WORK / "pred"
+    vals = ("speed", "flow_lane", "dens_lane")
+    base = pq.read_table(out / f"state_{new}.parquet")
+    kind = base.column("kind").to_numpy(zero_copy_only=False)
+    w = np.where(kind == "dark", w_dark, w_reg)
+    rest = {c: np.zeros(base.num_rows) for c in vals}
+    for m in others:
+        t = pq.read_table(out / f"state_{m}.parquet")
+        for c in base.column_names:
+            if c not in vals:
+                assert t.column(c).equals(base.column(c)), f"{m}: column {c} differs from {new}"
+        for c in vals:
+            rest[c] += t.column(c).to_numpy() / len(others)
+        del t
+    for c in vals:
+        v = w * base.column(c).to_numpy() + (1 - w) * rest[c]
+        base = base.set_column(base.column_names.index(c), c, pa.array(v))
+    pq.write_table(base, out / f"state_{tag}.parquet")
+    print(f"state_{tag}: {new} x (reg {w_reg}, dark {w_dark}) + {list(others)}; dark rows {int((kind == 'dark').sum())}", flush=True)
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("stage")
@@ -302,6 +479,11 @@ if __name__ == "__main__":
     ap.add_argument("--holdout", action="store_true")
     ap.add_argument("--rounds", default="{}", help='JSON {"reg_speed": 950, ...} for full fits')
     ap.add_argument("--members", nargs="*", help="ens: state tags to average into state_<tag>")
+    ap.add_argument("--new", help="ensw: member weighted per kind")
+    ap.add_argument("--w-reg", type=float, default=0.25)
+    ap.add_argument("--w-dark", type=float, default=0.25)
+    ap.add_argument("--reg", nargs="*", help="enskind: members averaged on regular rows")
+    ap.add_argument("--dark", nargs="*", help="enskind: members averaged on blackout rows")
     a = ap.parse_args()
     if a.stage == "feat":
         for p in a.panels:
@@ -315,3 +497,7 @@ if __name__ == "__main__":
         print(json.dumps(full_rounds(json.load(open(WORK / "models" / a.tag / "report.json")))))
     elif a.stage == "ens":
         ensemble(a.tag, a.members)
+    elif a.stage == "ensw":
+        ensemble_weighted(a.tag, a.new, a.members, a.w_reg, a.w_dark)
+    elif a.stage == "enskind":
+        ensemble_kinds(a.tag, a.reg, a.dark)

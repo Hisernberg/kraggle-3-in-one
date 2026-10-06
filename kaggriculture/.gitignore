@@ -1,0 +1,11 @@
+runs/
+replays/
+research/forum_raw/
+__pycache__/
+*.tar.gz
+tapes/
+agents/tapeplay/raw_*/
+agents/tapeplay/1*/
+agents/router/*/
+# generated edge builds (rebuild with agents/edge/build.py; submitted ones are copied to submissions/)
+agents/edge/*/main.py

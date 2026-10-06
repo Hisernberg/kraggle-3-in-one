@@ -109,10 +109,17 @@ def window_weights(gw: np.ndarray) -> np.ndarray:
     return (w / w.mean()).astype(np.float32)
 
 
-def oof(R: Rows, params, rounds, return_models=False, weighted=False, pred_all=False):
+def oof(R: Rows, params, rounds, return_models=False, weighted=False, pred_all=False, sample_weight=None):
     """Out-of-fold probabilities for rows of eval windows (one binned Dataset,
-    fold subsets share its bins to bound memory)."""
+    fold subsets share its bins to bound memory). ``sample_weight`` (optional,
+    one value per row of ``R``, e.g. importance weights by window as in
+    ``onset_iw``) multiplies the row weights; None keeps the plain behaviour."""
     p = np.full(len(R), np.nan, np.float32)
+    wt = window_weights(R.gw) if weighted else None
+    if sample_weight is not None:
+        sw = np.asarray(sample_weight, np.float32)
+        assert sw.shape == (len(R),) and np.isfinite(sw).all(), "sample_weight: one finite value per row"
+        wt = sw if wt is None else (wt * sw).astype(np.float32)
     ev_idx = np.arange(len(R)) if pred_all else np.flatnonzero(R.ev)
     # keep only the rows we predict, on disk (memory-mapped): the binned Dataset holds the rest
     tmp = WORK / f"_xev_{os.getpid()}.npy"
@@ -122,8 +129,7 @@ def oof(R: Rows, params, rounds, return_models=False, weighted=False, pred_all=F
     X_ev.flush(); del X_ev
     X_ev = np.load(tmp, mmap_mode="r")
     full = lgb.Dataset(R.X, R.y.astype(np.float32), feature_name=list(R.cols), free_raw_data=True,
-                       weight=window_weights(R.gw) if weighted else None,
-                       params={"max_bin": params.get("max_bin", 255), "verbose": -1}).construct()
+                       weight=wt, params={"max_bin": params.get("max_bin", 255), "verbose": -1}).construct()
     R.X = None  # release the raw matrix (callers must not reuse R.X after oof)
     gc.collect()
     models = []

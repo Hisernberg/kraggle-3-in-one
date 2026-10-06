@@ -1028,3 +1028,885 @@ Resources:
   results in the last bits.
 * Logs are in `/home/user/work/t2h/logs/`. Stage-2 OOFs are in
   `/home/user/work/t2h/stack8_oof_<tag>.parquet`.
+
+## 16. Ongoing stage-2 stacking on the v5 probability field (`lgb_v9_ogstack08`)
+
+**Goal.** A single-factor ongoing change on top of `lgb_v8_seeds9_stack03`.
+On March, ongoing scores about 0.840 against 0.883 in CV. March also has many
+more non-recurrent ongoing windows (section 11). The onset stacking of
+section 15 transferred to March (about +0.004).
+
+**Gate** (the coordinator's rule for a leaderboard candidate):
+* CV sim improves: paired-bootstrap Δ > 0, ideally by more than 1 SE.
+* off is not worse beyond noise.
+* The non-recurrent slices are not worse. Improving them is the goal.
+
+### Setup (`og_stack.py`)
+
+* **Stage 1.** The v5 ongoing blend: 0.35 LWR-all, 0.35 LWR-noloc,
+  0.15 v2-all and 0.15 v2-noloc (p2 config, old labels).
+  * Its OOF files cover only the evaluation windows: 3,001 sim and 40 off
+    ongoing windows, 1.73 M candidate cells (`robust cv` without
+    `T2_OOF_ALL`).
+  * So stage 2 trains on those 3,041 windows, with the same 4 week folds
+    (OOF stacking). The stage-2 model of a fold never sees that fold's
+    windows.
+* **Stage 2.** LightGBM per candidate cell (window, step k, link): 31 leaves,
+  min_data 100, lr 0.05, 300 rounds, feature and bagging fraction 0.8,
+  2 threads. It is bagged over 3 seeds. The 4 folds take about 2 min per seed.
+* **Final probability** = `w × p2 + (1 − w) × p1`, then top-m decoding.
+* **Features** are all in traffic direction. The link axis of the W/S panels
+  is reversed with `core.direction`, as in `stack.py`.
+  * **Field (`s_`).**
+    * p, and p at link offsets −4..+4.
+    * p at steps k−1 and k+1, same link and ±1 link.
+    * Step sum and max, window sum, step-sum growth vs step 1, vs step
+      k−1 and vs the observed queue at T.
+    * Rank in the step, p / step max, mass 0.5 / 1 / 2 km downstream and
+      upstream.
+    * Predicted blocks (runs of p ≥ 0.5): signed distance in links and km
+      to the tail of the block containing the link or the next block
+      downstream, and to the head of the containing block or the next one
+      upstream.
+    * Block length (links, km) and mass, number of blocks.
+    * Tail and head movement vs step k−1 and vs the observed block at T.
+  * **Observed queue (`o_`, data ≤ T).**
+    * The queue indicator `r_now ≤ 1`: slot T where visible, else the last
+      history value.
+    * The observed block's tail and head distances and length, and the
+      number of queued links.
+    * Tail and head movement over the last 20 and 35 min. It comes from the
+      filled history ratio at T−20 / T−35 min, which is `r_last − d_r15` /
+      `r_last − d_r30`.
+    * The observed tail extrapolated linearly to T+5k.
+    * These replace feat_v3's `lw_*` columns. Those are mirrored on the W/S
+      panels (section 13), so they are not used here.
+  * **Window context (`x_`).**
+    * Recurrence (`robust.recurrence`).
+    * Queued links at the end of the history and at T, and the 15 / 60-min
+      trends.
+    * Weekend flag and time of day.
+    * Per link: `r_now`, `r_last`, `d_r15`.
+  * **Static.** Step k, link length, relative position, panel code.
+* **Evaluator (`OngoingEval`).** It subclasses `OnsetEval`, so `compare()` and
+  `stack_v8.nested_weight` are reused.
+  * Top-m decoding per window.
+  * Two truths on the original windows:
+    * **old**: `ds_<p>.npz["y"]`, the training labels;
+    * **hybrid**: the truthfix hybrid truth, `ds_<p>_y2.npz["y"]`.
+  * Official aggregation for sim and off. The recurrence slices are plain
+    means over 78 / 298 windows.
+  * Paired bootstrap by window, 2,000 replicates.
+  * It reproduces v5 exactly: sim 0.8833, off 0.8906, rec<0.05 0.599,
+    rec<0.2 0.781 (old truth). The hybrid truth gives 0.8804 / 0.8938 /
+    0.593 / 0.774.
+  * The t2h re-drawn windows were not scored: only fast-config ongoing OOFs
+    exist there.
+
+### Results
+
+All rows use w = 0.8, the weight used by the candidate. Δ is against v5, ±
+the paired-bootstrap SE.
+* "Nested" chooses w per fold on the other three folds (old truth, grid
+  0.2-1.0) and reports the old / hybrid Δ with the weights chosen.
+* The last column is the plain-mean Δ on D7_I10_W's non-recurrent windows
+  (18 of the 78 with recurrence < 0.05). All five March D7_I10_W ongoing
+  windows are of this kind.
+
+| stage 2 (seeds) | old sim | Δ old | Δ hybrid | off | rec<0.05 | rec<0.2 | nested Δ old / hybrid (w per fold) | D7_I10_W rec<0.05 |
+|---|---:|---:|---:|---:|---:|---:|---|---:|
+| v5 (stage 1) | 0.8833 | | | 0.8906 | 0.599 | 0.781 | | |
+| all features (3) | 0.8901 | +0.0068 ± 0.0011 | +0.0069 | 0.9017 | 0.621 | 0.798 | +0.0062 / +0.0065 (0.8/0.8/1/0.7) | −0.041 |
+| all features (1) | 0.8899 | +0.0066 ± 0.0010 | +0.0069 | 0.9025 | 0.619 | 0.799 | +0.0065 / +0.0067 (1/1/1/0.7) | −0.037 |
+| + window weights (1) | 0.8894 | +0.0061 ± 0.0011 | +0.0058 | 0.8960 | 0.626 | 0.800 | +0.0055 / +0.0054 | −0.025 |
+| + loc / noloc component p (1) | 0.8892 | +0.0058 ± 0.0011 | +0.0062 | 0.9004 | 0.617 | 0.798 | +0.0053 / +0.0055 | −0.049 |
+| + time-of-day prior `pq_k` (1) | 0.8903 | +0.0070 ± 0.0011 | +0.0070 | 0.9017 | 0.626 | 0.799 | +0.0069 / +0.0068 | −0.032 |
+| − panel code (1) | 0.8898 | +0.0065 ± 0.0011 | +0.0067 | 0.9023 | 0.627 | 0.802 | +0.0064 / +0.0066 | −0.041 |
+| − context (`x_*`, panel, position) (1) | 0.8892 | +0.0059 ± 0.0009 | +0.0063 | 0.9042 | 0.629 | 0.801 | +0.0059 / +0.0062 | −0.028 |
+| field only (− `o_*`, `x_*`) (1) | 0.8885 | +0.0052 ± 0.0009 | +0.0050 | 0.9025 | 0.613 | 0.792 | +0.0048 / +0.0046 | −0.031 |
+| **`dyn`: − recurrence, time of day, weekend, panel, position (3)** | **0.8899** | **+0.0065 ± 0.0009** | **+0.0069** | **0.9031** | **0.630** | **0.801** | **+0.0065 ± 0.0009 / +0.0068 (0.8/0.7/0.8/0.8)** | **−0.020** |
+| − context (3) | 0.8896 | +0.0063 ± 0.0009 | +0.0065 | 0.9040 | 0.630 | 0.802 | +0.0063 / +0.0065 (0.8 ×4) | −0.027 |
+| − context, 63 leaves / 500 rounds (1) | 0.8902 | +0.0069 ± 0.0011 | +0.0067 | 0.9050 | 0.636 | 0.801 | +0.0065 / +0.0065 | −0.025 |
+
+Blend weight (`dyn`, 3 seeds, Δ old):
+
+| w | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | **0.8** | 1.0 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Δ sim | +0.0023 | +0.0034 | +0.0043 | +0.0051 | +0.0059 | +0.0065 | **+0.0065** | +0.0061 |
+| off | 0.8919 | 0.8940 | 0.8964 | 0.8989 | 0.9001 | 0.9012 | **0.9031** | 0.9046 |
+| rec<0.05 | 0.601 | 0.604 | 0.605 | 0.605 | 0.619 | 0.628 | **0.630** | 0.610 |
+
+* **The variants are within noise of each other.**
+  * `dyn` − all features: −0.0003 ± 0.0006.
+  * `dyn` − no context: +0.0002 ± 0.0003.
+  * 63 leaves − 31 leaves: +0.0006 ± 0.0006.
+  * Most of the gain is the field itself (+0.0052).
+  * The observed-queue features add the non-recurrent gain: rec<0.05 goes
+    from +0.014 (field only) to +0.030.
+* **The time and location context does not help the non-recurrent slices.**
+  It adds nothing on sim either. Dropping recurrence, time of day, weekend,
+  panel code and position (`dyn`) keeps sim and raises rec<0.05 by +0.009.
+  It also removes the features most exposed to the March shift. So `dyn` is
+  the candidate.
+* **The weight rule.** w = 0.8 is what the nested procedure picks when run on
+  all four folds (the argmax of old-truth sim). The nested estimate of that
+  procedure is +0.0065 ± 0.0009 (old) and +0.0068 (hybrid).
+
+### Where the gain comes from (`dyn`, w = 0.8)
+
+* **Folds:** +0.0071 / +0.0085 / +0.0041 / +0.0063 (hybrid +0.0076 / +0.0087 /
+  +0.0041 / +0.0069).
+* **Panels (plain mean):** 7 of 8 positive.
+  * D7_I210_E +0.020, D7_I10_E +0.016, D12_I5_N +0.007, D7_I405_N +0.006.
+  * D12_I5_S +0.004, D7_I210_W +0.003, D7_I405_S +0.001.
+  * D7_I10_W −0.004 ± 0.003.
+* **By stage-1 confidence** (the decoder's expected-IoU surrogate), sim
+  windows:
+
+  | stage-1 surrogate | windows | v5 IoU | Δ old | Δ hybrid | validation / private windows |
+  |---|---:|---:|---:|---:|---|
+  | ≤ 0.6 | 93 | 0.495 | +0.099 | +0.095 | 3 / 2 |
+  | 0.6-0.8 | 417 | 0.732 | +0.016 | +0.019 | 7 / 10 |
+  | 0.8-0.9 | 919 | 0.890 | +0.003 | +0.004 | 17 / 12 |
+  | 0.9-0.95 | 982 | 0.935 | +0.001 | +0.001 | 9 / 10 |
+  | > 0.95 | 590 | 0.962 | +0.001 | +0.001 | 4 / 6 |
+
+  The surrogate averages 0.831 on validation and 0.837 on private, against
+  0.872 on CV sim windows. Reweighting the per-bucket gains gives about
+  +0.012 (validation) and +0.010 (private) as plain means, against +0.007 on
+  the CV mix. This is indicative only: few windows.
+* **By true queue size.**
+  * ≤ 6 cells: +0.077 (67 windows).
+  * 6-12 cells: +0.091 (54 windows).
+  * 12-24: +0.007; 24-48: +0.005; 48-96: +0.000; > 96: +0.003.
+  * The small, dissipating queues that section 6 named the main error are
+    where it gains.
+* **It is not calibration.**
+  * Per-step isotonic calibration of v5, fitted out of fold: +0.0005 ± 0.0003.
+  * A logit bias on v5: at best +0.0002 (hybrid truth, +0.25), and negative
+    under the old truth.
+  * Stage 2 leaves the mean predicted set unchanged (147.9 cells per
+    window). It moves cells, it does not add them.
+* **Growth on the rec<0.05 windows.** Mean predicted cells per step, T+5 →
+  T+30:
+  * v5: 8.7 → 11.5;
+  * stack: 8.6 → 12.0;
+  * truth: 9.4 → 16.1.
+
+  Correct cells at T+30 rise from 10.33 to 10.58. The growth deficit is only
+  partly corrected.
+* **Watch: D7_I10_W non-recurrent windows.** 18 CV windows score −0.020 ±
+  0.014 (9 better, 7 worse). The other 60 rec<0.05 windows gain +0.046 ±
+  0.020. Every variant loses there, from −0.020 to −0.049, so the cause is
+  the field re-scoring, not the context features.
+  * The losses come from windows whose queue dissipated while the stack
+    extended it. Example: true cells 4 → 0 at T+30, 12 predicted.
+  * On average the stack moves D7_I10_W's growth toward the truth. New cells
+    at T+30 on the low-index side of the T+5 set: truth 111, v5 60, stack 78.
+  * On the five March D7_I10_W windows the stack changes cells both ways:
+    27 → 23, 38 → 43, 38 → 40, 11 → 11, 23 → 19 (agreement 0.69-0.95).
+  * This slice is the main risk for the March transfer.
+* **Surprise: queue growth is not always upstream.** In traffic direction,
+  new cells between T+5 and T+30 appear upstream of the T+5 set on
+  D12_I5_N, D7_I405_N, D7_I210_W and D7_I405_S. On D7_I10_E (94% of new
+  cells), D7_I210_E and D12_I5_S they appear downstream of it. D7_I10_W is
+  mixed. This was checked against the truth, and `core.direction` is
+  topology-based. A fixed "the tail moves upstream" rule would be wrong on
+  half the panels. Stage 2 learns the pattern from the field and the
+  observed geometry.
+
+### Decoder check (task 4): logit bias b before top-m
+
+Δ is against plain v5.
+
+| b | −0.5 | −0.25 | 0 | +0.25 | +0.5 | +0.75 | +1.0 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| v5, Δ old / hybrid | −0.0036 / −0.0070 | −0.0006 / −0.0024 | 0 / 0 | −0.0013 / +0.0002 | −0.0045 / −0.0018 | −0.0098 / −0.0056 | −0.0175 / −0.0120 |
+| `dyn` w=0.8, Δ old / hybrid | +0.0040 / +0.0014 | +0.0066 / +0.0049 | **+0.0065 / +0.0069** | +0.0052 / +0.0068 | +0.0018 / +0.0045 | −0.0029 / +0.0009 | −0.0088 / −0.0042 |
+| `dyn` w=0.8, off (old) | 0.8978 | 0.8977 | 0.9031 | 0.9041 | 0.9025 | 0.9012 | 0.8951 |
+
+b = 0 is the balanced optimum for the stacked probabilities. −0.25 suits only
+the old truth and +0.25 only the hybrid truth. No decoder change is proposed.
+
+### Gate and verdict
+
+| criterion | result |
+|---|---|
+| CV sim Δ (paired bootstrap) | +0.0065 ± 0.0009 old (7 SE), +0.0069 ± 0.0009 hybrid; nested +0.0065 / +0.0068 |
+| off | +0.0125 old, +0.0119 hybrid (0.9031 / 0.9057) |
+| rec<0.05 | +0.031 ± 0.016 old, +0.029 hybrid |
+| rec<0.2 | +0.020 ± 0.005 old, +0.019 hybrid |
+
+**Passes.** The candidate is `lgb_v9_ogstack08.csv`. Caveat: the
+D7_I10_W non-recurrent slice (−0.020 ± 0.014 on 18 windows) is the closest
+CV analogue of March's ongoing shift.
+
+### The file
+
+`/home/user/work/t2/lgb_v9_ogstack08.csv` is `lgb_v8_seeds9_stack03.csv` with
+only the ongoing rows replaced. It is built by `ongoing_v9.py`.
+* **Stage 1.** The v5 validation/private probabilities: the ongoing rows of
+  `probs_lgb_v5.parquet`. Decoding them reproduces the base file's 87,000
+  ongoing rows exactly.
+* **Stage 2.** `dyn` features, 3 seeds, trained on all 1.73 M OOF rows
+  (3,041 windows), predictions averaged. w = 0.8, then top-m decoding.
+* **Data rule.** Features of a validation/private window use only its stage-1
+  field and its own feature-table rows (released history, masked view at T,
+  full-train profile), plus static link data. That is data ≤ T only.
+
+Checks:
+* `submit.check`: 174,000 rows, 0 missing, 0 extra, binary, positive rate
+  0.0608.
+* Onset lines are byte-identical to the base file.
+
+Changes vs the base file (ongoing rows only):
+
+| split | windows changed (of 40) | cells changed | added / removed | ongoing cells, base → new | mean (min) window agreement |
+|---|---:|---:|---|---|---|
+| validation | 27 | 139 | 94 / 45 | 5,365 → 5,414 | 0.945 (0.667) |
+| private | 27 | 78 | 36 / 42 | 4,841 → 4,835 | 0.962 (0.500) |
+
+Largest changes:
+* D7_I10_W private 010: 14 → 7 cells.
+* D12_I5_N validation 009: 9 → 6.
+* D7_I210_E private 009: 15 → 22, the one private window with recurrence
+  < 0.05.
+* D7_I10_E validation 007 / 010: 121 → 148 and 137 → 159 (stage-1
+  surrogate 0.80 / 0.82).
+
+Other outputs:
+* **Probabilities:** `/home/user/work/t2/probs_v9_ogstack08_ongoing.parquet`,
+  with columns window_id, panel, k, link, p, p1, p2, split. It has the rows and
+  order of the `probs_lgb_v5` ongoing rows, and `p1` equals v5 exactly. The
+  stage-2 surrogate rises to 0.848 / 0.859 on validation / private.
+* **Models:** `/home/user/work/t2/model_v9_ogstack08_stage2_s{0,1,2}_queue_ongoing.txt`.
+
+Self-tests (`ongoing_v9 selftest`):
+* (a) The test-time feature path on shuffled rows with window_id keys equals
+  the training features exactly on D7_I10_W, D7_I405_N and D12_I5_S.
+* (b) The 10 official train windows per panel, run through the
+  released-history tables (`feat_<p>_train`), share 24,318 of 24,330 cells
+  with the training rows. Only the window aggregates touched by the 12
+  missing cells differ, and the recurrence differs by design (full-train
+  profile).
+* Re-decoding the saved probabilities reproduces the file byte for byte.
+
+**Expected effect.** The CV ongoing gain of +0.0065 is about S_queue +0.003.
+The gain sits in low-confidence and small-queue windows, which are
+over-represented in March and April. The per-bucket reweighting suggests
++0.010 to +0.012 on ongoing.
+
+### Reproduce
+
+```
+export PYTHONPATH=/home/user/knee OMP_NUM_THREADS=2 T2_THREADS=2 T2_WORK=/home/user/work/t2 T2_FEAT=/home/user/work/t2/feat_v3
+# OOF stage 2 + table vs v5 + nested weight; writes WORK/ogstack_oof_<tag>.parquet (~2 min per seed)
+python -m trafficflow.t2.og_stack dyn_s012 --seeds 0,1,2 --drop 'x_rec,x_tod,x_wkend,s_pcode,s_relpos'
+python -m trafficflow.t2.og_stack base_s012 --seeds 0,1,2
+python -m trafficflow.t2.og_stack noctx_s012 --seeds 0,1,2 --drop 'x_*,s_pcode,s_relpos'
+# single-seed variants (tags of the table)
+python -m trafficflow.t2.og_stack base_s0 --seeds 0
+python -m trafficflow.t2.og_stack w_s0 --seeds 0 --weighted
+python -m trafficflow.t2.og_stack comp_s0 --seeds 0 --comp
+python -m trafficflow.t2.og_stack loc_s0 --seeds 0 --loc
+python -m trafficflow.t2.og_stack nopcode_s0 --seeds 0 --drop s_pcode
+python -m trafficflow.t2.og_stack noctx_s0 --seeds 0 --drop 'x_*,s_pcode,s_relpos'
+python -m trafficflow.t2.og_stack field_s0 --seeds 0 --drop 'x_*,o_*,s_pcode,s_relpos'
+python -m trafficflow.t2.og_stack noctx_big_s0 --seeds 0 --leaves 63 --rounds 500 --drop 'x_*,s_pcode,s_relpos'
+python -m trafficflow.t2.og_stack table16 0.8          # the results table
+python -m trafficflow.t2.og_stack diag dyn_s012 0.8    # folds, panels, confidence, size, growth, calibration baselines
+python -m trafficflow.t2.og_stack bias dyn_s012 0.8    # decoder check
+python -m trafficflow.t2.og_stack watch 0.8 dyn_s012 base_s012 noctx_s012
+# candidate + probs_v9_<name>_ongoing.parquet + stage-2 models (~4 min)
+python -m trafficflow.t2.ongoing_v9 ogstack08 --stack 0.8 --seeds 0,1,2 --drop 'x_rec,x_tod,x_wkend,s_pcode,s_relpos'
+python -m trafficflow.t2.ongoing_v9 selftest
+```
+
+Resources:
+* Stage-2 CV peaks at about 2.1 GB RSS and the build at about 2 GB.
+* All runs used 2 threads.
+* Logs are in `/home/user/work/t2/logs_og9/`. Stage-2 OOFs are
+  `/home/user/work/t2/ogstack_oof_<tag>.parquet` (11 files, 27 MB each).
+
+## 17. Shift-weighted CV (`shift_cv.py`) and the G3 failure
+
+**Goal.** Plain CV failed badly on G3: the ongoing stage-2 stack gained
++0.0065 ± 0.0009 in CV but lost 0.023 of ongoing IoU on March. The idea was to
+re-weight the CV windows toward each target month so the local gate becomes
+honest, and to check this against the leaderboard results already in hand.
+
+### Window features (data <= T, one definition for CV and official windows)
+
+`shift_cv.window_features(cond)` builds one row per window: the 2,081 / 3,001
+CV sim windows, the 40 official train windows, and the 40 validation and
+40 private windows of each condition. Onset uses the t2h re-drawn windows and
+`t2h/feat`; ongoing uses the original windows and `feat_v3`.
+* **Sources.** The CV rows come from `feat_<p>.parquet` (fold-excluded
+  profiles). The official rows come from `feat_<p>_<split>.parquet`, built from
+  the released histories with full-train profiles. The history coverage is the
+  `window_index.csv` value; for CV windows it is the `ds` value, which equals it
+  exactly on the official train windows.
+* **Stage-1 confidence.** It comes from the reference model: v5 for ongoing,
+  v6 for onset. OOF probabilities are used for CV windows and the full-train
+  models for validation and private.
+* **Ongoing features.**
+  * The expected-IoU surrogate `sur`.
+  * Recurrence `rec` (as `robust.recurrence`), and recent-days activity `rq7`
+    at the queued links.
+  * Queued links at T `lnq`, and the number of queue fragments `nblk`.
+  * Relative growth over 35 and 60 min `g30` / `g60`, and at slot T `gT`
+    (< 0 means dissipating).
+  * Minimum speed ratio `rmin`, history coverage `cov`, and share of cells
+    visible at T `visT`.
+  * Weekend flag, and hour as sin/cos.
+* **Onset features.**
+  * `sur`, and the probability-weighted recurrence `orec` and recent-days
+    activity `orq7` of the predicted site at T+30.
+  * The expected set size `lpsum`, the number of sites with p ≥ 0.05 `nsite`,
+    `rmin`, and the flow/capacity extrapolation `fext`.
+  * `cov`, `visT`, weekend and hour.
+
+Within-panel standardised mean differences (target minus CV sim), before and
+after weighting:
+
+| feature | onset val | → weighted | onset priv | → weighted | ongoing val | → weighted | ongoing priv | → weighted |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| stage-1 surrogate | −0.97 | −0.31 | −0.39 | −0.20 | −0.47 | −0.13 | −0.37 | −0.28 |
+| recent-days activity | −0.37 | −0.12 | −0.41 | −0.20 | −0.39 | −0.12 | −0.35 | −0.26 |
+| recurrence | −0.19 | +0.03 | −0.08 | +0.07 | −0.22 | −0.00 | −0.28 | −0.19 |
+| expected size (onset) / dissipation at T `gT` (ongoing) | −0.74 | −0.23 | −0.01 | +0.04 | −0.38 | −0.12 | −0.10 | −0.06 |
+| weekend | +0.26 | +0.06 | −0.24 | −0.10 | +0.23 | +0.05 | −0.18 | −0.13 |
+
+March starts on a Saturday, so 37.5% of its windows fall on a weekend. April
+starts on a Tuesday (17.5%). On March the model is much less sure (onset
+surrogate −0.97 SD within panel), and queues are dissipating at T more often.
+
+### Importance weights
+
+`shift_cv.weights(cond, target)` returns a `pd.Series` by gw, with mean 1
+within each panel.
+* **Classifier.** L2-penalised logistic regression: target windows (40) vs CV
+  sim windows. It has unpenalised panel intercepts, so only within-panel
+  differences count, and standardised features.
+* **Penalty.** λ is chosen by 5-fold cross-validated log-likelihood.
+* **Cross-fitting.** 5 folds × 5 repeats, stratified by panel and class. Each
+  window's weight comes from models that never saw it.
+* **Weight.** `w = exp(x·β)`, which is the odds with the panel constant
+  cancelled. It is normalised to mean 1 per panel, capped at 10 × the panel
+  mean, and renormalised.
+* **Aggregation.** The official aggregation runs on the weighted panel means,
+  so each panel keeps its weight of 1/8.
+
+| cond / target | λ | cross-fitted AUC (within panel) | ESS of the aggregation (plain) | ESS ratio | min panel ESS | clipped | w max / q99 | largest coefficients (per SD) |
+|---|---:|---:|---|---:|---:|---:|---|---|
+| onset / validation | 10 | **0.70** | 1,082 (1,941) | 0.56 | 79 (D7_I10_W, of 133) | 0.2% | 10 / 5.1 | sur −0.59, orq7 −0.34, weekend +0.27, cov −0.23, orec +0.18 |
+| onset / private | 30 | 0.54 | 1,745 | 0.90 | 112 | 0 | 3.6 / 1.9 | orq7 −0.23, sur −0.17, weekend −0.12 |
+| onset / off (null check) | 30 | 0.57 | 1,793 | 0.92 | 124 | 0 | 2.5 / 1.9 | orq7 −0.34 (train starts on day 0: no previous days) |
+| ongoing / validation | 10 | **0.64** | 1,629 (2,556) | 0.64 | 68 (D7_I10_W, of 131) | 0 | 9.3 / 3.5 | sur −0.40, rq7 −0.35, gT −0.25, hour −0.21/−0.23, rmin −0.18, weekend +0.15 |
+| ongoing / private | 100 | 0.555 | 2,479 | 0.97 | 127 | 0 | 2.2 / 1.6 | sur −0.10, rq7 −0.08 |
+| ongoing / off (null check) | 300 | 0.545 | 2,536 | 0.99 | 131 | 0 | 1.3 / 1.2 | none |
+
+* **Validation is clearly shifted.** Private is only mildly shifted: the CV
+  likelihood picks a strong penalty, and the private SMDs shrink less after
+  weighting.
+* **The null check works.** The 40 official train windows (same months as CV)
+  get nearly uniform weights.
+
+### Weighted score and SE
+
+`shift_cv.score(df, cond, target, ref=None)` takes any `window_iou` frame
+(gw, panel, src, iou_*). Only sim windows are used.
+* **Output.** The weighted official aggregation, and for a paired Δ its
+  bootstrap SE and P(Δ ≤ 0). The bootstrap resamples windows within panel with
+  the weights fixed.
+* **`boot_refit`.** Also refits the weight model on each replicate (target
+  and CV windows resampled). This total SE is 0.9-1.3× the fixed-weight SE.
+* **`lb_predictive`.** The spread of a leaderboard-sized draw: 5 windows per
+  panel, drawn in proportion to the weights. This is the LB noise of a Δ if
+  the weighted CV were the target population.
+
+### Leaderboard facts (March, condition-level Δ = total Δ / 0.15)
+
+* **Onset v4 → v5: +0.0122.** From the P3/P4/D1 probes: v4 onset 0.6857 (A),
+  v6 0.7281 (P4), v5 = 0.7281 − 0.0302.
+* **Onset v5 → v6: +0.0302.** D1 − C1.
+* **F1: −0.0157. F2: −0.0115. G2: +0.0040.**
+* **Ongoing v4 → v5: +0.0040.** C1 − B1 gives ΔS_queue +0.0081, and onset
+  accounts for +0.0122 of the doubled total.
+* **Ongoing v3 → v4: ≈ +0.024, approximate.** B1 − A (+0.0053) minus the local
+  Task-1 gating estimate (+0.0016).
+* **G3: −0.0233.**
+
+### Reproduction (primary truth: hybrid for onset, old for ongoing)
+
+| change | **LB Δ** | plain CV Δ ± SE | **validation-weighted Δ ± SE** (SE with refit) | change-aware | private-weighted | LB noise sd (weighted) | z plain → z weighted | footprint on validation (target / weighted CV, pct) |
+|---|---:|---:|---:|---:|---:|---:|---|---|
+| onset v4 → v5 | **+0.012** | +0.0061 ± 0.0016 | **+0.0128 ± 0.0041** (0.0051) | +0.0110 | +0.0083 | 0.017 | +0.52 → −0.03 | typical (add p87) |
+| onset v5 → v6 (labels) | **+0.030** | +0.0071 ± 0.0017 | **+0.0105 ± 0.0046** (0.0056) | +0.0148 | +0.0086 | 0.018 | +1.91 → +1.08 | **removed 0.30 / 0.13 (p98)** |
+| F1 bias +0.5 | **−0.016** | −0.0001 ± 0.0012 | **+0.0013 ± 0.0028** (0.0025) | +0.0015 | +0.0004 | 0.011 | −1.95 → −1.57 | **added 0.30 / 0.14 (p98); edited windows p97** |
+| F2 site2 | **−0.012** | −0.0011 ± 0.0012 | **−0.0039 ± 0.0019** (0.0022) | −0.0061 | −0.0017 | 0.010 | −1.25 → −0.79 | typical (removed p68) |
+| G2 onset stacking | **+0.004** | +0.0035 ± 0.0011 | **+0.0106 ± 0.0036** (0.0044) | +0.0092 | +0.0058 | 0.013 | +0.07 → −0.50 | typical (added p73) |
+| ongoing v3 → v4 | **≈ +0.024** | +0.0038 ± 0.0011 | **+0.0065 ± 0.0031** (0.0039) | +0.0136 | +0.0051 | 0.011 | +2.81 → +1.63 | **removed 1.80 / 1.09 (p96)** |
+| ongoing v4 → v5 | **+0.004** | +0.0024 ± 0.0006 | **+0.0037 ± 0.0014** (0.0014) | +0.0044 | +0.0027 | 0.006 | +0.34 → +0.04 | typical (edited p93) |
+| G3 ongoing stack | **−0.023** | +0.0065 ± 0.0009 | **+0.0100 ± 0.0018** (0.0022) | +0.0114 | +0.0081 | 0.009 | **−4.02 → −3.55** | **added 2.35 / 1.24 (p96)** |
+
+Old-truth onset Δ (plain → weighted): v4 → v5 +0.0067 → +0.0135, v5 → v6
++0.0047 → +0.0072, F1 −0.0009 → −0.0002, F2 −0.0011 → −0.0039, G2
++0.0024 → +0.0067. The change-aware column adds each change's own footprint
+(number of cells it edits in the window, computable at T) to the classifier.
+
+**Levels.** The March levels are known for six versions. The weights move
+every one of them toward the LB:
+
+| version | LB March | plain CV (hybrid / old) | validation-weighted (hybrid / old) | sd of a 40-window LB level |
+|---|---:|---|---|---:|
+| onset v4 | 0.686 | 0.846 / 0.776 | 0.746 / **0.689** | 0.055 |
+| onset v5 | 0.698 | 0.852 / 0.782 | 0.759 / **0.702** | 0.054 |
+| onset v6 | 0.728 | 0.859 / 0.787 | 0.769 / **0.710** | 0.054 |
+| ongoing v3 | 0.812 | 0.875 / 0.877 | 0.836 / 0.838 | 0.030 |
+| ongoing v5 | ≈ 0.840 | 0.880 / 0.883 | 0.846 / 0.849 | 0.029 |
+| ongoing G3 | ≈ 0.817 | 0.887 / 0.890 | 0.857 / 0.859 | 0.028 |
+
+**What the weighting reproduces.**
+* **LB noise.** A paired Δ on 40 windows has an LB sd of 0.006-0.018. Only
+  four LB facts are clearly non-zero: G3 −0.023, v3 → v4 +0.024, v5 → v6
+  +0.030, and F1 −0.016 (borderline). v4 → v5 (both conditions), F2 and G2
+  are within about 1 sd of zero on the LB.
+* **Magnitudes: better.** The weights amplify every change toward its LB size
+  wherever the change acts on low-confidence windows.
+  * v4 → v5 onset: +0.0128 vs LB +0.0122. Ongoing v4 → v5: +0.0037 vs +0.0040.
+  * F2 becomes significantly negative (−0.0039 ± 0.0019).
+  * v5 → v6 and v3 → v4 close part of the gap (change-aware: +0.015 and
+    +0.014).
+  * The typical LB/CV ratio falls from 3.2× (plain) to 2.1× (weighted). This
+    is the geometric mean of the ratio over the six changes whose CV sign
+    matches the LB.
+  * Gaussian log predictive density of the 8 facts: 14.4 plain, 18.6
+    weighted (18.5 vs 21.2 without G3). Mean |z|: 1.61 plain, 1.15 weighted.
+* **Directions: not better.** Plain CV has the LB sign on 7 of 8; F1 only by
+  −0.0001, which is noise. The weighted CV has it on 6 of 8.
+  * F1 stays at zero: +0.0013 hybrid, −0.0002 old.
+  * **G3 stays positive and gets larger** (+0.010).
+  * "Clearly reproduced" (sign right, ≥ 2 SE, LB clearly non-zero): v5 → v6
+    and v3 → v4, both under-predicted by 3-4×. F2's sign is also right at 2 SE
+    under the weights, but its LB value is within noise.
+  * Not reproduced: G3, and F1.
+* **G3 cannot be reached by any sensible reweighting.**
+  * Sensitivity: 8 weighting variants were tried (λ 1-300, clip 5-20,
+    surrogate only, no surrogate, no rq7, a small LightGBM classifier, and
+    change-aware weights). All give G3 +0.007 to +0.013 and F1 −0.0003 to
+    +0.0023.
+  * The March value is a −3.6 sd event under the weighted predictive
+    distribution and −4.0 sd under plain CV. It never occurs in 20,000 draws.
+  * An outcome-oracle reweighting could reach it only by putting 10× weight
+    on each panel's worst 10% of G3 windows (bound −0.044; with a clip of 3,
+    −0.016).
+  * Among the feature-weighted panels only D7_I10_W is negative (−0.004).
+
+### Why G3 fails on March (diagnostics, no truth after T used)
+
+* **Stage 2 behaves differently on March.** Mean p2 by stage-1 probability
+  bucket:
+
+  | p1 bucket | CV (observed rate) | validation | private |
+  |---|---|---|---|
+  | 0.05-0.2 | 0.108 → 0.074 (0.082) | 0.103 → **0.100** | 0.111 → 0.071 |
+  | 0.2-0.4 | 0.292 → 0.253 (0.260) | 0.295 → **0.277** | 0.294 → 0.249 |
+
+  * On CV and on private, stage 2 lowers the marginal cells; on validation it
+    keeps them.
+  * Σ(p2 − p1) per window: CV +0.50, validation +1.11, private +0.25.
+  * On validation the stack adds 2.35 cells per window against 1.24 ± 0.52 for
+    weighted CV draws (p96). Removals are typical (p56).
+* **It is not an interpolation artifact of our truth.**
+  * 17.6% of the stack's CV edits land on truth cells that are interpolated,
+    about the base rate.
+  * The net value per edit is +0.23 on observed cells and +0.12 on
+    interpolated ones.
+  * Removals carry most of the CV value: net +972 cells, against +367 for
+    additions.
+* **The gain lies in per-window set sizes.** A size-preserving decode (stage 2
+  may only re-rank cells within v5's set size) keeps only +0.0004 of the
+  +0.0065.
+* **Every edit counts on March.** If every G3 edit on validation had been
+  wrong, the loss would be about −0.055: −0.027 from additions (D7_I10_E
+  007/010) and −0.030 from removals in small windows (D12_I5_N 009 9 → 6,
+  D7_I10_W 006/009/010). The observed −0.023 means the edits were net wrong on
+  March.
+* **The failure is outside what any CV built on train months can see.** It is
+  a behavioural or concept shift, or an official-truth difference at queue
+  boundaries, but not a composition effect.
+
+### The footprint check (truth-free) and the verdict on the gate
+
+`shift_cv.footprint_check(cond, new, ref, target)` compares three statistics
+of a change on the 40 target windows with LB-sized weighted CV draws: the
+share of windows edited, and the cells added and removed per window.
+* **It flags exactly the four LB surprises** (≥ p95): G3 and F1 (additions),
+  and v5 → v6 and v3 → v4 (removals). Their |z| under the weighted CV was
+  1.1-3.6.
+* **The unflagged changes were predictable.** v4 → v5 (both conditions), F2
+  and G2 all landed within 0.8 sd of the weighted prediction.
+* **Direction of the surprise.** Atypical additions lost on March and atypical
+  removals gained more than predicted. That fits March queues being smaller
+  than the models expect, but it rests on four cases.
+
+**Verdict: the weighted CV should not become the Task 2 gate on its own.** It
+is a better magnitude predictor. It fixes the systematic under-prediction of
+transfer, and it reproduces the March levels (old-truth onset within 0.003-0.018,
+ongoing v5 within 0.009). It did not catch G3, which is the case that
+motivated it. Proposed gate for Task 2 candidates:
+1. **Existing plain-CV criteria.** Paired Δ > 0, off not worse beyond noise,
+   non-recurrent slices not worse.
+2. **Both weighted Δs positive.** The validation- and private-weighted point
+   estimates must both be > 0; reject if either is below −1 SE
+   (`shift_cv.score`; `boot_refit` for the SE with the weight model). Use the
+   validation-weighted Δ (× 1-3) as the expected March size.
+   * Do not demand 2 SE here. The weights cut the ESS, and the two largest LB
+     gains sit at only 1.9 SE (v5 → v6) and 1.7 SE (v3 → v4) of their refit SE.
+3. **Footprint check on both months.** A flag at ≥ p95 means the CV is
+   extrapolating on that month. Probe on the LB before adopting. For April,
+   which cannot be probed, do not adopt a change flagged on private.
+
+Applied retroactively, this gate makes the right call on all 8 changes:
+* **Adopt without a probe:** v4 → v5 (both conditions) and G2. They pass 1-2
+  and are not flagged; the LB gave +0.012, +0.004 and +0.004.
+* **Reject without a probe:** F2 (validation-weighted −0.0039, about −2 SE)
+  and F1 (plain Δ ≤ 0; weighted ≈ 0; additions flagged at p98). The LB gave
+  −0.012 and −0.016.
+* **Probe first (flagged):** v5 → v6, v3 → v4 and G3. The LB then adopts the
+  first two (+0.030, +0.024) and rejects G3 (−0.023), as happened. The gate
+  cannot say which way a flagged change goes; it says the CV cannot vouch for
+  it.
+
+### Mitigations for the ongoing stack
+
+The rules below are applied identically to the CV OOF and to the
+validation/private probabilities (`OG_VARIANTS`). Δ is against v5 ± SE, with
+old truth first and hybrid second; "val" is validation-weighted, "priv" is
+private-weighted. The footprint columns give cells per window with their
+percentile against weighted CV draws; "flag" means a statistic ≥ p95.
+
+| variant | plain | val | priv | off | rec<0.05 / D7_I10_W rec<0.05 | val add / rem (flag) | priv add / rem (flag) | edited windows val / priv |
+|---|---|---|---|---:|---|---|---|---|
+| G3 (w 0.8) | +0.0065 / +0.0069 | +0.0100 / +0.0108 | +0.0081 / +0.0085 | +0.0125 | +0.031 / −0.020 | 2.35 (p96) / 1.12 **flag** | 0.90 / 1.05 | 27 / 27 |
+| w 0.5 | +0.0051 / +0.0052 | +0.0079 / +0.0085 | +0.0060 / +0.0062 | +0.0083 | +0.005 / −0.016 | 1.35 (p91) / 0.72 | 0.62 / 0.60 | 26 / 23 |
+| w 0.3 | +0.0034 / +0.0034 | +0.0057 / +0.0059 | +0.0041 / +0.0043 | +0.0035 | +0.005 / −0.002 | 0.88 (p91) / 0.50 | 0.45 / 0.47 **flag** (edited p98) | 21 / 23 |
+| stage 2 only if the queue grew (35 min) | +0.0013 / +0.0013 | +0.0024 | +0.0014 | +0.0074 | −0.001 / −0.009 | 1.52 (p95) **flag** | 0.28 / 0.23 | 15 / 7 |
+| ... and not shrinking at T | +0.0012 / +0.0012 | +0.0021 | +0.0013 | +0.0074 | −0.002 / −0.009 | 1.50 (p97) **flag** | 0.28 / 0.23 | 14 / 7 |
+| stage 2 only if recurrence ≥ 0.2 | +0.0049 / +0.0052 | +0.0076 | +0.0057 | +0.0116 | 0 / 0 | 2.05 (p97) **flag** | 0.72 / 0.97 **flag** | 20 / 25 |
+| v5 set size kept (re-rank only) | +0.0004 / +0.0004 | +0.0007 | +0.0004 | +0.0058 | +0.004 / −0.001 | 0.62 / 0.62 | 0.50 / 0.50 | 15 / 15 |
+| shrink-only (v5 ∩ stack) | +0.0036 / +0.0029 | +0.0050 / +0.0042 | +0.0046 / +0.0039 | +0.0016 | +0.035 / −0.018 | 0 / 1.12 (p56) | 0 / 1.05 | 13 / 16 |
+| add-only (v5 ∪ stack) | +0.0030 / +0.0040 | +0.0051 / +0.0066 | +0.0036 / +0.0046 | +0.0108 | −0.002 / −0.001 | 2.35 (p96) **flag** | 0.90 / 0 | 18 / 16 |
+| **shrink-only, recurrence ≥ 0.05** | **+0.0029 ± 0.0005 / +0.0023 ± 0.0006** | **+0.0049 ± 0.0010 / +0.0044 ± 0.0010** | **+0.0035 ± 0.0006 / +0.0029 ± 0.0007** | +0.0016 | 0 / 0 | 0 / 0.88 (p42) | 0 / 1.05 (p71; edited p93) | 10 / 16 |
+| w 0.3, recurrence ≥ 0.05 | +0.0033 ± 0.0004 / +0.0033 | +0.0058 / +0.0061 | +0.0040 / +0.0041 | +0.0037 | 0 / 0 | 0.80 (p91) / 0.40 | 0.38 / 0.47 **flag** (edited p99) | 16 / 22 |
+
+What the mitigation rows show:
+* **The stated bar passes almost everything, G3 included.** Every variant with
+  a real CV gain is positive under both weighted CVs and not worse on plain.
+  G3 itself passes, so the bar alone says nothing about LB safety for the
+  stack.
+* **The suggested growth gate removes most of the gain.** The stack gains
+  mostly on non-growing and dissipating queues. On March it still adds cells
+  atypically.
+* **Only one variant passes the stated bar and the footprint check on both
+  months: shrink-only with recurrence ≥ 0.05.**
+  * Stage 2 may only veto v5 cells, and never acts in the section 16 watch
+    slice (non-recurrent windows, which include all five March D7_I10_W
+    ongoing windows).
+  * With private weights at λ = 10: +0.0043 / +0.0039.
+  * SE with refit: 0.0012 (validation).
+  * 40-window March prediction: +0.0050 ± 0.0062.
+  * If every edit were wrong, the loss would be −0.017 on validation and −0.021
+    on private.
+
+### Candidate `lgb_v10_og_shrink08_rec05.csv`
+
+`/home/user/work/t2/lgb_v10_og_shrink08_rec05.csv` is `lgb_v8_seeds9_stack03.csv`
+with only the ongoing rows replaced.
+* **Rule.** In windows whose recurrence is ≥ 0.05, the set is v5's top-m set
+  intersected with the top-m set of 0.8 × stage 2 + 0.2 × v5, using the section
+  16 `dyn` models. Elsewhere it is v5.
+* **Probabilities.** `probs_v10_og_shrink08_rec05_ongoing.parquet` (probs_v9
+  layout plus a `stage2` flag).
+* **`submit.check`.** 174,000 rows, 0 missing, 0 extra, binary, positive rate
+  0.0601.
+* **Onset lines are byte-identical.** Only 77 ongoing rows differ, all
+  removals, and all of them G3 removals (77 of its 87).
+* **Validation.** 10 of 40 windows changed, 35 cells removed
+  (5,365 → 5,330). Mean window agreement 0.983; the minimum, 0.667, is
+  D12_I5_N 009 at 9 → 6 cells. D7_I405_N 010 loses 15 cells.
+* **Private.** 16 of 40 windows changed, 42 cells removed (4,841 → 4,799).
+  Mean agreement 0.979; the minimum, 0.50, is D7_I10_W private 010 at
+  14 → 7 cells.
+
+**Section 16 evaluator (`OngoingEval.compare`, paired, vs v5).**
+* Old truth: +0.0029 ± 0.0005, P(Δ ≤ 0) = 0, 552 windows better / 391 worse.
+* Hybrid truth: +0.0023 ± 0.0006.
+* Official train windows (off): +0.0016 old, +0.0009 hybrid.
+* rec < 0.05: unchanged by construction. rec < 0.2: +0.0067 ± 0.0029 old,
+  +0.0057 hybrid.
+
+It therefore passes all three criteria of the proposed gate without a flag,
+and the gate alone would adopt it without a probe.
+
+**Recommendation.** Treat it as a probe, not an adoption. The reason is
+specific to this model family, not the gate.
+* **CV evidence is favourable.** Weighted CV and the footprint checks all
+  favour it, and April's windows look much more like CV than March's
+  (classifier AUC 0.55).
+* **But its edits are a subset of G3's.** If G3's March edit quality applies
+  uniformly to these removals, the March result is about −0.007 (about −0.001
+  total). The weighted CV says +0.005 (+0.0008 total).
+* **Reading a probe.** A March ongoing Δ below about −0.004 (the 5th
+  percentile of the weighted prediction) means the G3 failure extends to the
+  removals; the stack family should then be dropped for the final submission.
+
+### Reproduce
+
+```
+export PYTHONPATH=/home/user/knee OMP_NUM_THREADS=2 T2_WORK=/home/user/work/t2 T2_FEAT=/home/user/work/t2/feat_v3
+python -m trafficflow.t2.shift_cv features    # /home/user/work/t2shift/winfeat_<cond>.parquet (~15 s)
+python -m trafficflow.t2.shift_cv weights     # weights_report.csv + balance tables (~10 s)
+python -m trafficflow.t2.shift_cv repro       # repro_table.csv, levels_table.csv (~3 min)
+python -m trafficflow.t2.shift_cv mitigate    # mitigation_table.csv (~2 min)
+python -m trafficflow.t2.shift_cv build "w0.8 shrink-only rec05" og_shrink08_rec05
+```
+
+Every run stays under 1 GB RSS and 2 threads. Tables are in
+`/home/user/work/t2shift/`.
+
+## 18. Covariate-shift-adapted onset models (`onset_iw.py`): not adopted
+
+**Goal.** Train the v8 onset recipe with importance weights toward each target
+month, taken from the section 17 weight model. The validation-weighted models
+would predict the validation rows and the private-weighted models the private
+rows.
+* The motivation: March onset windows are harder than the CV windows (stage-1
+  surrogate −0.97 SD within panel), and the validation-weighted CV predicts the
+  March onset levels well.
+* The deliverable was a single-factor candidate on top of
+  `lgb_v8_seeds9_stack03.csv` if it passed the Task 2 gate.
+
+**Result: the weighting makes the onset model worse, so there is no
+candidate.** The cheap single-seed test lost under every weighting, beyond seed
+noise, and a stronger weighting lost more. The full recipe and the gate were
+therefore not run, per the plan's stop rule.
+
+### Importance weights for the training windows
+
+**Features.** The `shift_cv` onset window features (data <= T, v6 OOF
+confidence) are computed with the same functions for every onset training
+window: 2,462 cand + 2,081 sim + 40 off = 4,583. The sim and off rows equal
+`shift_cv`'s cached table exactly.
+
+**Classifier.** The fitted classifier of section 17 (full-data coefficients,
+λ chosen by CV): validation λ 10, AUC 0.70; private λ 30, AUC 0.54. Features
+are standardised with the sim windows' mean and SD. On the sim windows its log
+odds correlate 0.995 (validation) and 0.980 (private) with `shift_cv`'s
+cross-fitted log odds.
+
+**Weights.** `w = exp(α · x·β)`, tempered with α = 0.5. They are normalised to
+mean 1 within each panel over all training windows, capped at 10 × the panel
+mean, and renormalised (`clip_normalise`). Every row of a window (T+30 × every
+link) carries the window's weight, so each panel keeps its unweighted share of
+the training loss.
+
+ESS below is Kish's, summed over panels. The balance columns are within-panel
+SMDs of the training mix against the target month (target − training, in SD
+of the sim windows), unweighted → weighted.
+
+| target | α | ESS / n (4,583) | cand / sim / off | smallest panel ESS | clipped | w max / q99 / q01 | SMD sur | SMD orq7 | SMD lpsum |
+|---|---:|---:|---|---|---:|---|---|---|---|
+| validation | **0.5** | **0.81** | 0.77 / 0.88 / 0.93 | D7_I405_N 568 / 773 | 0 | 8.7 / 3.1 / 0.44 | −0.95 → −0.62 | −0.35 → −0.23 | −0.75 → −0.57 |
+| validation | 1 | 0.41 | 0.37 / 0.54 / 0.80 | D7_I10_E 178 / 569 | 0.7% | 10 / 7.8 / 0.16 | −0.95 → −0.22 | −0.35 → −0.13 | −0.75 → −0.32 |
+| private | **0.5** | **0.97** | 0.97 / 0.97 / 0.97 | D7_I10_W 263 / 273 | 0 | 1.7 / 1.5 / 0.52 | −0.36 → −0.27 | −0.40 → −0.28 | −0.02 → +0.01 |
+| private | 1 | 0.89 | 0.89 / 0.90 / 0.92 | D7_I10_W 229 / 273 | 0 | 2.7 / 2.0 / 0.26 | −0.36 → −0.17 | −0.40 → −0.17 | −0.02 → +0.04 |
+
+* At α = 0.5 the validation weights move the training mix about a third of
+  the way toward March on the confidence surrogate.
+* The private weights are nearly uniform, because April is only mildly shifted
+  (section 17).
+* The cand windows are slightly more March-like than the sim windows (mean
+  validation weight 1.035 vs 0.958).
+
+### Cheap test: one stage-1 component
+
+**Setup.** on_v3, seed 0, p1, location prior, hybrid labels, 4 week folds, OOF
+on all onset rows. Δ is against the unweighted seed-0 OOF (± paired SE) on the
+2,081 re-drawn sim windows. "val" and "priv" are the validation- and
+private-weighted CV (`shift_cv.score`). The null rows compare unweighted seeds
+1-5 with seed 0 on the same metrics.
+
+| model | plain hybrid | plain old | val hybrid / old | priv hybrid / old | rec<0.05 / rec<0.2 (hybrid) | off hybrid | better / worse |
+|---|---|---|---|---|---|---:|---|
+| validation-weighted, α 0.5 | −0.0033 ± 0.0019 | −0.0029 ± 0.0020 | **−0.0054 ± 0.0043** / −0.0047 | −0.0041 / −0.0035 | −0.011 / −0.003 | −0.003 | 62 / 81 |
+| private-weighted, α 0.5 | −0.0017 ± 0.0015 | −0.0013 ± 0.0015 | −0.0051 / −0.0069 | **−0.0027 ± 0.0019** / −0.0028 | −0.018 / −0.006 | −0.004 | 63 / 72 |
+| validation-weighted, α 1 (dose check) | −0.0047 ± 0.0020 | −0.0047 ± 0.0020 | **−0.0138 ± 0.0055** / −0.0139 | −0.0064 / −0.0065 | −0.030 / −0.008 | −0.011 | 61 / 91 |
+| null: unweighted seeds 1-5, range | −0.0017 … +0.0007 | −0.0012 … +0.0013 | −0.0038 … −0.0011 / −0.0044 … +0.0007 | −0.0019 … −0.0003 / −0.0014 … +0.0010 | −0.019 … −0.003 / −0.005 … +0.001 | −0.012 … −0.007 | |
+| null SD | 0.0008 | 0.0011 | 0.0012 / 0.0023 | 0.0007 / 0.0009 | 0.007 / 0.002 | 0.002 | |
+
+**Against the mean of the six unweighted seeds, in null SDs.** Seed 0 happens
+to be the best seed on both weighted CVs, so the seed mean is the fairer
+baseline.
+
+| model | plain hybrid | plain old | val hybrid | priv hybrid / old |
+|---|---|---|---|---|
+| validation-weighted, α 0.5 | −0.0028 (−3.4 SD) | −0.0031 (−2.9) | −0.0033 (−2.9) | −0.0029 (−4.3) |
+| private-weighted, α 0.5 | −0.0012 (−1.5) | −0.0014 (−1.4) | | −0.0015 (−2.2) / −0.0024 (−2.6) |
+| validation-weighted, α 1 | −0.0042 (−5.1) | −0.0049 (−4.6) | −0.0117 (−10) | |
+
+**Decision (pre-specified stop rule).** The test was "promising" only if all
+three held:
+* the validation model's validation-weighted hybrid Δ > max(null SD, 0.001);
+* its plain hybrid Δ ≥ −0.002;
+* the private model is not below −1 null SD on the private weighting.
+
+Both months fail. The α = 1 dose check is worse on every metric, so the loss
+grows with the weight strength. The full recipe (nine seeds + weighted stage 2
+per month), the footprint check and the candidate build were therefore not
+run.
+
+### Where the loss comes from
+
+Plain mean Δ hybrid of the sim windows by v6 stage-1 max p, against the mean
+of the six unweighted seeds:
+
+| v6 max p | windows | mean validation weight (evaluation) | seed-mean IoU | validation-weighted α 0.5 | private-weighted α 0.5 | null range (6 seeds) |
+|---|---:|---:|---:|---:|---:|---|
+| ≤ 0.5 | 64 | 4.10 | 0.249 | +0.001 | +0.004 | −0.016 … +0.031 |
+| 0.5-0.8 | 64 | 2.04 | 0.527 | +0.010 | +0.004 | −0.012 … +0.009 |
+| 0.8-0.95 | 195 | 1.37 | 0.746 | −0.001 | −0.000 | −0.008 … +0.007 |
+| > 0.95 | 1,758 | 0.81 | 0.914 | **−0.002** | **−0.002** | −0.0006 … +0.0004 |
+
+* **Low-confidence windows (the ones the weights target).** The weighted model
+  stays within seed noise there; the 0.5-0.8 bucket is at the edge.
+* **Confident windows.** It loses 0.002 on the confident majority, outside the
+  seed range. These windows still carry about 68% of the validation-weighted
+  mass.
+* **Likely reason.** Onset outcomes in low-confidence windows are close to
+  unpredictable at T; section 13 found the first-slot extent is set inside the
+  5-minute slot. Up-weighting them teaches nothing that transfers. It spends
+  capacity and effective sample size (ESS 0.81 at α 0.5, 0.41 at α 1) on
+  noise.
+* **Why no gain was expected in theory.** Covariate-shift weighting corrects a
+  misspecified model. A flexible model that already sees the shift covariates
+  pays variance for no bias reduction.
+* **Conclusion.** Weighting the CV evaluation toward a month (section 17)
+  remains useful; weighting the onset training does not.
+
+### Notes
+
+* **Second-order dependence in the weights.** The weights use the v6 OOF
+  confidence, which comes from models trained on the other folds. This is the
+  same path as OOF stacking. It carries no labels of the window itself, and it
+  only matters for a positive result.
+* **Eligibility.** The official scorer computes IoU only over cells with
+  `is_score_eligible = True` (`score_task2.score_window`), while our truth and
+  CV count all cells. This applies to every onset number in sections 13-18
+  alike. An eligibility-aware decoder is being evaluated separately, so
+  decoding was left unchanged here (top-m, bias 0).
+
+### Code
+
+* **`onset_iw.py` (new).** It contains:
+  * training-window features, weights and the ESS / balance report;
+  * weighted OOF, the cheap test and the stop rule;
+  * the full-recipe path, which was not run: weighted stage 2, table,
+    footprint, gate, and the candidate writer that keeps ongoing rows
+    byte-identical.
+
+  Self-tests of the unused path, which ran without training:
+  * decoding the v8 probabilities through the candidate writer reproduces
+    `lgb_v8_seeds9_stack03.csv` byte for byte;
+  * v8 against itself gives zero footprint edits.
+* **Optional arguments on existing functions, defaults unchanged.**
+  `cv.oof(..., sample_weight=None)`,
+  `robust_pipeline.train_variant(..., gw_weight=None)` and
+  `stack.cv(..., weight=None)`. The default paths are bit-for-bit identical:
+  * re-running unweighted on_v3 seed 0 reproduces the v6 OOF file with
+    max |Δp| = 0;
+  * stage 2 with seed 0 on v6's four OOF files reproduces
+    `stack8_oof_v6base.parquet` with max |Δp2| = 0 (1 thread);
+  * the default `train_variant` passes the same Dataset arguments as before.
+
+### Reproduce
+
+```
+export PYTHONPATH=/home/user/knee OMP_NUM_THREADS=2 T2_THREADS=2 T2_WORK=/home/user/work/t2h T2_FEAT=/home/user/work/t2h/feat
+python -m trafficflow.t2.onset_iw weights                             # ~20 s: winfeat_onset_train, iw_<target>_a05, weights_report.csv
+python -m trafficflow.t2.onset_iw cv on_v3 0 validation               # ~3-5 min, 1.3 GB RSS
+python -m trafficflow.t2.onset_iw cv on_v3 0 private
+python -m trafficflow.t2.onset_iw cv on_v3 0 validation --alpha 1.0   # dose check
+python -m trafficflow.t2.onset_iw cheap                               # cheap_table.csv + the stop-rule decision
+```
+
+**Where things are.**
+* Outputs and logs: `/home/user/work/t2iw/` (logs in `logs/`); the default-path
+  self-test is `selftest_defaults.py`.
+* The full recipe, not run, would be: `cv` for the other eight specs per
+  month, then `stack TARGET`, then `table`, then `build NAME`.
+
+## 19. Where the March onset loss sits: a post-blackout site check (2026-09-27, `onset_post.py`)
+
+**Question.** Onset CV is 0.90 (eligible cells, hybrid truth) but March onset is about 0.73–0.77 (P4 and G2; the
+zeroed-onset probe understates onset by the share of windows with no eligible true cell, 4.4% on train). Is the gap
+a wrong *site* or a wrong *extent*?
+
+**Method (diagnostic only, never a feature).** In validation/private the mainline is dark for T+1..T+18 and visible
+again from T+19. The queued links at T+19..T+21 show where an onset queue sits about 65 minutes after T+30.
+- Calibration on 2,081 train sim windows: the true T+30 site is still queued at T+19..21 in 83.7% of windows.
+  Our top-m set hits that proxy in 82.4% (IoU 0.892 when it hits, 0.746 when it misses).
+
+**Result.**
+
+| split | windows | predicted site hits the T+19..21 queue | post-queue empty |
+|---|---|---|---|
+| train sim | 2,081 | 0.824 | 0.119 |
+| validation (March) | 40 | 0.775 | 0.100 |
+| private (April) | 40 | 0.700 | 0.175 |
+
+- The March site-hit rate is 2 windows lower than train (about −0.04 onset). That explains only a small part of the
+  gap, so most of the March loss is extent/shape at T+30, which the proxy cannot see.
+- The misses cluster in early-morning windows (04:40–05:40: D7_I10_W 003/005, D7_I210_W 003/004, D7_I405_N 004)
+  with short-lived queues, and in windows where the queue formed at a secondary bottleneck (D7_I10_E 005 at 97–100;
+  D12_I5_N 004 at 94–123).
+- The F1/F2 probes already showed that bigger and smaller sets both lose on March.
+
+**Verdict.** There is no decoding or site fix to make. The onset line stays closed until a new model idea comes up.
+
+## 20. Ongoing capacity p3 (255 leaves, 900 rounds): `lgb_v11` ongoing (2026-09-27)
+
+`CFG["p3"]` = P_HUGE with 255 leaves, 900 rounds. Everything else is the v5 recipe: window weights, half of the extra
+candidate windows, `feat_v3`, original windows, old truth. Four-fold CV
+(`python -m trafficflow.t2.robust cv og_v3|og_v3_noloc p3 --weighted`, 56 and 45 min):
+
+| model | sim | off | rec < 0.05 | rec < 0.2 | paired Δ sim vs p2 (windows better / worse) |
+|---|---|---|---|---|---|
+| og_v3 p2 | 0.8796 | 0.8873 | 0.5808 | 0.7731 | – |
+| og_v3 p3 | 0.8842 | 0.8905 | 0.5844 | 0.7779 | +0.0055 ± 0.0007 (1277 / 739) |
+| og_v3_noloc p2 | 0.8792 | 0.8869 | 0.5967 | 0.7719 | – |
+| og_v3_noloc p3 | 0.8857 | 0.8811 | 0.6031 | 0.7812 | +0.0072 ± 0.0006 (1380 / 663) |
+| v5 blend | 0.8833 | 0.8906 | 0.5994 | 0.7809 | – |
+| **v11 blend** (p3 for both main components) | **0.8881** | **0.8930** | **0.6030** | **0.7851** | **+0.0053 ± 0.0005 (1167 / 565)** |
+
+**Task 2 gate:**
+1. Plain CV passes: +0.0048 official aggregation, with every slice improving.
+2. Shift-weighted CV (`shift_cv.score`, v11 − v5) passes:
+
+   | weighting | Δ, old truth | Δ, hybrid truth |
+   |---|---|---|
+   | plain | +0.0048 ± 0.0005 | +0.0043 ± 0.0005 |
+   | validation | +0.0050 ± 0.0011 | +0.0041 ± 0.0011 |
+   | private | +0.0052 ± 0.0006 | +0.0047 ± 0.0006 |
+
+   P(Δ ≤ 0) = 0 in every case.
+3. Footprint check passes, with no flag on either month. Percentiles: validation fp_any 0.87, add 0.75, rem 0.64;
+   private 0.71, 0.71, 0.58.
+
+**LB (G8 = H5w with ongoing v11): 0.86798, −0.00041, i.e. March ongoing −0.0027.** It passed every part of the gate
+and still lost. Four of the last five ongoing changes failed on March (G3, H1b, G7, G8) against positive CV; only
+v5 transferred. Ongoing work is paused until the transfer failure is understood. v11 stays on the robust list
+(its private-weighted CV is +0.0052 ± 0.0006).
+
+Capacity keeps paying on ongoing: 31 → 63 → 127 → 255 leaves gives 0.852 → 0.867 → 0.877 → 0.882 (single model, sim).
