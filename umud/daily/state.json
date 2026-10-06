@@ -28,6 +28,8 @@
   "1.345"
  ],
  "settled": [
+  "visual forced choice between FL candidates (scripts/forced_choice.py, external/visual_fc): 76% correct on OSF experts (83% at confidence>=2), 64% on NeuAge; rater bias toward the longer/flatter candidate; test retest consistency 8/11 at confidence>=2",
+  "FL physics projection of the blend onto k*MT/sin(PA) (OSF sim with DLTrack as the reference proxy): soft 0.25 3.36->3.68 mm, band clip 3.80 -> rejected (PA errors are amplified by 1/sin)",
   "Lumify is the one device where Vera beats the pipeline: Lumify PA weight 1.0 +0.0034 (S2), 0.30 -0.0005 (S4) -> quadratic optimum ~0.32; Lumify FL weight 0.31 -> 0.15 -0.0007 (S5): pipeline FL errors track its PA errors there (corr -0.75)",
   "per-device PA changes are refuted 4x (Telemed both directions d9, --famcal pa, Lumify per-image d10 S2 +0.0034): the global PA blend (0.56) is calibrated per device; 'both seg models agree' is NOT independent evidence (same training masks)",
   "multi-scale maps hurt on test twice (d9 S3 incl. apo +0.026; d10 S3 fascicles only +0.0029) -> single-scale only",
@@ -53,10 +55,11 @@
   "public LB ~103 rows (~1/3); metric additive per target: tune one target per shot"
  ],
  "queue": [
-  "GATED PLAN (one shot at a time; research and written evidence before each; unused slots are fine)",
-  "Lumify FL weight 0.0 (S5 gained at 0.15; check the curve end) -- small expected effect",
-  "per-device weights only where a device shows the Lumify pattern (pipeline PA vs Vera disagreement that correlates with FL disagreement); Telemed PA is calibrated at 0.56 (V-shape), left_ticks/juniper untested",
-  "research first: gross PA/FL failures with plausible MT; new discussion topics / notebooks daily; prize track: score the pure pipeline once",
+  "GATED PLAN day 11 (one shot at a time; unused slots are fine)",
+  "S1 d11_S1_visfl: best + --row-w daily/inputs/roww_d11s1.csv (8 visually arbitrated units, 20 rows, FL weight 0.8 pipeline-picked / 0.1 reference-picked; mean |dFL| 16.9 mm, PA/MT unchanged). Build: python daily/run.py build d11_S1_visfl --row-w daily/inputs/roww_d11s1.csv",
+  "if S1 gains (>= 0.002): visual arbitration transfers -> S2 = same picks also for PA (w_pa 0.8 / 0.3 on the same rows), S3 = new forced-choice batch on 10-15 mm FL disagreements (confidence>=2 + retest on another clip frame)",
+  "if S1 loses: split once (Lumify picks IMG_00275/278/302 only vs Juniper/Telemed/left_ticks clips) to see which subset is wrong; otherwise drop visual arbitration",
+  "S1 flat (|d| < 0.002): picks fall mostly on private rows -> keep it only if it is neutral-or-better and move to the Lumify FL weight 0.0 test",
   "final selection (2 picks): A = best public; B = hedge with less reliance on the hard-coded Vera CSV"
  ]
 }
