@@ -1,6 +1,6 @@
 {
- "best_score": 0.30498,
- "best_name": "d10_S1_sanity",
+ "best_score": 0.30383,
+ "best_name": "d10_S5_lumifyfl",
  "best_args": [
   "--w",
   "0.56",
@@ -17,9 +17,18 @@
   "daily/inputs/pipeline_ens.csv",
   "--features",
   "daily/inputs/features_ens.csv",
-  "--sanity"
+  "--sanity",
+  "--fam-w",
+  "lumify_png",
+  "0.30",
+  "0.15",
+  "1.0",
+  "--fam-pa-offset",
+  "lumify_png",
+  "1.345"
  ],
  "settled": [
+  "Lumify is the one device where Vera beats the pipeline: Lumify PA weight 1.0 +0.0034 (S2), 0.30 -0.0005 (S4) -> quadratic optimum ~0.32; Lumify FL weight 0.31 -> 0.15 -0.0007 (S5): pipeline FL errors track its PA errors there (corr -0.75)",
   "per-device PA changes are refuted 4x (Telemed both directions d9, --famcal pa, Lumify per-image d10 S2 +0.0034): the global PA blend (0.56) is calibrated per device; 'both seg models agree' is NOT independent evidence (same training masks)",
   "multi-scale maps hurt on test twice (d9 S3 incl. apo +0.026; d10 S3 fascicles only +0.0029) -> single-scale only",
   "offline blend simulation on OSF with DLTrack (Vera's lineage): errors nearly uncorrelated (FL 0.10, PA -0.13); OSF PA blend optimum 0.56 = LB optimum; spread-gated FL weight hurts offline (3.28 vs 2.98) -> rejected; OSF variant differences ~0.002 have CIs spanning 0 -> not actionable",
@@ -45,8 +54,9 @@
  ],
  "queue": [
   "GATED PLAN (one shot at a time; research and written evidence before each; unused slots are fine)",
-  "no shot currently has strong evidence; research first: (1) gross PA/FL failures with plausible MT (fascicle detector picking aponeurosis-parallel texture -> very low PA -> huge FL), (2) new discussion topics / notebooks daily, (3) prize track: score the pure pipeline once",
-  "final selection (2 picks): A = best public; B = hedge with less reliance on the hard-coded Vera CSV (higher pipeline weights) in case Vera's PA/FL were tuned on the public LB",
-  "dropped: per-device PA (4 refutations), multi-scale maps (2), spread-gated FL, raw-texture PA, physics projection, left_ticks per-image PA"
+  "Lumify FL weight 0.0 (S5 gained at 0.15; check the curve end) -- small expected effect",
+  "per-device weights only where a device shows the Lumify pattern (pipeline PA vs Vera disagreement that correlates with FL disagreement); Telemed PA is calibrated at 0.56 (V-shape), left_ticks/juniper untested",
+  "research first: gross PA/FL failures with plausible MT; new discussion topics / notebooks daily; prize track: score the pure pipeline once",
+  "final selection (2 picks): A = best public; B = hedge with less reliance on the hard-coded Vera CSV"
  ]
 }
