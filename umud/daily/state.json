@@ -1,0 +1,52 @@
+{
+ "best_score": 0.30498,
+ "best_name": "d10_S1_sanity",
+ "best_args": [
+  "--w",
+  "0.56",
+  "0.31",
+  "1.0",
+  "--clip-mt",
+  "3",
+  "--pa-offset",
+  "1.57",
+  "--alpha",
+  "1.0",
+  "--no-anchors",
+  "--pipeline",
+  "daily/inputs/pipeline_ens.csv",
+  "--features",
+  "daily/inputs/features_ens.csv",
+  "--sanity"
+ ],
+ "settled": [
+  "per-device PA changes are refuted 4x (Telemed both directions d9, --famcal pa, Lumify per-image d10 S2 +0.0034): the global PA blend (0.56) is calibrated per device; 'both seg models agree' is NOT independent evidence (same training masks)",
+  "multi-scale maps hurt on test twice (d9 S3 incl. apo +0.026; d10 S3 fascicles only +0.0029) -> single-scale only",
+  "offline blend simulation on OSF with DLTrack (Vera's lineage): errors nearly uncorrelated (FL 0.10, PA -0.13); OSF PA blend optimum 0.56 = LB optimum; spread-gated FL weight hurts offline (3.28 vs 2.98) -> rejected; OSF variant differences ~0.002 have CIs spanning 0 -> not actionable",
+  "raw-texture orientation (v3_pa_tex) is not an independent source: PA debiased MAE 2.8-3.4 deg, errors correlated 0.4-0.8 with the pipeline -> rejected offline",
+  "gross-failure fixes pay: IMG_00305 (--sanity) -0.0021 (row is public); no other gross aponeurosis failures (only 5 rows |MT pipe-Vera|>2 mm, all explained)",
+  "my visual PA reading is biased ~6-7 deg LOW vs the experts (OSF im_10: 18.5 vs 24.4; im_20: 11 vs 18.2; pipeline 20-22 / 18.3-18.7) -> visual QA only gives direction when disagreements are large, never magnitude; the left_ticks visual case (IMG_00096) reverses after this correction",
+  "experts' FL / (MT/sin PA) on OSF: median 1.07, IQR 0.99-1.09; pipeline ~1.09-1.11 on every device, Vera 1.05-1.33 with wide IQR, best blend on Lumify 1.14",
+  "IMG_00305 (Lumify) is an undetected pipeline failure (MT 5.4 mm < host minimum 10, no fascicle angle -> prior constants blended in); --sanity treats MT outside 10-50 mm or missing PA as failure (only row changed)",
+  "within-clip spread is not an error measure for the pipeline (deterministic on near-identical frames); physics projection to the expert FL/trig band does not help the pipeline on OSF (already consistent)",
+  "PA per device: Telemed_644 PA is calibrated in the blend: +2.16 deg (Vera only) lost 0.0141, -1.71 deg (pipeline only) lost 0.0115 (~0.0066/deg both ways = max slope) -> do not calibrate devices to the reference's family medians (--famcal pa would be wrong)",
+  "FL weight optimum ~0.31 for the averaged FL (0.27: +0.0011, 0.45: +0.0168; quadratic vertex 0.307)",
+  "fascicle model ensemble (resnet34 + efficientnet-b3 probs) gains only -0.0001 at the blend level (d9 S4)",
+  "failure fallback inside cine clips is fragile: one more failed frame in clip IMG_00186-190 flipped the clip median to Vera values (+0.026, d9 S3); the truth there is near the pipeline-based values",
+  "multi-scale aponeurosis/MT is harmful on test: on clip IMG_00186-190 it gives MT 22.9 vs 25.6 (the LB punished the move, d9 S3) and IMG_00042 MT -3 mm -> keep single-scale apo; multi-scale only for fascicles",
+  "FL estimator: averaging fl_med with v2_fl_chord_mid (independent error) gained 0.0082 at the same weight (d8 S3); FL clip/tail hurt (d4/d5)",
+  "PA: deep-half fragments alone (v2_pa_lowhalf) lost 0.0029; mean(wmed, lowhalf) +offset ~1.5 is flat-to-better",
+  "external expert sets (OSF/NeuAge/GM) rank estimators but their biases do not transfer to the test labels (A2, d8 S2)",
+  "PA weight: 0.5 / 0.56 / 0.62 -> optimum ~0.57 (flat). PA residual clip 6 hurt (+0.0016): PA outliers are mostly right",
+  "MT weight 1.0 (0.9, 1.1, 1.25 all worse), MT offset 0; MT clip 3 best",
+  "PA offset re-matched whenever the PA estimator changes (keeps mean pipeline PA = pa_wmed + 2.0)",
+  "clip smoothing alpha 1.0 (full 5-frame median); anchors never pinned (--no-anchors)",
+  "public LB ~103 rows (~1/3); metric additive per target: tune one target per shot"
+ ],
+ "queue": [
+  "GATED PLAN (one shot at a time; research and written evidence before each; unused slots are fine)",
+  "no shot currently has strong evidence; research first: (1) gross PA/FL failures with plausible MT (fascicle detector picking aponeurosis-parallel texture -> very low PA -> huge FL), (2) new discussion topics / notebooks daily, (3) prize track: score the pure pipeline once",
+  "final selection (2 picks): A = best public; B = hedge with less reliance on the hard-coded Vera CSV (higher pipeline weights) in case Vera's PA/FL were tuned on the public LB",
+  "dropped: per-device PA (4 refutations), multi-scale maps (2), spread-gated FL, raw-texture PA, physics projection, left_ticks per-image PA"
+ ]
+}

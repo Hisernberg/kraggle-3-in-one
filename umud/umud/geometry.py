@@ -74,7 +74,7 @@ def find_aponeuroses(apo_prob: np.ndarray, px_per_mm: float, thr: float = 0.5):
         c_top, c_bot, c_cen = _fit(x, top), _fit(x, bot), _fit(x, cenl)
         if c_cen is None:
             continue
-        bands.append(dict(k=k, top=c_top, bot=c_bot, cen=c_cen, span=st[k, cv2.CC_STAT_WIDTH],
+        bands.append(dict(k=k, top=c_top, bot=c_bot, cen=c_cen, span=st[k, cv2.CC_STAT_WIDTH], top_raw=top, bot_raw=bot,
                           ymid=float(np.polyval(c_cen, W / 2)),
                           mass=float(apo_prob[lab == k].sum())))
     bands.sort(key=lambda b: b["ymid"])
@@ -252,6 +252,261 @@ def orientation_pa(fasc_prob: np.ndarray, apo: dict, px_per_mm: float) -> float:
     return float(abs(0.5 * (edges[i] + edges[i + 1])))
 
 
+def _wfit(x, y, w, iters=3):
+    """Weighted robust line y = a + b x (drops residuals > 2.5 weighted MADs); returns (a, b) or None."""
+    keep = np.ones(len(x), bool)
+    ab = None
+    for _ in range(iters):
+        if keep.sum() < 3 or np.ptp(x[keep]) < 0.15:
+            return ab
+        W = w[keep]
+        X = np.stack([np.ones(keep.sum()), x[keep]], 1)
+        A = X.T @ (X * W[:, None])
+        ab = np.linalg.solve(A + 1e-9 * np.eye(2), X.T @ (W * y[keep]))
+        r = np.abs(y - (ab[0] + ab[1] * x))
+        mad = _wmedian(r[keep], W) + 1e-6
+        keep = r <= 2.5 * 1.4826 * mad
+    return ab
+
+
+def fascicles_v2(fasc_prob: np.ndarray, apo: dict, px_per_mm: float, thr: float = 0.35,
+                 min_len_mm: float = 3.0) -> dict:
+    """Depth-resolved fascicle estimators (v2), mimicking the manual protocol.
+
+    Raters measure PA with the angle tool at fascicle *insertions* into the deep aponeurosis, and FL along the
+    fascicle path (segmented line), extrapolated straight to the aponeuroses. Fascicles curve, so the angle near
+    the deep aponeurosis differs from the mean fragment angle. Each fragment gets a normalised depth
+    d = 0 (superficial inner edge) .. 1 (deep inner edge) and its angle to the deep aponeurosis; a weighted
+    robust line angle(d) gives the insertion angle at d = 1 and a curved-path FL.
+    """
+    H, W = fasc_prob.shape
+    s, d = apo["sup"], apo["deep"]
+    sup_line = s["bot"] if s["bot"] is not None else s["cen"]
+    deep_line = d["top"] if d["top"] is not None else d["cen"]
+    xs = np.arange(W)
+    y_sup, y_deep = np.polyval(sup_line, xs), np.polyval(deep_line, xs)
+    yy = np.arange(H)[:, None]
+    margin = 0.5 * px_per_mm
+    region = (yy > y_sup[None] + margin) & (yy < y_deep[None] - margin)
+    p = np.where(region, fasc_prob, 0).astype(np.float32)
+    n, lab, st, _ = cv2.connectedComponentsWithStats((p >= thr).astype(np.uint8), 8)
+    deep_ang = math.degrees(math.atan(deep_line[0]))
+    sup_ang = math.degrees(math.atan(sup_line[0]))
+    R = []
+    for k in range(1, n):
+        if st[k, cv2.CC_STAT_AREA] < 10:
+            continue
+        ys, xk = np.where(lab == k)
+        pts = np.stack([xk, ys], 1).astype(float)
+        w = p[ys, xk]
+        mu = (pts * w[:, None]).sum(0) / w.sum()
+        q = pts - mu
+        ev, vec = np.linalg.eigh((q * w[:, None]).T @ q / w.sum())
+        v = vec[:, -1]
+        length = 4 * math.sqrt(max(ev[-1], 0))
+        if length < min_len_mm * px_per_mm or math.sqrt(max(ev[-1], 1e-9) / max(ev[0], 1e-9)) < 3:
+            continue
+        ang = math.degrees(math.atan2(v[1], v[0]))
+        rel = ((ang - deep_ang + 90) % 180) - 90  # signed angle to the deep aponeurosis
+        if not 2 <= abs(rel) <= 60:
+            continue
+        xc = int(np.clip(round(mu[0]), 0, W - 1))
+        th = y_deep[xc] - y_sup[xc]
+        if th <= 1:
+            continue
+        dc = (mu[1] - y_sup[xc]) / th
+        ends = [mu - 0.5 * length * v, mu + 0.5 * length * v]
+        lo = max(ends, key=lambda e: e[1])
+        xl = int(np.clip(round(lo[0]), 0, W - 1))
+        dlo = (lo[1] - y_sup[xl]) / max(y_deep[xl] - y_sup[xl], 1)
+        rel_s = ((ang - sup_ang + 90) % 180) - 90
+        axis = (1 - min(max(dc, 0), 1)) * sup_ang + min(max(dc, 0), 1) * deep_ang  # local muscle axis
+        rel_ax = ((ang - axis + 90) % 180) - 90
+        R.append((rel, rel_s, dc, dlo, length, float(w.mean()), mu[0], rel_ax))
+    out = {"v2_n": len(R)}
+    if len(R) < 2:
+        return out
+    R = np.array(R)
+    wt = R[:, 4] * R[:, 5]
+    sign = np.sign(np.average(np.sign(R[:, 0]), weights=wt)) or 1.0
+    keep = np.sign(R[:, 0]) == sign
+    R, wt = R[keep], wt[keep]
+    if len(R) < 2:
+        return out
+    pa, pa_s, dc, dlo = np.abs(R[:, 0]), np.abs(R[:, 1]), np.clip(R[:, 2], 0, 1), np.clip(R[:, 3], 0, 1)
+    for name, sel in (("lowhalf", dc >= 0.5), ("low3", dc >= 2 / 3), ("uphalf", dc < 0.5), ("insert", dlo >= 0.85)):
+        if sel.sum() >= 1:
+            out[f"v2_pa_{name}"] = _wmedian(pa[sel], wt[sel])
+    ab = _wfit(dc, pa, wt)
+    if ab is not None:
+        a, b = float(ab[0]), float(np.clip(ab[1], -20, 20))
+        out.update(v2_pa_fit1=a + b, v2_pa_fit0=a, v2_pa_fitmid=a + 0.5 * b, v2_pa_slope=b,
+                   v2_pa_fit09=a + 0.9 * b)
+        # curved-path FL through the middle of the image: thickness along the local normal / sin(angle(d))
+        xm = W / 2
+        th = (np.polyval(deep_line, xm) - np.polyval(sup_line, xm)) * math.cos(math.radians(0.5 * (deep_ang + sup_ang)))
+        dd = np.linspace(0, 1, 41)
+        phi = np.clip(a + b * dd, 3, 80)
+        out["v2_fl_curve"] = float(np.trapezoid(1 / np.sin(np.radians(phi)), dd) * th / px_per_mm)
+        out["v2_fl_chord_mid"] = float(th / px_per_mm / math.sin(math.radians(max(a + 0.5 * b, 3))))
+        out["v2_fl_chord_deep"] = float(th / px_per_mm / math.sin(math.radians(max(a + b, 3))))
+    out["v2_fasc_span"] = float(np.ptp(dc))
+    if ab is not None:
+        out.update(streamline_fl(fasc_prob, apo, px_per_mm, a, b, sign))
+    # v2b: angles relative to the local muscle axis (interpolated between both aponeuroses by depth), so that
+    # diverging aponeuroses do not bend the extrapolated fascicle towards the superficial one
+    pax = np.abs(R[:, 7])
+    abx = _wfit(dc, pax, wt)
+    if abx is not None:
+        ax_, bx_ = float(abx[0]), float(np.clip(abx[1], -20, 20))
+        out.update(v2b_pa_fit1=ax_ + bx_, v2b_pa_fitmid=ax_ + 0.5 * bx_)
+        out.update({k.replace("v2_", "v2b_"): v for k, v in
+                    streamline_fl(fasc_prob, apo, px_per_mm, ax_, bx_, sign, axis_rel=True).items()})
+        xm = W / 2
+        th = (np.polyval(deep_line, xm) - np.polyval(sup_line, xm)) * math.cos(math.radians(0.5 * (deep_ang + sup_ang)))
+        out["v2b_fl_chord_mid"] = float(th / px_per_mm / math.sin(math.radians(max(ax_ + 0.5 * bx_, 3))))
+    return out
+
+
+def streamline_fl(fasc_prob: np.ndarray, apo: dict, px_per_mm: float, a: float, b: float, sign: float,
+                  seeds=(0.3, 0.4, 0.5, 0.6, 0.7), axis_rel: bool = False) -> dict:
+    """FL along traced fascicle paths (the raters' segmented line), extrapolated straight outside the frame.
+
+    From seeds on the deep aponeurosis (central x) a path is stepped towards the superficial aponeurosis. The
+    step direction blends the local fascicle orientation (structure tensor of the fascicle map, weighted by its
+    coherence and probability) with the depth-fitted angle model a + b d; outside the image the last direction is
+    kept (linear extrapolation). FL = median path length over seeds.
+    """
+    H, W = fasc_prob.shape
+    s, d = apo["sup"], apo["deep"]
+    sup_line = s["bot"] if s["bot"] is not None else s["cen"]
+    deep_line = d["top"] if d["top"] is not None else d["cen"]
+    deep_ang = math.degrees(math.atan(deep_line[0]))
+    sup_ang = math.degrees(math.atan(sup_line[0]))
+    f = fasc_prob.astype(np.float32)
+    gx = cv2.Sobel(f, cv2.CV_32F, 1, 0, ksize=3)
+    gy = cv2.Sobel(f, cv2.CV_32F, 0, 1, ksize=3)
+    sig = max(1.0, 1.5 * px_per_mm)
+    jxx = cv2.GaussianBlur(gx * gx, (0, 0), sig)
+    jyy = cv2.GaussianBlur(gy * gy, (0, 0), sig)
+    jxy = cv2.GaussianBlur(gx * gy, (0, 0), sig)
+    theta = np.degrees(0.5 * np.arctan2(2 * jxy, jxx - jyy)) + 90.0
+    coh = np.sqrt((jxx - jyy) ** 2 + 4 * jxy ** 2) / (jxx + jyy + 1e-6)
+    wf = coh * cv2.GaussianBlur(f, (0, 0), sig)
+    rel_field = ((theta - deep_ang + 90) % 180) - 90  # relative to the deep aponeurosis (axis_rel: corrected below)
+    wmax = float(np.percentile(wf, 99)) + 1e-6
+    lens = []
+    for fr in seeds:
+        x, y = fr * W, np.polyval(deep_line, fr * W) - 1.0
+        length, n = 0.0, 0
+        dvec = None
+        while n < 6 * (H + W):
+            n += 1
+            ys, yd = np.polyval(sup_line, x), np.polyval(deep_line, x)
+            if y <= ys:
+                break
+            dpt = float(np.clip((y - ys) / max(yd - ys, 1.0), 0, 1))
+            phi = a + b * dpt
+            base = (1 - dpt) * sup_ang + dpt * deep_ang if axis_rel else deep_ang
+            xi, yi = int(round(x)), int(round(y))
+            if 0 <= xi < W and 0 <= yi < H:
+                rf = rel_field[yi, xi] - (base - deep_ang)
+                ok = np.sign(rf) == sign and 2 <= abs(rf) <= 60 and abs(abs(rf) - phi) < 8.0
+                w = min(wf[yi, xi] / wmax, 1.0) if ok else 0.0
+                phi = (w * abs(rf) + 0.5 * phi) / (w + 0.5)
+                ang = math.radians(base + sign * phi)
+                dvec = np.array([math.cos(ang), math.sin(ang)])
+                if dvec[1] > 0:
+                    dvec = -dvec
+            elif dvec is None:
+                break
+            x, y = x + 2 * dvec[0], y + 2 * dvec[1]  # 2 px steps
+            length += 2.0
+        if 0 < length and n < 6 * (H + W):
+            lens.append(length / px_per_mm)
+    return {"v2_fl_stream": float(np.median(lens))} if lens else {}
+
+
+def raw_texture_pa(gray: np.ndarray, apo: dict, px_per_mm: float) -> dict:
+    """PA from the raw B-mode texture (no fascicle segmentation): an estimator family with independent errors.
+
+    Structure-tensor orientation of the image intensity between the aponeuroses (1 mm margin), weighted by
+    coherence x local energy; the dominant orientation relative to the deep aponeurosis is read from a smoothed
+    histogram, overall and for the deep half of the muscle (where raters measure the insertion angle).
+    Also returns the chord FL (mid-image thickness / sin of that angle) as a texture-based FL.
+    """
+    g = gray.astype(np.float32)
+    H, W = g.shape
+    s, d = apo["sup"], apo["deep"]
+    sup_line = s["bot"] if s["bot"] is not None else s["cen"]
+    deep_line = d["top"] if d["top"] is not None else d["cen"]
+    xs = np.arange(W)
+    y_sup, y_deep = np.polyval(sup_line, xs), np.polyval(deep_line, xs)
+    yy = np.arange(H)[:, None]
+    m = px_per_mm
+    region = (yy > y_sup[None] + m) & (yy < y_deep[None] - m)
+    depth = (yy - y_sup[None]) / np.maximum(y_deep[None] - y_sup[None], 1)
+    g = cv2.GaussianBlur(g, (0, 0), max(0.5, 0.15 * m))
+    gx = cv2.Sobel(g, cv2.CV_32F, 1, 0, ksize=3)
+    gy = cv2.Sobel(g, cv2.CV_32F, 0, 1, ksize=3)
+    sig = max(1.0, 1.0 * m)
+    jxx = cv2.GaussianBlur(gx * gx, (0, 0), sig)
+    jyy = cv2.GaussianBlur(gy * gy, (0, 0), sig)
+    jxy = cv2.GaussianBlur(gx * gy, (0, 0), sig)
+    root = np.sqrt((jxx - jyy) ** 2 + 4 * jxy ** 2)
+    coh = root / (jxx + jyy + 1e-6)
+    theta = np.degrees(0.5 * np.arctan2(2 * jxy, jxx - jyy)) + 90.0  # line direction
+    deep_ang = math.degrees(math.atan(deep_line[0]))
+    sup_ang = math.degrees(math.atan(sup_line[0]))
+    rel = ((theta - deep_ang + 90) % 180) - 90
+    w = coh * root
+    out = {}
+    for name, sel in (("all", region), ("deep", region & (depth >= 0.5))):
+        if sel.sum() < 200:
+            continue
+        r_, w_ = rel[sel], w[sel]
+        keep = (np.abs(r_) >= 2) & (np.abs(r_) <= 60)  # drop aponeurosis-parallel texture
+        if keep.sum() < 100:
+            continue
+        hist, edges = np.histogram(r_[keep], bins=120, range=(-60, 60), weights=w_[keep])
+        hist = np.convolve(hist, np.ones(5) / 5, mode="same")
+        i = int(np.argmax(hist))
+        out[f"v3_pa_tex_{name}"] = float(abs(0.5 * (edges[i] + edges[i + 1])))
+    if "v3_pa_tex_all" in out:
+        xm = W / 2
+        th = (np.polyval(deep_line, xm) - np.polyval(sup_line, xm)) * math.cos(math.radians(0.5 * (deep_ang + sup_ang)))
+        out["v3_fl_tex_chord"] = float(th / m / math.sin(math.radians(max(out["v3_pa_tex_all"], 3))))
+    return out
+
+
+def mt_variants(apo: dict, px_per_mm: float) -> dict:
+    """Vertical inner-edge MT on the raw (unfitted) aponeurosis edges at left/middle/right positions.
+
+    The host draws three vertical lines between the aponeuroses; on straight-line fits every symmetric position
+    triple gives the same mean, so the raw per-column edges (median over +-2 % of the width) are used instead.
+    """
+    W = apo["W"]
+    s, d = apo["sup"], apo["deep"]
+    cs = s["bot"] if s["bot"] is not None else s["cen"]
+    cd = d["top"] if d["top"] is not None else d["cen"]
+    out = {}
+    half = max(2, int(0.02 * W))
+    for name, fr in (("1090", (0.1, 0.5, 0.9)), ("1684", (1 / 6, 0.5, 5 / 6)), ("2575", (0.25, 0.5, 0.75)),
+                     ("mid", (0.5,))):
+        vals = []
+        for f in fr:
+            x0 = int(f * W)
+            sl = slice(max(0, x0 - half), min(W, x0 + half + 1))
+            yb, yt = np.nanmedian(s["bot_raw"][sl]), np.nanmedian(d["top_raw"][sl])
+            if not np.isfinite(yb):
+                yb = np.polyval(cs, x0)
+            if not np.isfinite(yt):
+                yt = np.polyval(cd, x0)
+            vals.append(yt - yb)
+        out[f"v2_mt_raw_{name}"] = float(np.mean(vals) / px_per_mm)
+    return out
+
+
 def analyse(apo_prob: np.ndarray, fasc_prob: np.ndarray, px_per_mm: float) -> dict:
     ap = apo_prob.astype(np.float32) / 255.0 if apo_prob.dtype == np.uint8 else apo_prob
     fp = fasc_prob.astype(np.float32) / 255.0 if fasc_prob.dtype == np.uint8 else fasc_prob
@@ -264,4 +519,6 @@ def analyse(apo_prob: np.ndarray, fasc_prob: np.ndarray, px_per_mm: float) -> di
     out.update(muscle_thickness(apo, px_per_mm))
     out.update(fascicles(fp, apo, px_per_mm))
     out["pa_orient"] = orientation_pa(fp, apo, px_per_mm)
+    out.update(fascicles_v2(fp, apo, px_per_mm))
+    out.update(mt_variants(apo, px_per_mm))
     return out

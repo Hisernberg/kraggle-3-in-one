@@ -50,13 +50,22 @@ def make_submission(feat: pd.DataFrame, cfg: dict, groups: np.ndarray | None = N
     """Turn features into predictions following an explicit, documented config."""
     f = feat.copy()
     pri = cfg.get("prior", {"pa_deg": 17.0, "fl_mm": 80.0, "mt_mm": 21.0})
-    pa = f[cfg.get("pa_col", "pa_wmed")].astype(float)
+    if cfg.get("pa_cols"):  # mean of several PA estimators; missing ones fall back to pa_fallback
+        cols = [f[c].astype(float).fillna(f[cfg.get("pa_fallback", "pa_wmed")]) for c in cfg["pa_cols"]]
+        pa = sum(cols) / len(cols)
+    else:
+        pa = f[cfg.get("pa_col", "pa_wmed")].astype(float)
+    if cfg.get("pa_fallback"):  # e.g. depth-restricted estimators are undefined without deep-half fragments
+        pa = pa.fillna(f[cfg["pa_fallback"]].astype(float))
     mt = f[cfg.get("mt_col", "mt_inner")].astype(float)
     mt = mt * cfg.get("mt_scale", 1.0) + cfg.get("mt_offset", 0.0)
     pa = pa * cfg.get("pa_scale", 1.0) + cfg.get("pa_offset", 0.0)
     pa = pa.fillna(pri["pa_deg"]).clip(*RANGES["pa_deg"])
     mt = mt.fillna(pri["mt_mm"]).clip(*RANGES["mt_mm"])
-    fl_geo = f[cfg.get("fl_col", "fl_wmed")].astype(float) * cfg.get("fl_scale", 1.0)
+    if cfg.get("fl_cols"):  # mean of several geometric FL estimators (independent errors average out)
+        fl_geo = f[cfg["fl_cols"]].astype(float).mean(axis=1) * cfg.get("fl_scale", 1.0)
+    else:
+        fl_geo = f[cfg.get("fl_col", "fl_wmed")].astype(float) * cfg.get("fl_scale", 1.0)
     # trigonometric FL with aponeurosis divergence ignored: MT / sin(PA)
     fl_trig = mt / np.sin(np.radians(pa)) * cfg.get("fl_trig_scale", 1.0)
     wg = cfg.get("fl_geo_weight", 0.5)
@@ -83,6 +92,7 @@ def main():
     a2.add_argument("--features", required=True)
     a2.add_argument("--config", required=True)
     a2.add_argument("--test-dir", default=None)
+    a2.add_argument("--groups", default=None, help=".npy of cine-loop group ids in features order (instead of --test-dir)")
     a2.add_argument("--out", required=True)
     a = ap.parse_args()
     if a.cmd == "features":
@@ -93,6 +103,8 @@ def main():
         feat = pd.read_csv(a.features)
         cfg = json.loads(Path(a.config).read_text())
         groups = video_groups(list(feat.image_id), Path(a.test_dir)) if a.test_dir else None
+        if a.groups:
+            groups = np.load(a.groups)
         sub_df = make_submission(feat, cfg, groups)
         sub_df.to_csv(a.out, index=False)
         print(sub_df.describe().T.to_string())
