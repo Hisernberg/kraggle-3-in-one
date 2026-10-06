@@ -199,14 +199,17 @@ Leaderboard: rank 12 (1st 0.24071, 3rd 0.25482, 11th 0.29413).
 - FL weight optimum for the averaged FL stays ~0.31 (quadratic vertex 0.307).
 Rank 13 (1st 0.24071, 3rd 0.25209).
 
-## Day 10 (2026-10-06): gated protocol, best 0.30498
-One shot at a time, each with a written hypothesis and local evidence; 2 slots left unused (no shot with evidence).
+## Day 10 (2026-10-06): gated protocol, best 0.30383
+One shot at a time, each with a written hypothesis and local evidence. S4/S5 followed S2's result: Lumify is the one
+device where Vera is closer than the pipeline (Lumify PA weight curve 1.0 / 0.56 / 0.30 -> optimum ~0.32).
 
 | Shot | Change vs best | Public LB |
 |---|---|---|
 | **d10 S1** | **`--sanity`: IMG_00305 pipeline failure (MT 5.4 mm < 10 mm host minimum, no fascicles) -> reference values** | **0.30498 (-0.0021; the row is public)** |
 | d10 S2 | S1 + Lumify PA from the pipeline per image, Lumify median preserved | 0.30837 (refuted) |
 | d10 S3 | S1 on multi-scale fascicle probs of both models (apo single-scale) | 0.30789 (refuted) |
+| **d10 S4** | **S1 + Lumify PA pipeline weight 0.30 (toward Vera, median preserved; mirror of S2)** | **0.30450** |
+| **d10 S5** | **S4 + Lumify FL pipeline weight 0.15 (pipeline FL errors track its PA errors there, corr -0.75)** | **0.30383** |
 
 Research behind the shots (all offline, no submission spent):
 - My visual PA reading is ~6-7 deg low versus the OSF experts, so visual QA gives direction only.
@@ -215,4 +218,4 @@ Research behind the shots (all offline, no submission spent):
   the pipeline on 9%.
 - Blend simulation on OSF with DLTrack (Vera's lineage): errors nearly uncorrelated; PA blend optimum 0.56, the same as
   the LB optimum; FL spread gating and raw-texture PA rejected.
-Rank 13 (1st 0.23908, 3rd 0.25209).
+Rank 12 (1st 0.23908, 3rd 0.24452, 5th 0.26087).
