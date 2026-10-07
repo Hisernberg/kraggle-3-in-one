@@ -30,6 +30,9 @@
   "daily/inputs/roww_d11s2_lumify.csv"
  ],
  "settled": [
+  "protocol-matched FL aggregations (least extrapolation, central fascicles, visible fraction) do not beat the current FL on OSF/NeuAge/GM (paired bootstrap, identical rows); errors correlate 0.86-0.99 with the current FL -> FL estimator space from these masks is exhausted",
+  "MT conventions (vertical vs perpendicular, 10/50/90 vs 25/50/75 positions, raw edges) are equivalent on OSF (within 0.03 mm); Telemed scale verified from the ruler (12.61 px/mm); Telemed pipeline MT edges match the visible inner boundaries (blind 5/5) -> keep MT weight 1.0",
+  "AnatomyNet public output vs Vera: FL residual independent of our pipeline (r 0.08), MT residual redundant (r 0.81), PA partial (r 0.43)",
   "visual FL arbitration on test (d11): pays only on gross disagreements where the shorter candidate is picked (S2, 3 Lumify rows with 21-48 mm gaps: -0.0024); longer picks (S1: +0.0138) and 9-15 mm gaps (S5: +0.0018) are noise even when retest-consistent; retest consistency is not accuracy",
   "long-FL clips (IMG_00030, 56-60, 76-80) are calibrated at the global FL weight 0.31: 0.8 lost (S1) and 0.1 lost (S4 +0.0067) -> leave them",
   "PA on the visually arbitrated Lumify rows stays at the blend (0.65 pipeline weight lost +0.0009, S3): FL/trig-ratio consistency is not evidence for PA",
@@ -59,9 +62,8 @@
   "public LB ~103 rows (~1/3); metric additive per target: tune one target per shot"
  ],
  "queue": [
-  "GATED PLAN day 12 (one shot at a time; unused slots are fine)",
-  "gross FL disagreements (> 20 mm) not yet arbitrated where the pipeline is shorter: forced choice only if the gap >= 20 mm; apply 0.8 only to shorter-candidate picks at confidence >= 2",
-  "Lumify FL weight 0.0 for the remaining Lumify rows (day-10 S5 gained at 0.15; curve end untested)",
-  "prize track: score the pure pipeline once; final selection (2 picks): A = best public; B = hedge with less reliance on the hard-coded Vera CSV"
+  "day 12 cards: daily/plans/d12.md (S1 d12_S1_fl1025 = --fl-scale 1.025; S2-alt d12_alt_anfl = --ref daily/inputs/ref_vera_anfl.csv; optional IMG_00303 gross row)",
+  "workstream: third information source (direct regressor on train-mask-derived labels), validated on OSF/NeuAge/GM before any LB shot",
+  "final selection (2 picks): A = best public among global changes; B = robust hedge with less reliance on the hard-coded reference"
  ]
 }
