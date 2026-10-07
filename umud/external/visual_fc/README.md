@@ -16,3 +16,8 @@ Retest (`test_retest_*`): the 11 confidence >= 2 test units re-rendered on anoth
 image with 3 lines, seed 777); 8 of 11 kept their pick. Those 8 units (20 rows) define shot d11 S1
 (`daily/inputs/roww_d11s1.csv`): FL weight 0.8 where the pipeline was picked, 0.1 where the reference was picked.
 Bias seen on OSF: the rater prefers the longer (flatter) candidate (picked 68 % vs 56 % true).
+
+## Leaderboard outcome (2026-10-07)
+S1 (all 8 units) +0.0114; S2 (3 Lumify units only: gross 21-48 mm gaps, shorter candidate picked) -0.0024, the new best;
+S5 (batch 2: `test_batch2_*`, 9 units with 9-15 mm gaps, all consistent on retest) +0.0018. Visual arbitration only
+transfers on gross disagreements where the shorter candidate is picked.
