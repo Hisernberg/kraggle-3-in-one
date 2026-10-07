@@ -48,6 +48,9 @@ ap.add_argument("--fail-fill", choices=["ref", "clip"], default="ref",
 ap.add_argument("--sanity", action="store_true",
                 help="also treat rows as pipeline failures when MT is outside the host's 10-50 mm range or no fascicle "
                      "angle was measured (pipeline values there are prior constants or from a wrong aponeurosis)")
+ap.add_argument("--row-w", default=None,
+                help="CSV (image_id, w_pa, w_fl, w_mt; blank = keep) overriding the blend weights of single rows, "
+                     "e.g. visual forced-choice arbitration between the pipeline and the reference")
 ap.add_argument("--no-anchors", action="store_true",
                 help="do not pin IMG_00001/2 to the sample_submission values (host, topic 743111: they are made up)")
 ap.add_argument("--out", required=True)
@@ -93,6 +96,14 @@ for i, (t, w) in enumerate(zip(T, a.w)):
         w = pd.Series(w, index=p.index, dtype=float) if np.isscalar(w) else w.astype(float)
         for fw in a.fam_w:
             w[fam.str.startswith(fw[0])] = float(fw[1 + i])
+    if a.row_w:
+        rw = pd.read_csv(a.row_w).set_index("image_id")
+        col = {"pa_deg": "w_pa", "fl_mm": "w_fl", "mt_mm": "w_mt"}[t]
+        if col in rw:
+            w = pd.Series(w, index=p.index, dtype=float) if np.isscalar(w) else w.astype(float)
+            ov = rw[col].dropna()
+            ov = ov[ov.index.isin(p.index) & ~failed.reindex(ov.index, fill_value=True)]
+            w[ov.index] = ov.values
     d = p[t] - r[t]
     if clips[t] is not None:
         d = d.clip(-clips[t], clips[t])

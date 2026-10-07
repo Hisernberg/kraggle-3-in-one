@@ -219,3 +219,24 @@ Research behind the shots (all offline, no submission spent):
 - Blend simulation on OSF with DLTrack (Vera's lineage): errors nearly uncorrelated; PA blend optimum 0.56, the same as
   the LB optimum; FL spread gating and raw-texture PA rejected.
 Rank 12 (1st 0.23908, 3rd 0.24452, 5th 0.26087).
+
+## Day 11 (2026-10-07): visual FL arbitration, best 0.30147
+Where pipeline and reference FL disagree by > 15 mm (81 rows), a blind forced choice (`scripts/forced_choice.py`) shows
+the straight fascicle lines implied by both candidates; validated at 76 % on the OSF experts (83 % at confidence >= 2).
+Records: `external/visual_fc/`. Per-row weights via `blend_v2.py --row-w`.
+
+| Shot | Change | Public LB |
+|---|---|---|
+| d11 S1 | best + 8 confident, retest-consistent units (20 rows): FL weight 0.8 (pipeline picked) / 0.1 (reference picked) | 0.31525 (+0.0114) |
+| **d11 S2** | **best + only the 3 Lumify picks (IMG_00275/278/302, pipeline FL 21-48 mm shorter than the reference)** | **0.30147 (-0.0024, new best)** |
+| d11 S3 | S2 + PA weight 0.65 on the same 3 rows (expert FL/trig ratio argument) | 0.30234 (refuted) |
+| d11 S4 | S2 + FL weight 0.1 (toward the reference) on IMG_00030 and clips 56-60, 76-80 | 0.30815 (refuted) |
+| d11 S5 | S2 + second batch: 9 units with pipeline FL 9-15 mm shorter, all consistent on retest (FL 0.8 / 0.1, 13 rows) | 0.30322 (refuted) |
+
+- S1 vs S2 isolates the non-Lumify picks: +0.0138. S4 shows that moving the long-FL clips toward the reference also loses
+  (+0.0067), so the global 0.31 FL weight is already calibrated there (V-shape, like Telemed PA on day 9).
+- Visual arbitration paid only on gross disagreements (21-48 mm) where the shorter candidate was picked, against the
+  rater's bias toward longer lines. On 9-15 mm disagreements it was noise (S5), even with consistent retests.
+- Re-test consistency is not accuracy: the same rater, the same image and the same lines give correlated errors.
+Rank 12 (1st 0.23870, 3rd 0.24452, 5th 0.25892).
+
