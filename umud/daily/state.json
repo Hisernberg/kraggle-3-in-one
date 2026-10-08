@@ -1,15 +1,15 @@
 {
- "best_score": 0.30147,
- "best_name": "d11_S2_vislumify",
+ "best_score": 0.29875,
+ "best_name": "d12_S5_pa062",
  "best_args": [
   "--w",
-  "0.56",
+  "0.62",
   "0.31",
   "1.0",
   "--clip-mt",
   "3",
   "--pa-offset",
-  "1.57",
+  "1.645",
   "--alpha",
   "1.0",
   "--no-anchors",
@@ -27,9 +27,19 @@
   "lumify_png",
   "1.345",
   "--row-w",
-  "daily/inputs/roww_d11s2_lumify.csv"
+  "daily/inputs/roww_d12s4.csv",
+  "--fl-scale",
+  "0.988"
  ],
  "settled": [
+  "PA weight (d12 S5): 0.56 -> 0.62 level-matched (offset 1.645) gained 0.0020; the old optimum (~0.57) predates the less noisy PA estimator; next: 0.68",
+  "FL level (d12): x1.025 +0.0170, x0.988 -0.0007 (adopted), quadratic vertex -0.67 mm; a Laplace error model explains the asymmetry (median FL error ~ +0.5..1.4 mm) -> no more FL-level shots",
+  "AnatomyNet FL as reference, level-matched (d12 S3): +0.0020 -> its public FL residual is anti-informative for our blend; no AnatomyNet/DLTrack reference cards",
+  "IMG_00303 FL patch (122.9 -> 88.0, physics + gross-gap rule) is a private row (d12 S4 exactly flat); kept in the base; the Vera-outlier family is exhausted",
+  "third source: seg-model noise is small (r34 vs effb3 FL 1.9 mm, PA 0.33 deg median vs pipeline-reference 7.6 mm, 1.8 deg) -> a regressor on mask-derived labels shares the convention, no-go; public DLTrack-style outputs are independent (r ~0.1) but weak -> only a small-weight reference-mix card later",
+  "protocol-matched FL aggregations (least extrapolation, central fascicles, visible fraction) do not beat the current FL on OSF/NeuAge/GM (paired bootstrap, identical rows); errors correlate 0.86-0.99 with the current FL -> FL estimator space from these masks is exhausted",
+  "MT conventions (vertical vs perpendicular, 10/50/90 vs 25/50/75 positions, raw edges) are equivalent on OSF (within 0.03 mm); Telemed scale verified from the ruler (12.61 px/mm); Telemed pipeline MT edges match the visible inner boundaries (blind 5/5) -> keep MT weight 1.0",
+  "AnatomyNet public output vs Vera: FL residual independent of our pipeline (r 0.08), MT residual redundant (r 0.81), PA partial (r 0.43)",
   "visual FL arbitration on test (d11): pays only on gross disagreements where the shorter candidate is picked (S2, 3 Lumify rows with 21-48 mm gaps: -0.0024); longer picks (S1: +0.0138) and 9-15 mm gaps (S5: +0.0018) are noise even when retest-consistent; retest consistency is not accuracy",
   "long-FL clips (IMG_00030, 56-60, 76-80) are calibrated at the global FL weight 0.31: 0.8 lost (S1) and 0.1 lost (S4 +0.0067) -> leave them",
   "PA on the visually arbitrated Lumify rows stays at the blend (0.65 pipeline weight lost +0.0009, S3): FL/trig-ratio consistency is not evidence for PA",
@@ -59,9 +69,8 @@
   "public LB ~103 rows (~1/3); metric additive per target: tune one target per shot"
  ],
  "queue": [
-  "GATED PLAN day 12 (one shot at a time; unused slots are fine)",
-  "gross FL disagreements (> 20 mm) not yet arbitrated where the pipeline is shorter: forced choice only if the gap >= 20 mm; apply 0.8 only to shorter-candidate picks at confidence >= 2",
-  "Lumify FL weight 0.0 for the remaining Lumify rows (day-10 S5 gained at 0.15; curve end untested)",
-  "prize track: score the pure pipeline once; final selection (2 picks): A = best public; B = hedge with less reliance on the hard-coded Vera CSV"
+  "day 13 cards: daily/plans/d13.md (S1 d13_S1_pa068 = PA weight 0.68, offset 1.707 level-matched; S2 only via S1's rules)",
+  "final selection (write down by 2026-11-07): A = best public among global changes; B = robust hedge with less reliance on the hard-coded reference",
+  "global calibration levers nearly exhausted after PA weight / PA level; unused slots are fine"
  ]
 }

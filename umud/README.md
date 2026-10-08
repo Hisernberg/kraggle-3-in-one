@@ -6,8 +6,8 @@ predict pennation angle (PA, °), fascicle length (FL, mm) and muscle thickness 
 
 Metric: `mean(MAE_PA/6, MAE_FL/12, MAE_MT/3)`, lower is better.
 
-## Status (2026-10-07)
-Best public LB **0.30147** (rank 12): `submissions/d11_S2_vislumify.csv` (two fascicle models, physiological failure check, Lumify weights PA 0.30 / FL 0.15, plus a visually arbitrated FL on 3 Lumify rows with gross pipeline/reference disagreement). Full log with every submission: [`RESULTS.md`](RESULTS.md).
+## Status (2026-10-08)
+Best public LB **0.29875** (rank 14): `submissions/d12_S5_pa062.csv` (two fascicle models, physiological failure check, Lumify weights PA 0.30 / FL 0.15, visually arbitrated FL on 3 gross Lumify rows, FL level x0.988, IMG_00303 FL patch, PA pipeline weight 0.62).
 Reproduce it with `python daily/run.py build NAME` (args in `daily/state.json`): pipeline `configs/a5_pa_avg.json`
 (FL = mean of extrapolated-fragment FL and depth-fitted chord FL; PA = mean of all-fragment and deep-half PA) blended
 per target with the public Vera CSV. The pipeline alone (`kaggle/build_kernel.py --mode submit`) is the prize-eligible
