@@ -256,5 +256,5 @@ Research before the day (no submissions): protocol-matched FL aggregations, MT c
   evidence was confounded by an estimator swap.
 - Most of an MAE loss from a uniform shift is curvature (rows whose sign flips), so a large loss does not mean a
   large bias; the error model turned a planned -2.1 mm step into a -1.0 mm step.
-Rank 12 (1st 0.23776, 3rd 0.23878, 5th 0.25725).
+Rank 13 (1st 0.23776, 3rd 0.23878, 5th 0.25468).
 
