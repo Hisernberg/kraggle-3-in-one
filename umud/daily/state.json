@@ -1,15 +1,15 @@
 {
- "best_score": 0.30074,
- "best_name": "d12_S4_img303",
+ "best_score": 0.29875,
+ "best_name": "d12_S5_pa062",
  "best_args": [
   "--w",
-  "0.56",
+  "0.62",
   "0.31",
   "1.0",
   "--clip-mt",
   "3",
   "--pa-offset",
-  "1.57",
+  "1.645",
   "--alpha",
   "1.0",
   "--no-anchors",
@@ -32,6 +32,7 @@
   "0.988"
  ],
  "settled": [
+  "PA weight (d12 S5): 0.56 -> 0.62 level-matched (offset 1.645) gained 0.0020; the old optimum (~0.57) predates the less noisy PA estimator; next: 0.68",
   "FL level (d12): x1.025 +0.0170, x0.988 -0.0007 (adopted), quadratic vertex -0.67 mm; a Laplace error model explains the asymmetry (median FL error ~ +0.5..1.4 mm) -> no more FL-level shots",
   "AnatomyNet FL as reference, level-matched (d12 S3): +0.0020 -> its public FL residual is anti-informative for our blend; no AnatomyNet/DLTrack reference cards",
   "IMG_00303 FL patch (122.9 -> 88.0, physics + gross-gap rule) is a private row (d12 S4 exactly flat); kept in the base; the Vera-outlier family is exhausted",
@@ -68,8 +69,8 @@
   "public LB ~103 rows (~1/3); metric additive per target: tune one target per shot"
  ],
  "queue": [
-  "day 13 cards: daily/plans/d13.md (S1 d13_S1_pa062 = PA weight 0.62, level-matched offset 1.645; S2 only via S1's rules)",
+  "day 13 cards: daily/plans/d13.md (S1 d13_S1_pa068 = PA weight 0.68, offset 1.707 level-matched; S2 only via S1's rules)",
   "final selection (write down by 2026-11-07): A = best public among global changes; B = robust hedge with less reliance on the hard-coded reference",
-  "global calibration levers nearly exhausted; unused slots are fine"
+  "global calibration levers nearly exhausted after PA weight / PA level; unused slots are fine"
  ]
 }
