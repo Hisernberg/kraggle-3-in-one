@@ -1,6 +1,6 @@
 {
- "best_score": 0.30147,
- "best_name": "d11_S2_vislumify",
+ "best_score": 0.30074,
+ "best_name": "d12_S2_fl0988",
  "best_args": [
   "--w",
   "0.56",
@@ -27,7 +27,9 @@
   "lumify_png",
   "1.345",
   "--row-w",
-  "daily/inputs/roww_d11s2_lumify.csv"
+  "daily/inputs/roww_d11s2_lumify.csv",
+  "--fl-scale",
+  "0.988"
  ],
  "settled": [
   "third source: seg-model noise is small (r34 vs effb3 FL 1.9 mm, PA 0.33 deg median vs pipeline-reference 7.6 mm, 1.8 deg) -> a regressor on mask-derived labels shares the convention, no-go; public DLTrack-style outputs are independent (r ~0.1) but weak -> only a small-weight reference-mix card later",
