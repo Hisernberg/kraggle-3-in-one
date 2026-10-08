@@ -240,3 +240,21 @@ Records: `external/visual_fc/`. Per-row weights via `blend_v2.py --row-w`.
 - Re-test consistency is not accuracy: the same rater, the same image and the same lines give correlated errors.
 Rank 12 (1st 0.23870, 3rd 0.24452, 5th 0.25892).
 
+## Day 12 (2026-10-08): protocol v3 (pre-registered cards, one shot at a time), best 0.30074
+Research before the day (no submissions): protocol-matched FL aggregations, MT conventions, Telemed MT edges
+(blind 5/5 for the pipeline), FL/trig band clipping and a mask-label regressor were all rejected offline
+(`daily/plans/d12.md`).
+
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S1 | FL x1.025 (first upward FL-level test) | 0.31850 |
+| **S2** | **FL x0.988 (-1.0 mm), chosen with a Laplace error model fitted to S1** | **0.30074 (new best)** |
+| S3 | AnatomyNet FL as reference, level-matched | 0.30270 (refuted) |
+| S4 | IMG_00303 FL 122.9 -> 88.0 (Lumify outlier; blend PA/MT imply 89 mm) | 0.30074 (private row; kept) |
+
+- The FL level was slightly high: the three-point curve has its vertex at -0.67 mm. The day-2 "shortening hurts"
+  evidence was confounded by an estimator swap.
+- Most of an MAE loss from a uniform shift is curvature (rows whose sign flips), so a large loss does not mean a
+  large bias; the error model turned a planned -2.1 mm step into a -1.0 mm step.
+Rank 12 (1st 0.23776, 3rd 0.23878, 5th 0.25725).
+
