@@ -87,7 +87,16 @@ ongoing 0.843).
   prediction.
 - **Task 1/3 gate:** J = 0.35·S_state + 0.10·S_LWR (full-coverage holdout, realistic blackouts,
   `trafficflow/t1_lwr_eval.py`) improves on at least 3 of 4 panels, and the mean improves.
-- **Task 2 gate** (since 2026-09-25; TASK2_ANALYSIS.md section 17). All three must hold:
+- **Task 2 gate from 2026-09-28: the test-month pseudo-holdout** (`trafficflow/t2/pseudo.py`, TASK2_ANALYSIS.md §21).
+  It scores about 3,000 ongoing and 230 onset windows per test month, found in the released masked view. It is the
+  only local test that gets G3 right: −0.0048 on March, where CV said +0.0065.
+  - A change must improve the official aggregation on both pseudo months, April (the private month) above all, by
+    more than 2 paired SE.
+  - The 40-window March LB cannot confirm or reject a Task 2 change smaller than about ±0.01 on a condition: its
+    noise SD is 0.005–0.009. An LB loss within that noise does not overturn a pseudo-holdout gain.
+  - Changes that pass go into the **private-optimized line** (below), not into the public main line, unless the LB
+    also agrees.
+- **Older Task 2 gate** (2026-09-25 to 09-28; TASK2_ANALYSIS.md section 17), kept for reference. All three had to hold:
   1. **Plain CV.**
      - The hybrid-truth score is ≥ best − 0.002.
      - The conservative evaluation (re-drawn windows, old truth) is ≥ best − 0.002 and within one paired SE of 0.
@@ -107,6 +116,40 @@ ongoing 0.843).
 - a blind resubmission after an ERROR.
 
 ## Candidate queue
+**Chain for 2026-09-29** (base H11P 0.87249). Submit one at a time, and read each score before the next.
+1. **H12P** (`H12P_darkP.zip`): blackout rows = fullPD. Expected +0.0004 to +0.0006; adopt if Δ ≥ +0.0001.
+2. **H13P** (`H13P_darkP2.zip`): blackout rows = mean(fullPD, fullPD2). It differs from H12P only in the blackout rows
+   (133k state rows; queue and ODME identical). Adopt if Δ vs H12P ≥ +0.0001.
+3. **H14P** (`H14P_transductive4.zip`, `/home/user/work/build_H14P.sh`): H13P with regular rows = the best
+   mix of fullP2/P3/P4 on the pseudo-holdout. It is built only if a mix beats H11P's there.
+   **Built 15:46**, 65/65: regular rows = 0.25·fullP2 + 0.375·fullP3 + 0.375·fullP4 (pseudo +0.00012 March / +0.00010
+   April, 9/10 panels each). `loop diff` vs H13P: state rows only (6.61M, mean |Δv| 0.06 km/h).
+   Expected about +0.0002 (transductive steps give about 2× the S_state-only pseudo figure). Adopt if Δ ≥ +0.0001.
+4. **H15P** (`H15P_monthbias.zip`): H14P (or H13P) with the month-specific speed level of `t1_bias.py`. Cross-fitted
+   +0.0001, 10/10 panels in both months. Adopt if Δ ≥ +0.0001, or if Δ ≥ 0 matches the local estimate.
+   **Built 15:49** on H14P, 65/65. Correction on the P234w scheme: +0.00009 March / +0.00012 April, 10/10 panels.
+   `loop diff` vs H14P: state rows only (6.58M regular rows, mean |Δv| 0.17 km/h).
+5. **H16P** (`H16P_og_v7v11.zip`, `/home/user/work/queue_H16_adapt.sh`): H15P with ongoing = the v7+v11 mix
+   (Task 2 pseudo-holdout best: +0.0089 March / +0.0107 April on 3,000 windows, +0.0138 / +0.0067 on official-style
+   windows). **Built 15:53** on H15P, 65/65; `loop diff` vs H15P: 193 queue rows only (105 March, 88 April). It is a probe of pseudo-holdout vs LB, not a candidate for the public main line.
+   - LB Δ vs H15P ≥ +0.0005 (ongoing ≥ +0.003): the pseudo-holdout is confirmed on March; adopt.
+   - Δ within ±0.0005: noise, as predicted for 40 windows. It stays the private-optimized hedge.
+   - Δ ≤ −0.001: a third March loss for ongoing label/capacity changes. Treat the pseudo-holdout as biased for this
+     change type and keep v5 ongoing in both finals.
+
+**Fallbacks for the 29 Sep chain** (each later file is built on the one before):
+- H14P not adopted: rebuild H15P on H13P. Regenerate its state (deleted for disk) with `t1_pipeline enskind --tag
+  ens_H13P --reg fullP2:0.5 fullP3:0.5 --dark fullPD:0.5 fullPD2:0.5`, then run `t1_bias apply
+  fullP2:0.5,fullP3:0.5 ens_H13P ens_H15b`, `make_submission --state-tag ens_H15b ...` and `loop pack`.
+- H15P not adopted: build H16P on the then-best state (`make_submission --state-tag <best ens> --queue
+  /home/user/work/t2/lgb_v8og_v7v11.csv ...`).
+- Every candidate: `loop diff` against the file it follows must show state rows only (H16P: ongoing queue rows only).
+
+**Private-optimized line (for the final pick).** Current best plus the pseudo-holdout's best Task 2. Candidates:
+v7 ongoing (hybrid labels; pseudo +0.0069 March / +0.0102 April, about +0.0015 on the private score) and online
+adaptation of the April forecasts on March windows (`trafficflow/t2/adapt.py`; March data is ≤ T for every April
+window). Its public score will sit near the main line's (v7: −0.0002 on March, which is noise).
+
 **Chain for 2026-09-28.** Base = H5w (0.86838). The loop's `status` shows H6 (0.86839) as best because it takes
 the maximum score; H6 was below the +0.0001 adoption bar, so the base for single-factor steps stays H5w.
 
@@ -142,11 +185,14 @@ the maximum score; H6 was below the +0.0001 adoption bar, so the base for single
 4. **Remaining slots:** only probes that answer an open question.
 
 **Paused lines (27 Sep evidence):**
-- **Ongoing:** 4 of the last 5 changes lost on March despite passing every local test (G8 passed the full gate).
+- ~~Ongoing: 4 of the last 5 changes lost on March despite passing every local test.~~ **Resolved 28 Sep:** the
+  test-month pseudo-holdout reproduces G3's loss and puts G7/G8's March losses within LB noise (TASK2_ANALYSIS §21).
+  Ongoing work resumes on the pseudo-holdout gate.
 - **Blackout-cell models:** noisy transfer (H5w's blackout part ~50%, H6 ~5%).
 - **Onset decoding / extent:** calibrated from both sides (F1, F2; head-only would score 0.43 vs 0.86 on CV).
 
-**Robust list (for the final pick):** v11 ongoing (G8; private-weighted CV +0.0052 ± 0.0006, March −0.0027).
+**Robust list (for the final pick):** v7 ongoing (G7; pseudo April +0.0102, March +0.0069); v11 ongoing (G8;
+pseudo April +0.0022, March +0.0020; private-weighted CV +0.0052 ± 0.0006).
 
 **Checked and closed on 27 Sep (no submission needed):**
 - Task 2 onset with ramp-flow features (+0.15% log-loss only).
