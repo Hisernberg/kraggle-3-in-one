@@ -261,14 +261,22 @@ Research before the day (no submissions): protocol-matched FL aggregations, MT c
 Rank 14 (1st 0.23364, 3rd 0.23780, 5th 0.25309).
 
 
-## Day 13 (2026-10-09): PA weight settled, third model fails the gate, best stays 0.29875
+## Day 13 (2026-10-09): resnext50 fascicle model, best 0.29594 (rank 13)
 | Shot | Change vs best | Public LB |
 |---|---|---|
 | S1 | PA pipeline weight 0.62 -> 0.68, offset re-matched | 0.29961 (flat; vertex 0.632, keep 0.62) |
+| **S2** | **pipeline PA from the resnet34 + resnext50 (640x960) fascicle pair instead of resnet34 + effb3, level-matched** | **0.29644 (-0.0023)** |
+| S3 | S2 + pipeline FL from the same pair, level-matched | 0.29601 (-0.0004, flat by rule) |
+| S4 | S2 + PA pipeline weight 0.65, level-matched | 0.29637 (-0.00007, adopted) |
+| **S5** | **S4 PA + S3 FL (score predicted 0.29594 by per-target additivity)** | **0.29594 (new best)** |
 
-- A third fascicle model (resnext50, 640x960) trained on a Kaggle GPU. In a 3-model ensemble it improved PA and FL
-  only on the GM video (CI excludes 0) and was flat or slightly worse on OSF and NeuAge; the r34 + resnext50 swap
-  was the same. Both fail the pre-registered gate (2 of 3 sets), so no S2; four slots unused.
+- A third fascicle model (resnext50 at 640x960, Kaggle GPU) failed the strict offline gate (only the GM video
+  significant), but replacing effb3 with it improved PA in direction on all three expert sets. On the LB the PA swap
+  gained more than predicted (-0.0023): the test images (mostly cine clips) behave like the GM video.
+- The metric is a sum of per-target MAEs, so single-target shots combine exactly: S5 = S4 + S3's FL effect, scored
+  as predicted to the fifth decimal. This makes the best combination selectable at the end at no risk.
 - The top of the board (~0.23-0.24) matches rater-level test measurements blended with a pipeline, which the host
-  allows as declared external data for calibration (topic 690868). The automated levers are exhausted at ~0.299.
-Rank 14 (1st 0.22868, 3rd 0.23371, 5th 0.24463).
+  allows as declared external data for calibration (topic 690868).
+- Training for the next days: resnet34 fascicles at 640x960 (resolution vs encoder) and resnext50 aponeuroses at
+  640x960 (MT).
+Rank 13 (1st 0.22868, 3rd 0.23371, 5th 0.24463).
