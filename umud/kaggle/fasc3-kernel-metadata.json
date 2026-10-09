@@ -1,0 +1,17 @@
+{
+ "id": "kragglenote2forwork/umud-seg-fasc3",
+ "title": "umud-seg-fasc3",
+ "code_file": "kernel.py",
+ "language": "python",
+ "kernel_type": "script",
+ "is_private": true,
+ "enable_gpu": true,
+ "enable_internet": true,
+ "competition_sources": [
+  "umud-challenge-muscle-architecture-in-ultrasound-data"
+ ],
+ "dataset_sources": [],
+ "kernel_sources": [
+  "kragglenote2forwork/umud-seg-train"
+ ]
+}
