@@ -14,9 +14,10 @@ The repository also holds other competitions; see the root README.
 ## Status
 | | |
 |---|---|
-| Best public score | **0.86711** (`G2_onset_v8stack.zip`, 2026-09-25), rank 9 of 140 teams on the rebuilt leaderboard |
+| Best public score | **0.87377** (`H17_og_v12v11.zip`, 2026-10-09) |
+| Final-pair recommendation | **H17** (public line) + **H19** (`H19_H17_aprAdapt.zip`: H17 with April ongoing adapted on March pseudo windows; private line) |
 | Deadline | 2026-11-07 06:55 UTC; 5 submissions a day |
-| Automation | Three daily Routines (00:07, 12:43, 21:13 UTC) run the loop in [`docs/LOOP.md`](docs/LOOP.md) |
+| Automation | None since 2026-10-10: submissions only on the user's instruction, following the runbook in [`docs/LOOP.md`](docs/LOOP.md) |
 | Leaderboard log | [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) (every submission, with its score and what it taught), [`docs/lb_log.csv`](docs/lb_log.csv) |
 
 ## Approach
@@ -24,7 +25,7 @@ The repository also holds other competitions; see the root README.
 |---|---|---|
 | 1: state reconstruction | Pooled LightGBM residuals on interpolation baselines, with fundamental-diagram features. Separate "dark" models are trained on simulated 90-min blackouts. Density is reconciled in dense traffic (v < 0.6·v_f, speed/flow split 0.75) | `t1.py`, `t1_pipeline.py`, `t1_holdout.py` |
 | 3: physics (LWR / FD) | Scored on the Task 1 answer. Total-variation smoothing of density inside runs of target cells lowers the conservation residual | `t1_smooth.py`, local proxy in `evaluate.py`, `t1_lwr_eval.py`, `t1_smooth_eval.py` |
-| 2: queue forecasting | Reproduced window selector. Onset: LightGBM on hybrid-imputed labels with a stage-2 stacking model, top-m expected-IoU decoding at T+30. Ongoing: blend of LWR-shockwave and location-robust models | `t2/` ([`docs/TASK2_ANALYSIS.md`](docs/TASK2_ANALYSIS.md)) |
+| 2: queue forecasting | Reproduced window selector. Onset: LightGBM on hybrid-imputed labels with a stage-2 stacking model, top-m expected-IoU decoding at T+30. Ongoing: blend of LWR-shockwave and location-robust models on old and hybrid labels (`v12v11`), gated on the test-month pseudo-holdout; the private-line file adapts the April models on March pseudo windows | `t2/` ([`docs/TASK2_ANALYSIS.md`](docs/TASK2_ANALYSIS.md)) |
 | 4: ODME | L2 projection of the weak path prior onto the link counts | `t4/` ([`docs/TASK4_ANALYSIS.md`](docs/TASK4_ANALYSIS.md)) |
 
 Why each piece exists is in [`docs/PLAN.md`](docs/PLAN.md) and [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md).
@@ -52,10 +53,10 @@ bash trafficflow/t2/run_all.sh
 # Task 4
 python3 -m trafficflow.t4.make_submissions
 
-# Current best submission, and the guarded submit
-python3 -m trafficflow.make_submission --state-tag full3 --recon-a 0.75 --gate 0.6 \
+# Current best submission (H17; every step from a fresh container: trafficflow/run_20261009.sh), and the guarded submit
+python3 -m trafficflow.make_submission --state-tag ens_H15b --recon-a 0.75 --gate 0.6 \
   --smooth "free=0.0075,free_a=0.001,gate=0.02,gate_a=0.005,dark=0.05" \
-  --queue /home/user/work/t2/lgb_v8_seeds9_stack03.csv --odme /home/user/work/t4/t4_l2proj.csv \
+  --queue /home/user/work/t2/lgb_v8og_v12v11.csv --odme /home/user/work/t4/t4_l2proj.csv \
   --out /home/user/work/subs/<ID>.csv --note "<ID>: ..."
 python3 -m trafficflow.loop pack /home/user/work/subs/<ID>.csv
 python3 -m trafficflow.loop submit /home/user/work/subs/<ID>.zip -m "<ID>: <change>; <local evidence>"

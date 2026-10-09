@@ -5,7 +5,10 @@ as in that evaluation ($T2_FEAT, feat_v3: full-train old-truth profiles), top-m 
 the ongoing rows of BASE change (onset rows are byte-identical).
 
     T2_WORK=/home/user/work/t2 T2_FEAT=/home/user/work/t2/feat_v3 \\
-        python -m trafficflow.t2.ongoing_mix v7v11 /home/user/work/t2/lgb_v8og_v7v11.csv
+        python -m trafficflow.t2.ongoing_mix v7v11 /home/user/work/t2/lgb_v8og_v7v11.csv     # H16b queue
+        python -m trafficflow.t2.ongoing_mix v12v11 /home/user/work/t2/lgb_v8og_v12v11.csv   # H17 queue
+
+The components are trained by ``og_components.py`` (v7, v11, v12).
 """
 from __future__ import annotations
 
@@ -23,6 +26,9 @@ BASE = Path("/home/user/work/t2/lgb_v8_seeds9_stack03.csv")
 RECIPES = {
     "v7v11": [("t2h:v7_og_v3", 0.175), ("t2h:v7_og_v3_noloc", 0.175), ("v11_og_v3", 0.175), ("v11_og_v3_noloc", 0.175),
               ("t2h:v7_og_v2", 0.15), ("t2h:v7_og_v2_noloc", 0.15)],
+    # 2026-10-09 (H17): v7's og_v3 / og_v3_noloc replaced by v12 (same variants on hybrid labels at p3)
+    "v12v11": [("t2h:v12_og_v3", 0.175), ("t2h:v12_og_v3_noloc", 0.175), ("v11_og_v3", 0.175), ("v11_og_v3_noloc", 0.175),
+               ("t2h:v7_og_v2", 0.15), ("t2h:v7_og_v2_noloc", 0.15)],
     "v7": [("t2h:v7_og_v3", 0.35), ("t2h:v7_og_v3_noloc", 0.35), ("t2h:v7_og_v2", 0.15), ("t2h:v7_og_v2_noloc", 0.15)],
 }
 

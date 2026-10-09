@@ -100,11 +100,23 @@ def _split_of_t(t: np.ndarray) -> np.ndarray:
     return out
 
 
+def _jmap(panel: str) -> pd.DataFrame:
+    """Column j -> link_id. From the feat test table when it exists; otherwise from the Panel's milepost order
+    (the order feat_panel and t1_pseudo use), so a restored container does not need the heavy feat stage."""
+    f = WORK / "feat" / f"{panel}_test.parquet"
+    if f.exists():
+        return pd.read_parquet(f, columns=["j", "link_id"]).drop_duplicates().assign(panel=panel)
+    from .data import load
+    from .t1 import mileposts
+    d = load(panel)
+    links = np.asarray(d["links"])[np.argsort(mileposts(panel, d["links"]))]
+    return pd.DataFrame({"j": np.arange(len(links)), "link_id": links, "panel": panel})
+
+
 def apply(members, tag_in: str, tag_out: str) -> None:
     from .make_submission import fd_per_cell
     G = fit(pseudo_frame(members))
-    jmap = pd.concat([pd.read_parquet(WORK / "feat" / f"{p}_test.parquet", columns=["j", "link_id"])
-                      .drop_duplicates().assign(panel=p) for p in PANELS])
+    jmap = pd.concat([_jmap(p) for p in PANELS])
     G = G.merge(jmap, on=["panel", "j"], how="left")
     assert G.link_id.notna().all()
     pr = pd.read_parquet(WORK / "pred" / f"state_{tag_in}.parquet")

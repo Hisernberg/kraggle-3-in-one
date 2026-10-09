@@ -635,3 +635,43 @@ T to T+19, with the observed rows T and T+19 as boundaries.
 - **The floor.** Even flattened (τ = 1) the span error equals the true increments inside the span (e ≈ 1.05, 86–89% of
   it interior). The minute-scale variation of the truth inside a blackout is mostly measurement noise. No smoother
   or model can predict it, so the blackout rows are at their LWR floor; only their level (RMSE) can still improve.
+
+## 2026-10-09: restore (E0) and five submissions, H11P 0.87249 → H17 0.87377
+Builder agent, from branch `claude/focused-allen-uzq8gr` @ 84503a8 in a separate worktree. Every command is in
+[`../run_20261009.sh`](../run_20261009.sh). The lead submitted, one file at a time.
+
+**E0 restore.** Data from Kaggle (7.8 GB zip, 12.4 GB unpacked), caches rebuilt (`trafficflow.data`, 10 min), and the
+`tfb-work` backup copied to its manifest paths. Proof of the pipeline: `make_submission --state-tag ens_H11P` on the
+backed-up state, queue and ODME is **byte-identical** to the backed-up H11P CSV (md5 2ed0d98d…). The Task 1
+pseudo-holdout (`t1_pseudo build`, `predict fullP2,fullP3`) reproduces the 28 Sep month-bias check exactly (+0.00010
+March / +0.00012 April, 10/10 panels). The Task 2 components were retrained from scratch (dataset → feat_v3 → truthfix
+hybrid → t2h dataset → feat_og → v7 ×4 at p2, v11 ×2 at p3; 1 h on 2+2 threads). The rebuilt v7+v11 mix changes
+exactly the 29 Sep counts (105 March + 88 April cells vs v5), and scores 0.8386 on the official-style March pseudo
+windows (doc ~0.839).
+
+| File | Change (single factor vs parent) | Local evidence | Public | Δ |
+|---|---|---|---|---|
+| H15b_monthbias | H11P + month speed level (`t1_bias apply fullP2:0.5,fullP3:0.5`); 6.58M regular state rows (mean \|Δv\| 0.18 km/h), dark rows and density unchanged | +0.00010 / +0.00012, 10/10 panels | 0.87257 | +0.00008 |
+| **H16b_monthbias_og_v7v11** | H15b + ongoing v7+v11 mix; 193 queue rows | Task 2 pseudo +0.0089 / +0.0107 all-windows, +0.0138 / +0.0067 official-style (28 Sep) | **0.87310** | **+0.00053** |
+| **H17_og_v12v11** | H16b with v7's og_v3 / og_v3_noloc replaced by **v12** (the same variants on hybrid labels at p3); 68 queue rows (37 March, 31 April) | vs v7v11: official-style +0.0005 / +0.0041 (paired +0.0016 ± 0.0012 / +0.0031 ± 0.0015); all-windows +0.0004 / +0.0005 (paired +0.0003 ± 0.0004 / −0.0002 ± 0.0004) | **0.87377** | **+0.00067** |
+| H18_aprAdapt (private line) | H16b, April ongoing only: v11 components → March-adapted (`adapt.py`: train + 977k labelled rows of the March pseudo windows, p3) | April official-style: v7ad 0.8737 vs v7v11 0.8626 (+0.011 ongoing); all-windows 0.8764 vs 0.8663 (+0.0101, paired +0.0106 ± 0.0007) | 0.87310 | 0 (as required) |
+| H19_H17_aprAdapt (private line) | H17, April ongoing only: v11 components → March-adapted; 58 queue rows, all April | April official-style: v12ad 0.8762 vs v12v11 0.8667, +0.0096 (paired +0.0101 ± 0.0020, 5 SE; 120 windows better / 29 worse). April all-windows (3,040): 0.8768 vs 0.8668, +0.0100 (paired +0.0113 ± 0.0006; 1,135 better / 274 worse). March figures are in-sample (the adapted models train on the March pseudo windows) and are ignored | 0.87377 | 0 (as required) |
+
+**What we learned.**
+- **Ongoing changes chosen on the Task 2 pseudo-holdout transfer to March.** H16b gave +0.00053 total (about
+  +0.0035 on ongoing), and H17 gave +0.00067 (about +0.0045 on ongoing), more than the official-style March estimate
+  (+0.0005). Two out of two since the pseudo-holdout became the gate. The G7/G8 losses (27 Sep) look like LB noise.
+- The month bias transferred at about 75% of its pseudo figure (+0.00008 vs +0.00010). For an S_state-only
+  correction, that is in line with the earlier transfer pattern.
+- H18 and H19 scored exactly their parents' public scores. That confirms by construction that no March row moved,
+  so they are pure private-line files.
+- **Closed (no submission):**
+  - P2/P3 weight mixes on the Task 1 pseudo-holdout (0.4/0.6 +0.00002 / +0.00001; 0.3/0.7 +0.00001 / −0.00001; P3
+    alone −0.00011 / −0.00018; adding full7 at 0.1–0.2, −0.00008 to −0.00023).
+  - Month-bias variants (`t1_bias_variants.py`: K 10/100, time-of-day, regime, no band): all below the adopted scheme.
+  - v7v11v12 three-way ongoing mix: official-style −0.0008 / +0.0008, all-windows −0.0015 / +0.0006.
+  - v7+v12 (v12 replacing v11): +0.0001 / −0.0018.
+- **Final-pair recommendation:** H17 (public line, best public 0.87377) and H19 (private line = H17 + April
+  adaptation, pseudo April +0.0096 ongoing ≈ +0.0014 on the private total).
+- **Next:** the same adaptation idea for April onset (E3), a second v12 seed (variance reduction, `og_components v12
+  1`), onset labels v2 (E5).
