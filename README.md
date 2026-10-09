@@ -9,6 +9,9 @@ competition live only inside its folder; nothing is shared across folders.
 | [`umud/`](umud/README.md) | [UMUD Challenge: Muscle Architecture in Ultrasound Data](https://www.kaggle.com/competitions/umud-challenge-muscle-architecture-in-ultrasound-data) | `umud` (results: [`umud/RESULTS.md`](umud/RESULTS.md)) |
 | `trafficflow/` | traffic-flow forecasting competition | `trafficflow` |
 | [`cobalt_heron/`](cobalt_heron/README.md) | filament-segmentation-2026 | `ch` |
+| [`casmi/`](casmi/README.md) | [Enveda CASMI 2026](https://www.kaggle.com/competitions/enveda-CASMI26-molecule-id-mass-spectra) | `casmi` |
+
+**Submissions:** only when the user explicitly says so (no automatic submissions from 2026-10-10 on). Every submission is recorded in [`SUBMISSION_LOG.md`](SUBMISSION_LOG.md); the 2026-10-09 research and plan for all competitions is in [`docs/research_2026-10-09/`](docs/research_2026-10-09/MASTER_PLAN.md).
 
 Rules: never commit `kaggle.json`, API keys or competition data; Kaggle kernels are prefixed by their
 project (`umud-*`, `rsna-knee-*`, `ch-*`, `tfb-*`) so account-level kernel lists stay separable.
