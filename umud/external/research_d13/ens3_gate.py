@@ -56,7 +56,7 @@ for k in names:
         m = pd.DataFrame({"p": P[t], "d": xl[dcol].reindex(o.index), "y": o[t]}).dropna()
         p = m.p - (m.p - m.y).median()
         d = m.d - (m.d - m.y).median()
-        ws = np.round(np.arange(0, 1.001, 0.02), 2)
+        ws = sorted(set(np.round(np.arange(0, 1.001, 0.02), 2)) | {w0})
         sc = {w: (d + w * (p - d) - m.y).abs().mean() / div for w in ws}
         wb = min(sc, key=sc.get)
         print(f"  {k:6s} {t}: n={len(m)} at live w={w0}: {sc[w0]:.4f}  best w={wb:.2f}: {sc[wb]:.4f}  "

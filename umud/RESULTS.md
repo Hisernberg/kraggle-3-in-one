@@ -260,3 +260,15 @@ Research before the day (no submissions): protocol-matched FL aggregations, MT c
 - The PA weight optimum moved up after the PA estimator became less noisy (d8/d9); next test 0.68.
 Rank 14 (1st 0.23364, 3rd 0.23780, 5th 0.25309).
 
+
+## Day 13 (2026-10-09): PA weight settled, third model fails the gate, best stays 0.29875
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S1 | PA pipeline weight 0.62 -> 0.68, offset re-matched | 0.29961 (flat; vertex 0.632, keep 0.62) |
+
+- A third fascicle model (resnext50, 640x960) trained on a Kaggle GPU. In a 3-model ensemble it improved PA and FL
+  only on the GM video (CI excludes 0) and was flat or slightly worse on OSF and NeuAge; the r34 + resnext50 swap
+  was the same. Both fail the pre-registered gate (2 of 3 sets), so no S2; four slots unused.
+- The top of the board (~0.23-0.24) matches rater-level test measurements blended with a pipeline, which the host
+  allows as declared external data for calibration (topic 690868). The automated levers are exhausted at ~0.299.
+Rank 14 (1st 0.22868, 3rd 0.23371, 5th 0.24463).
