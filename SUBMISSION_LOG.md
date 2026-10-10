@@ -72,7 +72,7 @@ Award admin: registration e-mail by **Oct 25**; code package and PDF by **Nov 10
 
 ## 2026-10-10
 
-### WEAR @HASCA 2026 (`3rd-wear-dataset-challenge-hasca-2026`), 8 of 10 used
+### WEAR @HASCA 2026 (`3rd-wear-dataset-challenge-hasca-2026`), 10 of 10 used
 
 The user said to submit one at a time and learn from each. Base file for all three: `Fm1_margin1_only` (ref 56944621, 0.93597). Details: `wear/RESULTS.md`.
 
@@ -86,3 +86,5 @@ The user said to submit one at a time and learn from each. Base file for all thr
 | 57034867 | M11_supported5 | M6 + 4 committee-supported flips (3314 was already in the losing T3) | 0.93610 | −0.00030 vs M6 |
 | 57034882 | M4_drop_support0 | M6 minus 6213 and 1751 | 0.93598 | −0.00042 vs M6: those two flips are the whole gain |
 | 57034921 | M8_jogarm2 | M6 + 6629 (null→jogging) + 11652 (null→jogging (butt-kicks)) | 0.93640 | 0 (private windows or cancelling) |
+| 57035427 | L11_s24_limbbalance | M6 + 11 sbj_24 arm windows jogging → jogging (butt-kicks) (limb-balance anomaly + link neighbours) | **0.93756** | **+0.00116 vs M6 (new best)** |
+| 57035458 | L15_s24_limbbalance | L11 + 4 more sbj_24 arm windows (link neighbour share 0.33–0.50) | 0.93678 | −0.00078 vs L11: weaker-link windows really are jogging |

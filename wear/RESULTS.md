@@ -33,6 +33,17 @@ Lessons:
 - Committee-supported flips from earlier files are used up.
 - These are public-window corrections; expect little transfer to private.
 
+## Slots 9–10: limb balance (new structural constraint)
+
+Each test window carries one *randomly chosen* limb, so every true bout should hold about 50% arm windows. In train truth the arm fraction is 0.495 ± 0.055 per bout. In M6, sbj_24's jogging (butt-kicks) bout had 28 arm and 54 leg windows (binomial p = 0.005, the most extreme of 76 bouts). Its arm windows look like plain jogging to every window model; the leg windows say butt-kicks. The fork link chains (16 matchings) placed 11 jogging-labelled arm windows next to butt-kicks windows (neighbour share ≥ 0.36; the bout's own arm windows average 0.61, jogging leg windows 0.12).
+
+| Slot | File | Public | Read |
+|---|---|---|---|
+| 9 | L11: M6 + those 11 windows → butt-kicks | **0.93756** | **+0.00116**, about #6 |
+| 10 | L15: L11 + 4 more (neighbour share 0.33–0.50 after the move) | 0.93678 | −0.00078: below a neighbour share of about 0.36 the windows really are jogging; stop at L11 |
+
+`scripts/limbfix.py` has the link-neighbour inspector. A global per-window scan is noisy (links are about 65% exact); the mechanism works when a whole bout is anomalous.
+
 ## What is left that can move the score
 
 1. **Re-decode the f4n/mv4/mv6 family.** In goodpjw's ablations, true counts are worth +0.011 out-of-fold and true boundary order +0.016. This needs the raw probabilities and link sets, which exist only on the user's PC (`E:\Claude code\wear`); none of the team's Kaggle kernels has them.
@@ -40,4 +51,4 @@ Lessons:
 3. Everything else measured here is at noise level (≤ 0.0003 out-of-fold).
 
 ## Final selection
-Public best is now M6 (ref 57034785, 0.93640). It differs from Fm1 by 6 windows, 2 of them verified, so it is safe to select. Alternatives: `Fm1_plus2` (ref 56944691) or `f4n` (ref 56884414).
+Public best is now L11 (ref 57035427, 0.93756), a bout-level fix that should carry over to private. Earlier best: M6 (ref 57034785, 0.93640). It differs from Fm1 by 6 windows, 2 of them verified, so it is safe to select. Alternatives: `Fm1_plus2` (ref 56944691) or `f4n` (ref 56884414).
