@@ -40,6 +40,7 @@ except Exception:  # when run as a flat Kaggle script, scale.py is inlined below
 IN_H, IN_W = 512, 768
 WORKERS = 4
 SEED = 42
+SPLIT_SEED = 42  # validation split stays fixed when --seed changes, so val Dice stays comparable
 
 
 def seed_all(s: int = SEED) -> None:
@@ -182,13 +183,13 @@ LR = 3e-4
 
 
 def train_kind(data: Path, out: Path, kind: str, epochs: int, bs: int, dev: str) -> None:
-    seed_all()
+    seed_all(SEED)
     pairs = list_pairs(data, kind)
     print(f"[{kind}] {len(pairs)} pairs", flush=True)
     t0 = time.time()
     X, Y = load_cache(pairs)
     print(f"[{kind}] cached in {time.time()-t0:.0f}s", flush=True)
-    idx = np.random.RandomState(SEED).permutation(len(X))
+    idx = np.random.RandomState(SPLIT_SEED).permutation(len(X))
     nval = max(20, len(X) // 12)
     va, tr = idx[:nval], idx[nval:]
     dl = torch.utils.data.DataLoader(SegDS(X, Y, tr, True), batch_size=bs, shuffle=True, num_workers=WORKERS,
@@ -294,8 +295,11 @@ def main():
     ap.add_argument("--kinds", default="apo,fasc", help="which models to train")
     ap.add_argument("--encoder-fasc", default=None, help="encoder of the fascicle model (default --encoder)")
     ap.add_argument("--fresh", action="store_true", help="with --init: train from ImageNet, copy untouched models")
+    ap.add_argument("--seed", type=int, default=None, help="init / augmentation / shuffle seed (default 42; split is fixed)")
     a, _ = ap.parse_known_args()
-    global ENCODER, IN_H, IN_W, WORKERS, INIT_DIR, LR, FRESH
+    global ENCODER, IN_H, IN_W, WORKERS, INIT_DIR, LR, FRESH, SEED
+    if a.seed is not None:
+        SEED = a.seed
     ENCODER = a.encoder
     FRESH = a.fresh
     if a.encoder_fasc:

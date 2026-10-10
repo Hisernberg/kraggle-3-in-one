@@ -1,0 +1,22 @@
+
+=== pa_deg: debiased MAE per set (paired, identical rows); CI of mean(|e_cand| - |e_ens2|)
+  osf    n= 35 ens2=0.920 ens3=0.909 x50=0.974 r34=0.935 eff=1.009 | ens3-ens2 -0.011 [-0.088,+0.069] ns | x50-ens2 +0.054 [-0.103,+0.213] ns | r34-ens2 +0.015 [-0.091,+0.117] ns | eff-ens2 +0.089 [-0.037,+0.229] ns
+  neuage n=170 ens2=2.265 ens3=2.287 x50=2.268 r34=2.261 eff=2.316 | ens3-ens2 +0.022 [-0.022,+0.065] ns | x50-ens2 +0.003 [-0.067,+0.072] ns | r34-ens2 -0.004 [-0.075,+0.083] ns | eff-ens2 +0.052 [+0.000,+0.108] WORSE
+  gm     n= 84 ens2=0.919 ens3=0.868 x50=0.804 r34=0.962 eff=0.939 | ens3-ens2 -0.051 [-0.102,-0.001] BETTER | x50-ens2 -0.116 [-0.193,-0.037] BETTER | r34-ens2 +0.043 [-0.023,+0.107] ns | eff-ens2 +0.020 [-0.024,+0.066] ns
+
+=== fl_mm: debiased MAE per set (paired, identical rows); CI of mean(|e_cand| - |e_ens2|)
+  osf    n= 35 ens2=3.622 ens3=3.703 x50=3.813 r34=3.701 eff=3.775 | ens3-ens2 +0.082 [-0.262,+0.415] ns | x50-ens2 +0.191 [-0.262,+0.705] ns | r34-ens2 +0.080 [-0.372,+0.519] ns | eff-ens2 +0.153 [-0.136,+0.471] ns
+  neuage n=169 ens2=14.582 ens3=14.616 x50=14.823 r34=14.804 eff=14.580 | ens3-ens2 +0.034 [-0.504,+0.582] ns | x50-ens2 +0.241 [-0.419,+0.958] ns | r34-ens2 +0.222 [-0.662,+1.310] ns | eff-ens2 -0.002 [-0.394,+0.374] ns
+  gm     n= 84 ens2=2.714 ens3=2.547 x50=2.574 r34=2.383 eff=2.865 | ens3-ens2 -0.167 [-0.327,-0.007] BETTER | x50-ens2 -0.140 [-0.387,+0.116] ns | r34-ens2 -0.331 [-0.484,-0.172] BETTER | eff-ens2 +0.151 [-0.044,+0.364] ns
+
+=== OSF blend sim vs DLTrack (both debiased), score units (PA/6, FL/12)
+  ens2   pa_deg: n=35 at live w=0.62: 0.1128  best w=0.64: 0.1128  pipe alone 0.1534  err corr -0.13
+  ens2   fl_mm: n=35 at live w=0.31: 0.2486  best w=0.52: 0.2276  pipe alone 0.3018  err corr +0.10
+  ens3   pa_deg: n=35 at live w=0.62: 0.1137  best w=0.58: 0.1133  pipe alone 0.1516  err corr -0.13
+  ens3   fl_mm: n=35 at live w=0.31: 0.2506  best w=0.56: 0.2281  pipe alone 0.3086  err corr +0.09
+  x50    pa_deg: n=35 at live w=0.62: 0.1091  best w=0.62: 0.1091  pipe alone 0.1624  err corr -0.26
+  x50    fl_mm: n=35 at live w=0.31: 0.2522  best w=0.52: 0.2376  pipe alone 0.3178  err corr +0.08
+  r34    pa_deg: n=35 at live w=0.62: 0.1052  best w=0.62: 0.1052  pipe alone 0.1558  err corr -0.26
+  r34    fl_mm: n=35 at live w=0.31: 0.2543  best w=0.50: 0.2378  pipe alone 0.3085  err corr +0.15
+  eff    pa_deg: n=35 at live w=0.62: 0.1305  best w=0.56: 0.1287  pipe alone 0.1682  err corr -0.11
+  eff    fl_mm: n=35 at live w=0.31: 0.2488  best w=0.52: 0.2299  pipe alone 0.3146  err corr +0.08

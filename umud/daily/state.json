@@ -1,20 +1,20 @@
 {
- "best_score": 0.29875,
- "best_name": "d12_S5_pa062",
+ "best_score": 0.29433,
+ "best_name": "d14_S5_fl033",
  "best_args": [
   "--w",
-  "0.62",
-  "0.31",
+  "0.65",
+  "0.33",
   "1.0",
   "--clip-mt",
   "3",
   "--pa-offset",
-  "1.645",
+  "1.8374",
   "--alpha",
   "1.0",
   "--no-anchors",
   "--pipeline",
-  "daily/inputs/pipeline_ens.csv",
+  "daily/inputs/pipeline_three.csv",
   "--features",
   "daily/inputs/features_ens.csv",
   "--sanity",
@@ -25,13 +25,20 @@
   "1.0",
   "--fam-pa-offset",
   "lumify_png",
-  "1.345",
+  "1.0392",
   "--row-w",
   "daily/inputs/roww_d12s4.csv",
   "--fl-scale",
-  "0.988"
+  "0.98232"
  ],
  "settled": [
+  "d14 LB: MT level -0.2 mm +0.0037 -> MT median error ~0 (Laplace), public MT MAE ~0.5 mm; MT level/slope/clip settled",
+  "d14 LB: FL from r34+x50+x50s7 -0.0012, PA from the same three maps -0.0002, FL weight 0.34 -0.0002 and 0.33 -0.00001 (vertex ~0.33); four maps (r34 + three x50 seeds) and 3:2:2:2 weighting fail offline -> map ensembling done",
+  "d14: resnext50 seed 7 fails (3 maps PA worse in direction on all sets; x50+x50s7 PA significantly worse on OSF/NeuAge) -> r34@512 + x50 is a local optimum among fascicle maps; stop fascicle-model training",
+  "d14 gates: resnet34 fascicles at 640x960 do not help (PA ns, FL OSF worse) -> the d13 gain is the resnext50 encoder, not resolution; resnext50 aponeuroses at 640x960 fail (NeuAge MT +1.5 mm, test Lumify/left_ticks shifts, 24 rows > 3 mm from Vera); averaged apo maps fail (follows apo2's gross failures, 14/18 wrong on NeuAge)",
+  "x50 pair (d13): PA from r34+x50 -0.0023 (S2); FL from the pair -0.0004 (S3, flat alone); PA weight 0.65 on the new PA -0.00007 (S4, vertex ~0.64-0.65); S5 = S4 + S3 FL = 0.29594 exactly as predicted by per-target additivity -> base",
+  "third fascicle model (resnext50 640x960, d13): 3-model ensemble and r34+x50 swap both fail the expert gate (only GM, a single video, significant); OSF blend sim slightly worse at live weights; test change below the noise floor -> keep the two-model ensemble",
+  "LB top (~0.23-0.24 since day 7) is consistent with rater-level test-set measurements blended with a pipeline (host-allowed as declared external data, topic 690868); automated levers are exhausted at ~0.299; my visual reading cannot substitute for a human annotator",
   "PA weight curve (current estimator): 0.56/0.62/0.68 = 0.30074/0.29875/0.29961 -> vertex 0.632; keep 0.62 (settled)",
   "the two-model ensemble did not reduce FL error on the expert sets (GM worse) -> no FL-weight increase card; a third PA estimator fails the offline gate",
   "PA weight (d12 S5): 0.56 -> 0.62 level-matched (offset 1.645) gained 0.0020; the old optimum (~0.57) predates the less noisy PA estimator; next: 0.68",
@@ -71,8 +78,7 @@
   "public LB ~103 rows (~1/3); metric additive per target: tune one target per shot"
  ],
  "queue": [
-  "third fascicle model (resnext50, 640x960) on Kaggle GPU (umud-seg-fasc3): offline gate on OSF/NeuAge/GM, then a card '3-model ensemble + PA weight re-tune'",
-  "final selection (write down by 2026-11-07): A = best public among global changes; B = robust hedge with less reliance on the hard-coded reference",
-  "global calibration levers exhausted (FL level, PA weight, MT, FL weight); unused slots are fine"
+  "decision for the user: human test-set measurement (FIJI protocol) used to calibrate the pipeline, declared as external data; only path to the top 5 at ~0.05 gap",
+  "final selection (write down by 2026-11-07): A = best public among global changes (d13_S5 today); B = robust hedge with less reliance on the hard-coded reference"
  ]
 }

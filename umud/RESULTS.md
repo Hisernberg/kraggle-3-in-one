@@ -260,3 +260,41 @@ Research before the day (no submissions): protocol-matched FL aggregations, MT c
 - The PA weight optimum moved up after the PA estimator became less noisy (d8/d9); next test 0.68.
 Rank 14 (1st 0.23364, 3rd 0.23780, 5th 0.25309).
 
+
+## Day 13 (2026-10-09): resnext50 fascicle model, best 0.29594 (rank 13)
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S1 | PA pipeline weight 0.62 -> 0.68, offset re-matched | 0.29961 (flat; vertex 0.632, keep 0.62) |
+| **S2** | **pipeline PA from the resnet34 + resnext50 (640x960) fascicle pair instead of resnet34 + effb3, level-matched** | **0.29644 (-0.0023)** |
+| S3 | S2 + pipeline FL from the same pair, level-matched | 0.29601 (-0.0004, flat by rule) |
+| S4 | S2 + PA pipeline weight 0.65, level-matched | 0.29637 (-0.00007, adopted) |
+| **S5** | **S4 PA + S3 FL (score predicted 0.29594 by per-target additivity)** | **0.29594 (new best)** |
+
+- A third fascicle model (resnext50 at 640x960, Kaggle GPU) failed the strict offline gate (only the GM video
+  significant), but replacing effb3 with it improved PA in direction on all three expert sets. On the LB the PA swap
+  gained more than predicted (-0.0023): the test images (mostly cine clips) behave like the GM video.
+- The metric is a sum of per-target MAEs, so single-target shots combine exactly: S5 = S4 + S3's FL effect, scored
+  as predicted to the fifth decimal. This makes the best combination selectable at the end at no risk.
+- The top of the board (~0.23-0.24) matches rater-level test measurements blended with a pipeline, which the host
+  allows as declared external data for calibration (topic 690868).
+- Training for the next days: resnet34 fascicles at 640x960 (resolution vs encoder) and resnext50 aponeuroses at
+  640x960 (MT).
+Rank 13 (1st 0.22868, 3rd 0.23371, 5th 0.24463).
+
+## Day 14 (2026-10-10): three-map ensemble and FL weight re-tune, best 0.29433 (rank 14)
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S1 | final MT -0.2 mm (first MT level test) | 0.29968 (worse: MT level is centred) |
+| **S2** | **FL from r34 + x50 + x50 (seed 7) maps** | **0.29477 (-0.0012)** |
+| **S3** | **PA from the same three maps** | **0.29455 (-0.0002)** |
+| **S4** | **FL pipeline weight 0.31 -> 0.34** | **0.29434 (-0.0002)** |
+| **S5** | **FL pipeline weight 0.33 (fitted vertex)** | **0.29433 (new best)** |
+
+- MT: the -0.2 mm shift isolates the MT term (per-target additivity): the MT median error is ~0 and the public MT
+  MAE ~0.5 mm. MT level, slope, residual clip and gross rows are settled.
+- The test set rewards more fascicle maps more than the expert sets predict (third and fourth time), up to three
+  maps; a fourth map (another x50 seed or r34 at 640x960) and a resnext50 aponeurosis model fail offline.
+- Less noisy FL moved the FL weight optimum from ~0.31 to ~0.33, as the PA weight moved on day 12.
+- The container was recycled overnight; the environment and expert sets were rebuilt and the live pipeline reproduces
+  exactly.
+Rank 14 (1st 0.22868, 3rd 0.23371, 5th 0.24077).
