@@ -280,3 +280,13 @@ Rank 14 (1st 0.23364, 3rd 0.23780, 5th 0.25309).
 - Training for the next days: resnet34 fascicles at 640x960 (resolution vs encoder) and resnext50 aponeuroses at
   640x960 (MT).
 Rank 13 (1st 0.22868, 3rd 0.23371, 5th 0.24463).
+
+## Day 14 (2026-10-10): three new models fail their gates, no submissions, best stays 0.29594
+- resnet34 fascicles at 640x960: no PA gain, FL worse on OSF -> the day-13 gain came from the resnext50 encoder, not
+  from the input resolution.
+- resnext50 aponeuroses at 640x960: fixes one gross OSF error but adds gross failures on NeuAge (+1.5 mm MT) and
+  shifts test MT by -1.0 to -1.5 mm on two device families; averaging both aponeurosis maps follows those failures.
+- A second resnext50 fascicle model (seed 7): adding it is slightly worse everywhere; replacing resnet34 with it is
+  significantly worse. The resnet34 + resnext50 pair is a local optimum; no more fascicle-model training.
+- The container was recycled overnight; the environment and the expert sets were rebuilt and the live pipeline
+  reproduces exactly.
