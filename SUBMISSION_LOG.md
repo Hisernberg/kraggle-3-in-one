@@ -26,15 +26,17 @@ Knee best is now 0.950 (rank 759 of 5,610). Analysis and plan: `docs/research_20
 
 ### CASMI 2026 (`enveda-CASMI26-molecule-id-mass-spectra`), 5 of 5 used
 
-Best so far: C1 0.433 (was 0.328). C2, C4 and C5 were still scoring at the last update.
+Best: **C5 0.435** (was 0.328); C1 and C4 0.433, C3 0.412.
+
+**C2 (PubChem JOIN) lost 0.038 against its parent C1.** This notebook ranks its PubChem channel by popularity as well as fingerprint score, so the top-50 join pulled in different candidates than in huseyin's branch, where the join was measured at +0.011. Do not reuse the JOIN on this lineage without popularity turned off and offline validation first.
 
 | Ref | What | Kernel | Public |
 |---|---|---|---|
 | 57014911 | C3: huseyin 0.421 + `GL_MH_ONLY`, `POST_ICE_LAM=0`, `FILL_25` | `casmi-c3-huseyin-glmh` v1 | 0.412 |
 | 57014934 | C1: haideptry v32 anchor | `casmi-c1-v32-anchor` v1 | **0.433** |
-| 57015095 | C4: amanatar v18 (CPU) | `casmi-c4-v18-cpu` v1 | pending |
-| 57015409 | C2: v32 + PubChem JOIN | `casmi-c2-v32-pcjoin` v1 | pending |
-| 57015887 | C5: flexonafft V1.1 + cross-formula GLACIER | `casmi-c5-flexon` v1 | pending |
+| 57015095 | C4: amanatar v18 (CPU) | `casmi-c4-v18-cpu` v1 | 0.433 |
+| 57015409 | C2: v32 + PubChem JOIN | `casmi-c2-v32-pcjoin` v1 | 0.395 |
+| 57015887 | C5: flexonafft V1.1 + cross-formula GLACIER | `casmi-c5-flexon` v1 | **0.435** (best) |
 
 ### Solar Filament (`filament-segmentation-2026`), 5 of 5 used
 
