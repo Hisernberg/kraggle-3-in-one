@@ -1,6 +1,6 @@
 {
- "best_score": 0.29594,
- "best_name": "d13_S5_pa065_flx50",
+ "best_score": 0.29477,
+ "best_name": "d14_S2_fl3",
  "best_args": [
   "--w",
   "0.65",
@@ -14,7 +14,7 @@
   "1.0",
   "--no-anchors",
   "--pipeline",
-  "daily/inputs/pipeline_r34x50.csv",
+  "daily/inputs/pipeline_r34x50_fl3.csv",
   "--features",
   "daily/inputs/features_ens.csv",
   "--sanity",
@@ -29,7 +29,7 @@
   "--row-w",
   "daily/inputs/roww_d12s4.csv",
   "--fl-scale",
-  "0.98528"
+  "0.98401"
  ],
  "settled": [
   "d14: resnext50 seed 7 fails (3 maps PA worse in direction on all sets; x50+x50s7 PA significantly worse on OSF/NeuAge) -> r34@512 + x50 is a local optimum among fascicle maps; stop fascicle-model training",
