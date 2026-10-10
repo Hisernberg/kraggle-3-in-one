@@ -72,7 +72,7 @@ Award admin: registration e-mail by **Oct 25**; code package and PDF by **Nov 10
 
 ## 2026-10-10
 
-### WEAR @HASCA 2026 (`3rd-wear-dataset-challenge-hasca-2026`), 3 of 10 used
+### WEAR @HASCA 2026 (`3rd-wear-dataset-challenge-hasca-2026`), 8 of 10 used
 
 The user said to submit one at a time and learn from each. Base file for all three: `Fm1_margin1_only` (ref 56944621, 0.93597). Details: `wear/RESULTS.md`.
 
@@ -81,3 +81,8 @@ The user said to submit one at a time and learn from each. Base file for all thr
 | 57034250 | P1_s22_sitcx_to_null | sbj_22 predicted sit-ups (complex), 128 windows → null (third-session null-label probe) | 0.92537 | −0.01060 |
 | 57034443 | LAGp1_c875 | +1 s label lag at link-confirmed set boundaries (131 windows) | 0.93038 | −0.00559 |
 | 57034490 | P2_s23_strham_to_null | sbj_23 predicted stretching (hamstrings), 111 windows → null | 0.92836 | −0.00761 |
+| 57034785 | M6_meta_top6 | Fm1 + 6 flips ranked by the leaderboard meta-model | **0.93640** | **+0.00043 (new best)** |
+| 57034827 | M17_meta_tier2 | M6 + 11 null→activity flips with zero committee support (window log-odds 2.9–4.3) | 0.93596 | −0.00044 vs M6 |
+| 57034867 | M11_supported5 | M6 + 4 committee-supported flips (3314 was already in the losing T3) | 0.93610 | −0.00030 vs M6 |
+| 57034882 | M4_drop_support0 | M6 minus 6213 and 1751 | 0.93598 | −0.00042 vs M6: those two flips are the whole gain |
+| 57034921 | M8_jogarm2 | M6 + 6629 (null→jogging) + 11652 (null→jogging (butt-kicks)) | 0.93640 | 0 (private windows or cancelling) |
