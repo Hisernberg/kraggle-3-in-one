@@ -47,19 +47,48 @@ def make_clf(kind, C):
     raise ValueError(kind)
 
 
+def ext_features(spec):
+    """External clips (Kaggle ext.csv order of the round-2 kernel) for spec['model'] and their labels."""
+    z = np.load(f'{EMB}/emb_ext_{spec["model"]}.npz', allow_pickle=True)
+    lab = pd.read_csv(f'{EMB}/ext.csv').emotion.map({c: i for i, c in enumerate(CLASSES)}).values
+    L = spec['layers']; X = z['mean'][:, L].astype(np.float32).mean(1)
+    if spec.get('std'):
+        X = np.concatenate([X, z['std'][:, L].astype(np.float32).mean(1)], 1)
+    return X, lab.astype(int)
+
+
+def fit_clf(kind, C, X, y, Xe=None, ye=None, we=0.0):
+    if Xe is None or we == 0:
+        return make_clf(kind, C).fit(X, y)
+    sw = np.r_[np.ones(len(y)), np.full(len(ye), we)]
+    step = 'logisticregression' if kind == 'lr' else 'svc'
+    return make_clf(kind, C).fit(np.vstack([X, Xe]), np.r_[y, ye], **{f'{step}__sample_weight': sw})
+
+
 def run_spec(m, spec):
     """Return oof[seed,N,4] on train and test[Ntest,4] fitted on all train."""
     X = features(m, spec); tr = (m.split == 'train').values
     y = m.y.values[tr].astype(int); Xtr, Xte = X[tr], X[~tr]
     kind, C = spec.get('clf', 'lr'), spec.get('C', 0.1)
+    we = spec.get('ext', 0.0); Xe, ye = ext_features(spec) if we else (None, None)
+    st = spec.get('st', 0.0)
+
+    def fit_st(Xa, ya, U):
+        """Fit; with st > 0 refit once adding unlabeled rows U whose max probability exceeds st."""
+        clf = fit_clf(kind, C, Xa, ya, Xe, ye, we)
+        if st:
+            pu = clf.predict_proba(U); keep = pu.max(1) > st
+            clf = fit_clf(kind, C, np.vstack([Xa, U[keep]]), np.r_[ya, pu.argmax(1)[keep]], Xe, ye, we)
+        return clf
+
     def fold_job(seed, k):
         f = folds(y, seed); va = f == k
-        clf = make_clf(kind, C).fit(Xtr[~va], y[~va]); return seed, va, clf.predict_proba(Xtr[va])
+        clf = fit_st(Xtr[~va], y[~va], np.vstack([Xtr[va], Xte])); return seed, va, clf.predict_proba(Xtr[va])
     res = Parallel(n_jobs=4)(delayed(fold_job)(s, k) for s in SEEDS for k in range(5))
     oof = np.zeros((len(SEEDS), len(y), 4))
     for s, va, p in res:
         oof[SEEDS.index(s), va] = p
-    test = make_clf(kind, C).fit(Xtr, y).predict_proba(Xte)
+    test = fit_st(Xtr, y, Xte).predict_proba(Xte)
     return oof, test
 
 
