@@ -18,14 +18,12 @@ This loop works only on the traffic project:
 > - Research continues only as local shell jobs (training, builds, evaluations) and as analysis in the
 >   main session.
 
-## Schedule (UTC; Routines fire into this session)
-| Time | Job |
-|---|---|
-| 00:07 | **Daily chain:** submit the queued candidates one at a time, reading each score before the next |
-| 12:43 | **Heartbeat:** review finished research, submit newly validated candidates, launch the next experiments |
-| 21:13 | **Evening sweep:** spend the remaining quota (validated candidates first, then probes that answer an open question), queue tomorrow's candidates, start overnight jobs |
+## Schedule
+> **From 2026-10-10 there are no automatic submissions.** Submit only on the user's explicit instruction. The daily
+> Routines (00:07, 12:43, 21:13 UTC) are not re-armed; do not re-create them. The runbook below still applies to each
+> instructed submission (one change per file, checks, `loop diff`, read each score before the next).
 
-Background agents and jobs wake the session when they finish, so work continues between firings.
+Old schedule (dead since 2026-09-28, kept for reference): 00:07 daily chain, 12:43 heartbeat, 21:13 evening sweep.
 
 ## Every firing, in order
 1. `python3 -m trafficflow.loop status`. It reports quota used/left today, pending scores, the best
@@ -55,31 +53,38 @@ Background agents and jobs wake the session when they finish, so work continues 
    (**Backup** below).
 
 ## Current best
-**`H11P_transductive3.zip` = 0.87249** (2026-09-28). #1 KTK 0.90085.
+**`H17_og_v12v11.zip` = 0.87377** (2026-10-09). Day: H11P 0.87249 → H15b 0.87257 → H16b 0.87310 → H17 0.87377.
 
-Build:
+**Final-pair recommendation (so far): H17 (public line) + H19 (private line = H17 + April adaptation).**
+
+| Line | File | Public | What it is |
+|---|---|---|---|
+| public | `H17_og_v12v11.zip` | 0.87377 | best public |
+| private | `H19_H17_aprAdapt.zip` | 0.87377 (= H17 by construction) | H17 with April ongoing adapted on March pseudo windows; pseudo April +0.0096 ± 0.0020 ongoing |
+| private (older) | `H18_aprAdapt.zip` | 0.87310 (= H16b) | H16b with the same April adaptation |
+
+Build (all commands, from a fresh container: `trafficflow/run_20261009.sh`):
 ```
-python3 -m trafficflow.make_submission --state-tag ens_H11P --recon-a 0.75 --gate 0.6 \
+python3 -m trafficflow.make_submission --state-tag ens_H15b --recon-a 0.75 --gate 0.6 \
   --smooth "free=0.0075,free_a=0.001,gate=0.02,gate_a=0.005,dark=0.05" \
-  --queue /home/user/work/t2/lgb_v8_seeds9_stack03.csv --odme /home/user/work/t4/t4_l2proj.csv \
+  --queue /home/user/work/t2/lgb_v8og_v12v11.csv --odme /home/user/work/t4/t4_l2proj.csv \
   --out /home/user/work/subs/<ID>.csv --note "<ID>: ..."
 python3 -m trafficflow.loop pack /home/user/work/subs/<ID>.csv
 ```
-
-- **Task 1:** regular rows = 0.5·`fullP2` + 0.5·`fullP3` (transductive); blackout rows = `full7` (ramp-flow member).
-  - `fullP3`: seed 13, three disjoint transductive row sets (`trainrows,trainrows2,trainrows3`).
-  - `fullP2`: like `fullP`, seed 12, trained on two disjoint transductive row sets (`TFB_PSEUDO_FILES=trainrows,trainrows2`).
-  - `fullP`: regular models only (`TFB_KINDS=reg`), FD features, seed 11, standard config.
-    It trains on train rows plus 180k observed March/April cells per panel (`t1_pseudo.py trainrows`, `TFB_PSEUDO=1`).
-  - `state_ens_H11P.parquet` comes from `t1_pipeline enskind --tag ens_H11P --reg fullP2:0.5 fullP3:0.5 --dark full7`.
-  - Density reconciliation where v < 0.6·v_f (a = 0.75), then TV smoothing.
-- **Task 2:** `lgb_v8_seeds9_stack03`.
-  - Onset v8: stacking + 9 seeds on hybrid labels.
-  - Ongoing: the v5 blend.
+- **Task 1:** regular rows = 0.5·`fullP2` + 0.5·`fullP3` (transductive) with the month speed level of `t1_bias.py`
+  (`t1_bias apply fullP2:0.5,fullP3:0.5 ens_H11P ens_H15b`); blackout rows = `full7`. Gated density reconciliation
+  (v < 0.6·v_f, a = 0.75), then TV smoothing.
+- **Task 2:** onset = v8 (`lgb_v8_seeds9_stack03`, stacking + 9 seeds on hybrid labels). Ongoing = the `v12v11` mix
+  (`t2/ongoing_mix.py`): 0.175 each of v12 og_v3 / og_v3_noloc (hybrid labels, p3) and v11 og_v3 / og_v3_noloc (old
+  labels, p3), 0.15 each of v7 og_v2 / og_v2_noloc (hybrid, p2). Components: `t2/og_components.py`.
+  H19 additionally serves April windows with the March-adapted v11 components (`t2/adapt.py`, `t2/ongoing_split_mix.py`).
 - **Task 4:** L2 projection.
 
-Exact decomposition: ODME 0.19876, Task 1+3 0.43268, queue 0.23633 (S_queue 0.7878: onset 0.732,
-ongoing 0.843).
+Artefacts not in the Kaggle backup yet (rebuilt 2026-10-09 in /home/user/work): t2/feat_v3, t2h/feat_og, t2/pseudo2,
+t2/pseudo3, the v7/v11/v12/adapt models, `state_ens_H15b.parquet`, the H15b–H19 zips. Run `loop backup` with them
+before the container is lost.
+
+Previous best: `H11P_transductive3.zip` = 0.87249 (2026-09-28), build below in the decision log.
 
 ## Gates
 **Candidate:** one locally validated change against the current best.
@@ -87,7 +92,16 @@ ongoing 0.843).
   prediction.
 - **Task 1/3 gate:** J = 0.35·S_state + 0.10·S_LWR (full-coverage holdout, realistic blackouts,
   `trafficflow/t1_lwr_eval.py`) improves on at least 3 of 4 panels, and the mean improves.
-- **Task 2 gate** (since 2026-09-25; TASK2_ANALYSIS.md section 17). All three must hold:
+- **Task 2 gate from 2026-09-28: the test-month pseudo-holdout** (`trafficflow/t2/pseudo.py`, TASK2_ANALYSIS.md §21).
+  It scores about 3,000 ongoing and 230 onset windows per test month, found in the released masked view. It is the
+  only local test that gets G3 right: −0.0048 on March, where CV said +0.0065.
+  - A change must improve the official aggregation on both pseudo months, April (the private month) above all, by
+    more than 2 paired SE.
+  - The 40-window March LB cannot confirm or reject a Task 2 change smaller than about ±0.01 on a condition: its
+    noise SD is 0.005–0.009. An LB loss within that noise does not overturn a pseudo-holdout gain.
+  - Changes that pass go into the **private-optimized line** (below), not into the public main line, unless the LB
+    also agrees.
+- **Older Task 2 gate** (2026-09-25 to 09-28; TASK2_ANALYSIS.md section 17), kept for reference. All three had to hold:
   1. **Plain CV.**
      - The hybrid-truth score is ≥ best − 0.002.
      - The conservative evaluation (re-drawn windows, old truth) is ≥ best − 0.002 and within one paired SE of 0.
@@ -107,6 +121,45 @@ ongoing 0.843).
 - a blind resubmission after an ERROR.
 
 ## Candidate queue
+**2026-10-09 (all five slots used; nothing queued — submissions now only on the user's instruction).** Ideas with
+evidence, in order: a second v12 seed (`og_components v12 1`, variance reduction); April adaptation of onset (E3);
+onset labels v2 (E5). The 29 Sep chain below is history: H15b/H16b were built from it; H12P–H14P′ (fullPD, fullPD2,
+fullP4) still need their members trained (10+ CPU-h).
+
+**Chain for 2026-09-29** (base H11P 0.87249). Submit one at a time, and read each score before the next.
+1. **H12P** (`H12P_darkP.zip`): blackout rows = fullPD. Expected +0.0004 to +0.0006; adopt if Δ ≥ +0.0001.
+2. **H13P** (`H13P_darkP2.zip`): blackout rows = mean(fullPD, fullPD2). It differs from H12P only in the blackout rows
+   (133k state rows; queue and ODME identical). Adopt if Δ vs H12P ≥ +0.0001.
+3. **H14P** (`H14P_transductive4.zip`, `/home/user/work/build_H14P.sh`): H13P with regular rows = the best
+   mix of fullP2/P3/P4 on the pseudo-holdout. It is built only if a mix beats H11P's there.
+   **Built 15:46**, 65/65: regular rows = 0.25·fullP2 + 0.375·fullP3 + 0.375·fullP4 (pseudo +0.00012 March / +0.00010
+   April, 9/10 panels each). `loop diff` vs H13P: state rows only (6.61M, mean |Δv| 0.06 km/h).
+   Expected about +0.0002 (transductive steps give about 2× the S_state-only pseudo figure). Adopt if Δ ≥ +0.0001.
+4. **H15P** (`H15P_monthbias.zip`): H14P (or H13P) with the month-specific speed level of `t1_bias.py`. Cross-fitted
+   +0.0001, 10/10 panels in both months. Adopt if Δ ≥ +0.0001, or if Δ ≥ 0 matches the local estimate.
+   **Built 15:49** on H14P, 65/65. Correction on the P234w scheme: +0.00009 March / +0.00012 April, 10/10 panels.
+   `loop diff` vs H14P: state rows only (6.58M regular rows, mean |Δv| 0.17 km/h).
+5. **H16P** (`H16P_og_v7v11.zip`, `/home/user/work/queue_H16_adapt.sh`): H15P with ongoing = the v7+v11 mix
+   (Task 2 pseudo-holdout best: +0.0089 March / +0.0107 April on 3,000 windows, +0.0138 / +0.0067 on official-style
+   windows). **Built 15:53** on H15P, 65/65; `loop diff` vs H15P: 193 queue rows only (105 March, 88 April). It is a probe of pseudo-holdout vs LB, not a candidate for the public main line.
+   - LB Δ vs H15P ≥ +0.0005 (ongoing ≥ +0.003): the pseudo-holdout is confirmed on March; adopt.
+   - Δ within ±0.0005: noise, as predicted for 40 windows. It stays the private-optimized hedge.
+   - Δ ≤ −0.001: a third March loss for ongoing label/capacity changes. Treat the pseudo-holdout as biased for this
+     change type and keep v5 ongoing in both finals.
+
+**Fallbacks for the 29 Sep chain** (each later file is built on the one before):
+- H14P not adopted: rebuild H15P on H13P. Regenerate its state (deleted for disk) with `t1_pipeline enskind --tag
+  ens_H13P --reg fullP2:0.5 fullP3:0.5 --dark fullPD:0.5 fullPD2:0.5`, then run `t1_bias apply
+  fullP2:0.5,fullP3:0.5 ens_H13P ens_H15b`, `make_submission --state-tag ens_H15b ...` and `loop pack`.
+- H15P not adopted: build H16P on the then-best state (`make_submission --state-tag <best ens> --queue
+  /home/user/work/t2/lgb_v8og_v7v11.csv ...`).
+- Every candidate: `loop diff` against the file it follows must show state rows only (H16P: ongoing queue rows only).
+
+**Private-optimized line (for the final pick).** Current best plus the pseudo-holdout's best Task 2. Candidates:
+v7 ongoing (hybrid labels; pseudo +0.0069 March / +0.0102 April, about +0.0015 on the private score) and online
+adaptation of the April forecasts on March windows (`trafficflow/t2/adapt.py`; March data is ≤ T for every April
+window). Its public score will sit near the main line's (v7: −0.0002 on March, which is noise).
+
 **Chain for 2026-09-28.** Base = H5w (0.86838). The loop's `status` shows H6 (0.86839) as best because it takes
 the maximum score; H6 was below the +0.0001 adoption bar, so the base for single-factor steps stays H5w.
 
@@ -142,11 +195,14 @@ the maximum score; H6 was below the +0.0001 adoption bar, so the base for single
 4. **Remaining slots:** only probes that answer an open question.
 
 **Paused lines (27 Sep evidence):**
-- **Ongoing:** 4 of the last 5 changes lost on March despite passing every local test (G8 passed the full gate).
+- ~~Ongoing: 4 of the last 5 changes lost on March despite passing every local test.~~ **Resolved 28 Sep:** the
+  test-month pseudo-holdout reproduces G3's loss and puts G7/G8's March losses within LB noise (TASK2_ANALYSIS §21).
+  Ongoing work resumes on the pseudo-holdout gate.
 - **Blackout-cell models:** noisy transfer (H5w's blackout part ~50%, H6 ~5%).
 - **Onset decoding / extent:** calibrated from both sides (F1, F2; head-only would score 0.43 vs 0.86 on CV).
 
-**Robust list (for the final pick):** v11 ongoing (G8; private-weighted CV +0.0052 ± 0.0006, March −0.0027).
+**Robust list (for the final pick):** v7 ongoing (G7; pseudo April +0.0102, March +0.0069); v11 ongoing (G8;
+pseudo April +0.0022, March +0.0020; private-weighted CV +0.0052 ± 0.0006).
 
 **Checked and closed on 27 Sep (no submission needed):**
 - Task 2 onset with ramp-flow features (+0.15% log-loss only).
@@ -163,6 +219,11 @@ the maximum score; H6 was below the +0.0001 adoption bar, so the base for single
 ## Decision log
 | Date | Submission | Public (Δ vs best) | Decision / lesson |
 |---|---|---|---|
+| 10-09 | **H15b: H11P + month speed bias** (state rows only) | **0.87257 (+0.00008)** | Pseudo +0.00010 / +0.00012; transferred ~75%. **Adopted** |
+| 10-09 | **H16b: H15b + ongoing v7+v11 mix** (193 queue rows) | **0.87310 (+0.00053)** | Pseudo-holdout gain transferred to March (~+0.0035 ongoing). **Adopted.** G7/G8 March losses were noise |
+| 10-09 | **H17: H16b, v7 og_v3/noloc → v12 (hybrid labels at p3)** (68 queue rows) | **0.87377 (+0.00067)** | Pseudo official-style +0.0005 Mar / +0.0041 Apr; LB gave more. **Adopted: new best** |
+| 10-09 | H18: H16b + April-only adapted ongoing (private line) | 0.87310 (= H16b) | Public unchanged by construction (no March row moved). Private-line file; pseudo April +0.011 ongoing |
+| 10-09 | H19: H17 + April-only adapted ongoing (private line) | 0.87377 (= H17) | Same on H17; pseudo April +0.0096 ± 0.0020. **Recommended second final** |
 | 09-25 | F1: onset re-decoded with logit bias +0.5 (+15 cells, 12 in validation) | 0.86356 (−0.00235) | Larger onset sets hurt on March (onset −0.016); the official first-slot blocks are not larger than ours. Keep b = 0 |
 | 09-25 | F2: onset site-commit decoder `site2_lo.05_r.5` (−11 hedge cells) | 0.86418 (−0.00173) | Fewer hedges hurt too (onset −0.012). Top-m at b = 0 is optimal on March from both sides; onset gains must come from better probabilities, not decoding |
 | 09-25 | **G1: E1 + TV density smoothing inside target runs** (state rows only) | **0.86651 (+0.00060)** | Local J predicted +0.00062. **Adopted: new best.** The Task 3 proxy predicts the LB to within 0.00002 |

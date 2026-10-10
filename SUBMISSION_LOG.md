@@ -26,10 +26,12 @@ Knee best is now 0.950 (rank 759 of 5,610). Analysis and plan: `docs/research_20
 
 ### CASMI 2026 (`enveda-CASMI26-molecule-id-mass-spectra`), 5 of 5 used
 
+Best so far: C1 0.433 (was 0.328). C2, C4 and C5 were still scoring at the last update.
+
 | Ref | What | Kernel | Public |
 |---|---|---|---|
-| 57014911 | C3: huseyin 0.421 + `GL_MH_ONLY`, `POST_ICE_LAM=0`, `FILL_25` | `casmi-c3-huseyin-glmh` v1 | pending |
-| 57014934 | C1: haideptry v32 anchor | `casmi-c1-v32-anchor` v1 | pending |
+| 57014911 | C3: huseyin 0.421 + `GL_MH_ONLY`, `POST_ICE_LAM=0`, `FILL_25` | `casmi-c3-huseyin-glmh` v1 | 0.412 |
+| 57014934 | C1: haideptry v32 anchor | `casmi-c1-v32-anchor` v1 | **0.433** |
 | 57015095 | C4: amanatar v18 (CPU) | `casmi-c4-v18-cpu` v1 | pending |
 | 57015409 | C2: v32 + PubChem JOIN | `casmi-c2-v32-pcjoin` v1 | pending |
 | 57015887 | C5: flexonafft V1.1 + cross-formula GLACIER | `casmi-c5-flexon` v1 | pending |
@@ -44,12 +46,24 @@ re-created scores 0.4144.
 
 | File | What | OOF f0 | Public |
 |---|---|---|---|
-| s16 (f1) | s11 maps + GBM hit filter with YOLO11m evidence, thr 0.35, + uncovered YOLO instances with conf ≥ 0.5 | 0.4304 | pending |
-| s18 (f3) | s16 recipe on s13 3-model maps | (recipe) | pending |
-| s17 (f2) | s11 maps, joint U-Net + YOLO candidate pool, learned scorer, greedy disjoint selection thr 0.40 | 0.4320 | pending |
-| s19 (f4) | s17 recipe on s13 maps | (recipe) | pending |
-| s20 (f5) | s16 recipe on the mean of all 13 U-Nets | (recipe) | pending |
+| s16 (f1) | s11 maps + GBM hit filter with YOLO11m evidence, thr 0.35, + uncovered YOLO instances with conf ≥ 0.5 | 0.4304 | 0.37 |
+| s18 (f3) | s16 recipe on s13 3-model maps | (recipe) | 0.37 |
+| s17 (f2) | s11 maps, joint U-Net + YOLO candidate pool, learned scorer, greedy disjoint selection thr 0.40 | 0.4320 | 0.37 |
+| s19 (f4) | s17 recipe on s13 maps | (recipe) | 0.37 |
+| s20 (f5) | s16 recipe on the mean of all 13 U-Nets | (recipe) | 0.36 |
 
-### TrafficFlowBench (`2026-ieee-big-data-traffic-flow-bench`)
+### TrafficFlowBench (`2026-ieee-big-data-traffic-flow-bench`), 5 of 5 used
 
-See `trafficflow/docs/EXPERIMENTS.md` and `trafficflow/docs/lb_log.csv` for this competition's own log.
+Details: `trafficflow/docs/EXPERIMENTS.md` (2026-10-09 section). Reproduce with `trafficflow/run_20261009.sh`.
+
+| Ref | File | Parent | Change | Public |
+|---|---|---|---|---|
+| 57016351 | H15b_monthbias | H11P (0.87249) | Task 1 month speed bias | 0.87257 |
+| 57016422 | H16b_monthbias_og_v7v11 | H15b | ongoing = v7+v11 mix (193 queue rows) | 0.87310 |
+| 57018612 | H17_og_v12v11 | H16b | v12 (hybrid labels, p3) replaces v7 og_v3/noloc (68 queue rows) | **0.87377** (best) |
+| 57018690 | H18_aprAdapt | H16b | April-only ongoing adapted on March pseudo windows (71 April rows) | 0.87310 (= parent, as designed) |
+| 57018918 | H19_H17_aprAdapt | H17 | the same April adaptation on H17 (58 April rows); pseudo April +0.0100 (paired +0.0113 ± 0.0006) | 0.87377 (= parent, as designed) |
+
+Recommended final pair: **H17 (public line) + H19 (private line)**.
+
+Award admin: registration e-mail by **Oct 25**; code package and PDF by **Nov 10**.

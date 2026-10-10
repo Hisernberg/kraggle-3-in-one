@@ -1910,3 +1910,72 @@ v5 transferred. Ongoing work is paused until the transfer failure is understood.
 (its private-weighted CV is +0.0052 ± 0.0006).
 
 Capacity keeps paying on ongoing: 31 → 63 → 127 → 255 leaves gives 0.852 → 0.867 → 0.877 → 0.882 (single model, sim).
+
+## 21. Test-month pseudo-holdout for Task 2 (2026-09-28, `pseudo.py`)
+**Why.** Plain CV draws its windows from train (one demand draw); the scored months are independent draws. The
+organizer's rule (forum #742068) allows any released data with timestamp ≤ T, so queue events visible in the
+March/April masked view can serve as evaluation windows, the way the Task 1 pseudo-holdout uses observed cells.
+
+**Windows** (`pseudo.find_windows`, masked view only):
+- The official selector's rules: coverage ≥ 0.7, ongoing when the history holds ≥ 2 queued observations with ≥ 2 on
+  one link, a queued horizon cell, and persistence IoU ≤ 0.9 for ongoing.
+- The history's hidden Task 1 targets are forward-filled causally (≤ 3 slots). Official histories carry no targets,
+  and test-month targets are isolated in time: median run 1, p90 2.
+- No corridor-dark row may fall in [T−12, T+6].
+- Onset: the first origin of each candidate run. Ongoing: every 6th candidate.
+- Labels are the queue status of the observed, eligible horizon cells. Hidden cells are left out of the IoU, which
+  is unbiased when they are random (Task 1 targets are).
+- Features come from `build_features._rows` on the filled history, the masked view and the full-train profile.
+
+About 3,000 ongoing and 230 onset windows per month, against 40 official windows per condition. The official windows
+sit in the first 0–5 days of each month (the selector is chronological); restricting the pseudo windows to those days
+changes none of the conclusions below.
+
+**LB noise.** 4,000 draws of 5 early-month pseudo windows per panel give a standard deviation of 0.005–0.009 for a
+40-window March ongoing delta. For a true +0.0022 (v11), P(LB Δ ≤ −0.0027) = 0.16. For a true +0.0068 (v7),
+P(LB Δ ≤ −0.0013) = 0.10. Small Task 2 LB deltas are mostly noise.
+
+**Past ongoing changes replayed** (official aggregation; window-paired SE about 0.0008):
+
+| change | plain CV | pseudo March | pseudo April | LB March |
+|---|---|---|---|---|
+| v9 stage-2 stacking at 0.8 (G3) | +0.0065 | **−0.0048** (4 SE) | −0.0006 | −0.023 |
+| v11: og_v3 / noloc at p3 (G8) | +0.0053 | +0.0020 | +0.0022 | −0.0027 |
+| v7: v5 recipe on hybrid labels (G7) | +0.0032 | **+0.0069** | **+0.0102** | −0.0013 |
+| v4-type blend (0.5 lgb_v3 + 0.5 noloc) vs lgb_v3 | + | +0.0117 | +0.0145 | ≈ +0.025 (B1, mixed with the Task 1 gate) |
+| lgb_v2 vs v5 | – | −0.0210 | −0.0194 | – |
+
+- The pseudo-holdout gets G3 right, where every CV variant (plain, shift-weighted) had it positive.
+- It disagrees with the LB only on v11 and v7, whose LB deltas are within LB noise.
+- **Consequence:** the pseudo-holdout, not the 40-window March LB, is the Task 2 gate from now on. v7 (+0.010 on
+  April, about +0.0015 on the private score) is the strongest ongoing candidate for the final pick.
+
+### 21b. Official-style windows (selector replay) and the joint LB check (28 Sep afternoon)
+`T2_PSEUDO_MODE=sim` replays the official greedy selector from every start day of the month: chronological, 5 per
+condition, 360 min between any two picks. The ongoing windows are then mostly the first established queue after a
+gap. This gives 332 / 334 ongoing and about 210 onset windows per month (`/home/user/work/t2/pseudo3`). The ongoing
+level (v5: 0.825 March) is close to the official 0.843; the every-6th-candidate set gave 0.867.
+
+| ongoing scheme (vs v5) | sim March | sim April | all-windows March / April |
+|---|---|---|---|
+| v7 (G7 recipe, all four components on hybrid labels) | +0.0103 | +0.0025 | +0.0037 / +0.0089 |
+| v11 (G8) | +0.0032 | +0.0012 | +0.0020 / +0.0022 |
+| **v7+v11 mix** (0.175 each of v7/v11 og_v3 and noloc, 0.15 each v7 og_v2 / og_v2_noloc) | **+0.0138** | **+0.0067** | **+0.0089 / +0.0107** (window-paired +0.0108 ± 0.0009 / +0.0121 ± 0.0010) |
+| v7+v11 with logit shift ±0.25 | +0.011 | +0.005 | – |
+| v9 stacking (G3) | −0.0046 | +0.0032 | −0.0048 / −0.0006 |
+
+Onset (hybrid-profile tables, `/home/user/work/t2h/pseudo2`, 233 / 224 windows): seeds9 0.728 March (official 0.732)
+/ 0.747 April. v6 −0.002 / 0.000; logit shifts −0.25…+0.5 all within ±0.004 and mostly negative (F1's +0.5 lost on
+the LB too). Onset decoding stays.
+
+**Joint LB check.** 20,000 draw-weighted draws of 5 sim windows per panel (the official design) put the 40-window
+March deltas at v7 +0.0095 ± 0.0078 and v11 +0.0026 ± 0.0045 (correlation −0.06). The observed LB pair (v7 −0.0013,
+v11 −0.0027) has probability 0.085 and 0.118 separately, but **0.011 jointly**. Either March was a 1-in-90 draw, or
+the pseudo-holdout is biased for ongoing label/capacity changes in a way not yet found. The G3 result shows it still
+catches failures that plain CV misses. Draw-weighted April: v7v11 +0.005 ± 0.010, P(< 0) = 0.29.
+
+**Decision.** The v7+v11 ongoing is a hedge, not an adoption: at the final pick, one file keeps the v5 ongoing and
+one carries the pseudo-best Task 2. Kaggle scores the better of the two on private. H16P (H15P + v7+v11 ongoing,
+`/home/user/work/t2/lgb_v8og_v7v11.csv` from `ongoing_mix.py`) goes to the LB on 29 Sep as the one affordable test.
+Under the pseudo-holdout its March LB delta is +0.013 ± 0.007 on ongoing (+0.002 total). Under the G7/G8 pattern
+it is about −0.002 (−0.0003 total). It also registers the file for the final pick.
