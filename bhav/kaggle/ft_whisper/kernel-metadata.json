@@ -1,0 +1,14 @@
+{
+  "id": "kragglenote2forwork/bhav-ft-whisper",
+  "title": "bhav-ft-whisper",
+  "code_file": "bhav_ft_whisper.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "dataset_sources": [],
+  "competition_sources": ["dataverse-detecting-emotions-from-hindi-speech"],
+  "kernel_sources": [],
+  "model_sources": []
+}
