@@ -69,3 +69,15 @@ Details: `trafficflow/docs/EXPERIMENTS.md` (2026-10-09 section). Reproduce with 
 Recommended final pair: **H17 (public line) + H19 (private line)**.
 
 Award admin: registration e-mail by **Oct 25**; code package and PDF by **Nov 10**.
+
+## 2026-10-10
+
+### WEAR @HASCA 2026 (`3rd-wear-dataset-challenge-hasca-2026`), 3 of 10 used
+
+The user said to submit one at a time and learn from each. Base file for all three: `Fm1_margin1_only` (ref 56944621, 0.93597). Details: `wear/RESULTS.md`.
+
+| Ref | File | Change | Public | Δ |
+|---|---|---|---|---|
+| 57034250 | P1_s22_sitcx_to_null | sbj_22 predicted sit-ups (complex), 128 windows → null (third-session null-label probe) | 0.92537 | −0.01060 |
+| 57034443 | LAGp1_c875 | +1 s label lag at link-confirmed set boundaries (131 windows) | 0.93038 | −0.00559 |
+| 57034490 | P2_s23_strham_to_null | sbj_23 predicted stretching (hamstrings), 111 windows → null | 0.92836 | −0.00761 |
