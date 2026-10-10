@@ -100,3 +100,8 @@ Every file copies the train label onto the 78 test clips that have an exact-leng
 | 57047493 | s1_wavlm_l8 | WavLM-large layer 8 mean+std, logistic regression | 0.785 / 0.852 | 0.82442 |
 | 57048523 | s2_wl3_wm_xlsr | Whisper-large-v3 L32 + Whisper-medium L24 + XLS-R L18, log-prob mean | 0.899 / 0.930 | 0.92944 |
 | 57049609 | s3_greedy | Whisper-large(v1) L32 + Hindi Whisper-medium L23 ×2 + w2v-BERT 2.0 L11 + Whisper-large-v2 L32 (greedy forward selection) | 0.926 / 0.949 | **0.94230** |
+| 57050991 | s4_greedy_attn | S3 + attentive-pooling head on frozen Whisper-large-v3 frames | 0.929 / 0.951 | **0.94230** |
+| 57051800 | s5_heads_greedy | greedy over LR probes + heads: head Whisper-large-v2 ×2, Vaani-large-v3 LR, head Whisper-large-v3, WavLM LR, head Whisper-large-v1 | 0.933 / 0.953 | 0.93019 |
+
+5 of 5 used. Leaderboard after S5: 0.94230 = 9th of 44 on the tie-break (7th-9th tied); top 3 at 0.96544.
+S3/S4/S5 differ by 2-9 test clips; one public clip is ~0.012, so the public split cannot rank them.

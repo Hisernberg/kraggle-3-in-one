@@ -20,6 +20,14 @@ MEMBERS = {
     'w2vb': dict(model='w2vbert2', layers=[11], std=True, C=0.05),
     'mms': dict(model='mms_300m', layers=[15], std=True, C=0.05),
     'wavlm': dict(model='wavlm_large', layers=[8], std=True, C=0.05),
+    'w2vb16': dict(model='w2vbert2', layers=[16], std=True, C=0.05),
+    'w2vb_mid': dict(model='w2vbert2', layers=[11, 13, 16], std=True, C=0.05),
+    'aud7': dict(model='audeering_dim', layers=[7], std=True, C=0.05),
+    'hub16': dict(model='hubert_large', layers=[16], std=True, C=0.05),
+    'wl1_s': dict(model='whisper_large_v1', layers=[32], std=True, C=0.05),
+    'wl1_31': dict(model='whisper_large_v1', layers=[31], std=True, C=0.05),
+    'him22': dict(model='whisper_hi_medium', layers=[22], std=True, C=0.05),
+    'hil2_31': dict(model='whisper_hi_large_v2', layers=[31], std=True, C=0.05),
 }
 P = f'{BH}/work/probs/members.pkl'
 

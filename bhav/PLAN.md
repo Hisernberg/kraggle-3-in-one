@@ -30,29 +30,51 @@ Things that did **not** help: per-speaker (ECAPA cluster) normalisation (-0.10, 
 layer ensembles of one encoder, LDA / PCA-whitened LR, class-bias tuning (does not transfer across fold seeds),
 equal-weight blending of the weaker SSL models. Small gain: self-training on confident test pseudo-labels (+0.005).
 
-## Today (2026-10-10), 5 submissions
+## Today (2026-10-10), 5 of 5 used
 
 | Slot | Content | CV novel / all | Public |
 |---|---|---|---|
 | S1 | WavLM-L L8 LR + override (calibration) | 0.785 / 0.852 | 0.82442 |
-| S2 | Whisper-L3 L32 + Whisper-M L24 + XLS-R L18 LR blend + override | 0.899 / 0.930 | 0.92944 |
-| S3 | S2 + best of the extra Whisper encoders (large-v2/v1/turbo, Hindi-ASR fine-tunes) | tbd | |
-| S4 | S3 + attentive-pooling head on frozen Whisper-L3 frames (and/or self-training) | tbd | |
-| S5 | partial fine-tune of Whisper-L3 top-K layers (5x3 folds) blended with S4 | tbd | |
+| S2 | Whisper-L3 L32 + Whisper-M L24 + XLS-R L18 LR blend | 0.899 / 0.930 | 0.92944 |
+| S3 | greedy: Whisper-large(v1) + Hindi Whisper-medium ×2 + w2v-BERT 2.0 + Whisper-large-v2 (LR probes) | 0.926 / 0.949 | **0.94230** |
+| S4 | S3 + attention head on frozen Whisper-L3 frames | 0.929 / 0.951 | **0.94230** |
+| S5 | greedy over probes + heads (head Whisper-large-v2 ×2, ...) | 0.933 / 0.953 | 0.93019 |
+
+Result: 9th of 44 by tie-break (0.94230, tied 7th-9th). Top 3 = 0.96544 (≈2 more public clips right).
+
+Lessons from today:
+* Whisper encoders (any size/language variant) beat every wav2vec2-family model by 0.07-0.10 on novel rows; the
+  original **Whisper-large (v1) and large-v2** are the best, Hindi-ASR fine-tunes are close, turbo is weak.
+* An attentive-pooling head on frozen frames beats the LR probe for large-v2 (0.904 vs 0.885 novel).
+* Partial fine-tuning (top 8 of Whisper-L3, 12 epochs) was worse than the frozen probe (0.861) and hurt the blend.
+* External Hindi emotion corpora hurt at any weight (domain shift); speaker normalisation hurt; kNN, stacking,
+  class-bias tuning and self-training of the blend gave nothing.
+* CV saturates near 0.93 novel; S3-S5 differ by 2-9 clips; public (≈84 rows) cannot separate them.
 
 ## Tomorrow (2026-10-11), 5 submissions
 
-1. External data: 2,598 clips of the four classes from four public Hindi/Indian emotion datasets (none overlaps the
-   competition audio). Train with them added (down-weighted) for the LR probes and the fine-tune; keep only if CV
-   novel rises.
-2. Fine-tune variants: K (top layers) 8 vs 16, the best Hindi Whisper backbone, 2 more seeds; multi-seed averaging.
-3. Self-training round on the full blend (confident test pseudo-labels, CV-checked threshold).
-4. Stacking: logistic regression on the OOF probabilities of all members instead of a fixed log-prob mean.
-5. Choose the two finals: best CV blend and the most different strong blend (hedge).
+Priority is variance reduction and a stronger single family, not more greedy selection (greedy on 566 rows is
+noisy: two different pools gave 0.926 and 0.925 with different members).
 
-Ladder for 2026-10-11 (one change per slot so each public score is interpretable):
-T1 best of today + external data in the LR members; T2 fine-tune K=16 / Hindi backbone; T3 multi-seed fine-tune +
-stacking; T4 self-training on T3; T5 hedge (best blend without the fine-tune, or with external data off).
+GPU work (one kernel each, moderate):
+1. **Bagged heads**: 5 seeds per backbone for the large-v2, large-v1, Vaani-L3 and Hindi-medium heads (head
+   training is ~2 min per backbone on a T4 once frames are computed).
+2. **Multi-layer heads**: learnable softmax weights over the last 4 encoder layers of large-v2 / large-v1 before
+   pooling (late layers 29-32 all score > 0.86).
+3. **TTA frames**: re-extract with 0.1 s and 0.2 s leading silence and average head/probe outputs (Whisper is
+   position-sensitive; cheap robustness).
+4. Partial fine-tune retry only on large-v2 with K=4, lr 1e-5, 8 epochs; keep it only if novel > 0.90.
+
+Ladder (one change per slot):
+* T1 = S4 members + bagged large-v2 head (fixed weights, no greedy): robust successor of the public best.
+* T2 = T1 + multi-layer heads.
+* T3 = T2 + TTA.
+* T4 = equal-weight average of the best LR-probe blend and the best head blend (two families, 50/50).
+* T5 = hedge: whichever of T1-T4 has the best CV with members picked by rule (all Whisper members with novel > 0.87),
+  not by greedy.
+
+Final selection (2 slots): the best-CV rule-based blend and the best public of S3/S4/T*; never two near-identical
+files.
 
 ## Day 3 (2026-10-12, until 18:30 UTC)
 
