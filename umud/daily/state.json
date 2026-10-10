@@ -32,6 +32,7 @@
   "0.98528"
  ],
  "settled": [
+  "d14 gates: resnet34 fascicles at 640x960 do not help (PA ns, FL OSF worse) -> the d13 gain is the resnext50 encoder, not resolution; resnext50 aponeuroses at 640x960 fail (NeuAge MT +1.5 mm, test Lumify/left_ticks shifts, 24 rows > 3 mm from Vera); averaged apo maps fail (follows apo2's gross failures, 14/18 wrong on NeuAge)",
   "x50 pair (d13): PA from r34+x50 -0.0023 (S2); FL from the pair -0.0004 (S3, flat alone); PA weight 0.65 on the new PA -0.00007 (S4, vertex ~0.64-0.65); S5 = S4 + S3 FL = 0.29594 exactly as predicted by per-target additivity -> base",
   "third fascicle model (resnext50 640x960, d13): 3-model ensemble and r34+x50 swap both fail the expert gate (only GM, a single video, significant); OSF blend sim slightly worse at live weights; test change below the noise floor -> keep the two-model ensemble",
   "LB top (~0.23-0.24 since day 7) is consistent with rater-level test-set measurements blended with a pipeline (host-allowed as declared external data, topic 690868); automated levers are exhausted at ~0.299; my visual reading cannot substitute for a human annotator",
@@ -74,8 +75,7 @@
   "public LB ~103 rows (~1/3); metric additive per target: tune one target per shot"
  ],
  "queue": [
-  "umud-seg-fasc4 (resnet34 at 640x960 fascicles): offline gate vs the r34+x50 pair on OSF/NeuAge/GM, then a card (swap r34@512 -> r34@640, or 3-model with x50)",
-  "umud-seg-apo2 (resnext50 at 640x960 aponeuroses): MT on OSF/NeuAge (debiased, paired) vs the current apo model; MT is the most score-sensitive target; card only if MT improves on both sets",
+  "umud-seg-fasc5 (resnext50 fascicles at 640x960, seed 7): gate r34+x50+x50s7 and x50+x50s7 vs the live pair; card = PA first, FL as a separate shot",
   "decision for the user: human test-set measurement (FIJI protocol) used to calibrate the pipeline, declared as external data; only path to the top 5 at ~0.05 gap",
   "final selection (write down by 2026-11-07): A = best public among global changes (d13_S5 today); B = robust hedge with less reliance on the hard-coded reference"
  ]

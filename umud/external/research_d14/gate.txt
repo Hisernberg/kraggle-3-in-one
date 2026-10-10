@@ -1,0 +1,14 @@
+
+=== pa_deg: debiased MAE (paired, identical rows); CI of mean(|e_cand| - |e_pair|)
+  osf    n= 35 pair=0.912 r640x50=0.930 three=0.922 apo2=0.964 apoavg=0.937 | r640x50 +0.018 [-0.084,+0.129] ns | three +0.010 [-0.070,+0.098] ns | apo2 +0.053 [+0.007,+0.100] WORSE | apoavg +0.025 [-0.027,+0.075] ns
+  neuage n=136 pair=2.287 r640x50=2.298 three=2.308 apo2=2.462 apoavg=2.354 | r640x50 +0.011 [-0.031,+0.056] ns | three +0.021 [-0.015,+0.062] ns | apo2 +0.176 [-0.056,+0.452] ns | apoavg +0.067 [-0.045,+0.179] ns
+  gm     n= 84 pair=0.839 r640x50=0.823 three=0.875 apo2=0.819 apoavg=0.826 | r640x50 -0.015 [-0.063,+0.034] ns | three +0.036 [-0.010,+0.087] ns | apo2 -0.020 [-0.035,-0.005] BETTER | apoavg -0.013 [-0.022,-0.003] BETTER
+
+=== fl_mm: debiased MAE (paired, identical rows); CI of mean(|e_cand| - |e_pair|)
+  osf    n= 35 pair=3.532 r640x50=3.909 three=3.803 apo2=2.418 apoavg=2.415 | r640x50 +0.377 [+0.033,+0.730] WORSE | three +0.271 [+0.031,+0.533] WORSE | apo2 -1.114 [-3.469,+0.160] ns | apoavg -1.118 [-3.394,+0.086] ns
+  neuage n=135 pair=13.848 r640x50=14.172 three=14.159 apo2=17.232 apoavg=14.357 | r640x50 +0.324 [-0.258,+0.958] ns | three +0.311 [-0.074,+0.708] ns | apo2 +3.384 [+1.046,+5.784] WORSE | apoavg +0.509 [-0.744,+2.026] ns
+  gm     n= 84 pair=2.492 r640x50=2.392 three=2.357 apo2=2.474 apoavg=2.481 | r640x50 -0.100 [-0.252,+0.051] ns | three -0.135 [-0.265,-0.006] BETTER | apo2 -0.018 [-0.082,+0.046] ns | apoavg -0.011 [-0.053,+0.030] ns
+
+=== mt_mm: debiased MAE (paired, identical rows); CI of mean(|e_cand| - |e_pair|)
+  osf    n= 35 pair=0.500 r640x50=0.500 three=0.500 apo2=0.197 apoavg=0.192 | r640x50 +0.000 [+0.000,+0.000] ns | three +0.000 [+0.000,+0.000] ns | apo2 -0.303 [-0.931,+0.023] ns | apoavg -0.308 [-0.934,+0.016] ns
+  neuage n=218 pair=2.704 r640x50=2.704 three=2.704 apo2=4.236 apoavg=3.014 | r640x50 +0.000 [+0.000,+0.000] ns | three +0.000 [+0.000,+0.000] ns | apo2 +1.532 [+0.986,+2.102] WORSE | apoavg +0.310 [-0.040,+0.672] ns
