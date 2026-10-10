@@ -1,0 +1,10 @@
+=== pa_deg: debiased MAE (paired, identical rows); CI of mean(|e_cand| - |e_three|)
+  osf    n= 35 three=0.918 four_x50=0.941 | four_x50 +0.022 [-0.039,+0.094] ns
+  neuage n=174 three=2.392 four_x50=2.392 | four_x50 +0.000 [-0.044,+0.045] ns
+  gm     n= 84 three=0.843 four_x50=0.836 | four_x50 -0.007 [-0.028,+0.014] ns
+
+=== fl_mm: debiased MAE (paired, identical rows); CI of mean(|e_cand| - |e_three|)
+  osf    n= 35 three=3.566 four_x50=3.613 | four_x50 +0.047 [-0.097,+0.204] ns
+  neuage n=173 three=14.736 four_x50=15.070 | four_x50 +0.333 [-0.173,+1.015] ns
+  gm     n= 84 three=2.439 four_x50=2.482 | four_x50 +0.043 [-0.072,+0.154] ns
+

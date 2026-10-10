@@ -281,12 +281,20 @@ Rank 14 (1st 0.23364, 3rd 0.23780, 5th 0.25309).
   640x960 (MT).
 Rank 13 (1st 0.22868, 3rd 0.23371, 5th 0.24463).
 
-## Day 14 (2026-10-10): three new models fail their gates, no submissions, best stays 0.29594
-- resnet34 fascicles at 640x960: no PA gain, FL worse on OSF -> the day-13 gain came from the resnext50 encoder, not
-  from the input resolution.
-- resnext50 aponeuroses at 640x960: fixes one gross OSF error but adds gross failures on NeuAge (+1.5 mm MT) and
-  shifts test MT by -1.0 to -1.5 mm on two device families; averaging both aponeurosis maps follows those failures.
-- A second resnext50 fascicle model (seed 7): adding it is slightly worse everywhere; replacing resnet34 with it is
-  significantly worse. The resnet34 + resnext50 pair is a local optimum; no more fascicle-model training.
-- The container was recycled overnight; the environment and the expert sets were rebuilt and the live pipeline
-  reproduces exactly.
+## Day 14 (2026-10-10): three-map ensemble and FL weight re-tune, best 0.29433 (rank 14)
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S1 | final MT -0.2 mm (first MT level test) | 0.29968 (worse: MT level is centred) |
+| **S2** | **FL from r34 + x50 + x50 (seed 7) maps** | **0.29477 (-0.0012)** |
+| **S3** | **PA from the same three maps** | **0.29455 (-0.0002)** |
+| **S4** | **FL pipeline weight 0.31 -> 0.34** | **0.29434 (-0.0002)** |
+| **S5** | **FL pipeline weight 0.33 (fitted vertex)** | **0.29433 (new best)** |
+
+- MT: the -0.2 mm shift isolates the MT term (per-target additivity): the MT median error is ~0 and the public MT
+  MAE ~0.5 mm. MT level, slope, residual clip and gross rows are settled.
+- The test set rewards more fascicle maps more than the expert sets predict (third and fourth time), up to three
+  maps; a fourth map (another x50 seed or r34 at 640x960) and a resnext50 aponeurosis model fail offline.
+- Less noisy FL moved the FL weight optimum from ~0.31 to ~0.33, as the PA weight moved on day 12.
+- The container was recycled overnight; the environment and expert sets were rebuilt and the live pipeline reproduces
+  exactly.
+Rank 14 (1st 0.22868, 3rd 0.23371, 5th 0.24077).
