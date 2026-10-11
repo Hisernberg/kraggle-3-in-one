@@ -108,6 +108,28 @@ S3/S4/S5 differ by 2-9 test clips; one public clip is ~0.012, so the public spli
 
 ## 2026-10-11
 
+### WEAR @HASCA 2026: automatic run at 00:05 UTC (user-requested), 10 of 10 used
+
+Base: L11 (ref 57035427, 0.93756, #6). Probe-and-keep rule: keep a probe only if public rises by at least +0.00005.
+
+| Ref | File | Change vs L11 | Public | Δ |
+|---|---|---|---|---|
+| 57055922 | O11_V3 | variant-share band: 3 sbj_23 push-ups (complex) → push-ups | 0.93756 | 0 (discarded) |
+| 57055952 | O11_A2 | 2197 (sbj_25 triceps stretch) and 9783 (sbj_23 lunges) → null; all sources agree | 0.93741 | −0.00015 (discarded) |
+| 57055989 | O11_L8 | L11 minus its 3 weakest moves (6548, 2158, 5264 back to jogging) | 0.93699 | −0.00057: those moves were right; L11 stays |
+
+7 slots held: no remaining candidate has supporting evidence (meta-model exhausted; generic limb repair is a coin flip out-of-fold). No unlock arrived: the 2nd-challenge data still returns 403 and no PC probability files were supplied.
+| 57061193 | cand_pair_q25 (4 research agents; only rule passing OOF) | L11 + 10 sbj_23 push-ups (complex) → push-ups (sibling-pair count rule, OOF precision 0.66–0.79) | 0.93727 | −0.00029: discarded, L11 stays best |
+| 57061812 | O11_J4 | L11 + 4 sbj_23 jog-rot → jog (limb imbalance + links, no style signature) | 0.93727 | −0.00029 |
+| 57061822 | O11_P2 | L11 + 2 sbj_22 push-ups (complex) → push-ups (5671, 8305: right-limb imbalance + links + window/IMU agree) | **0.93784** | **+0.00028, new best (#5)** |
+| 57062482 | O11_P4 | P2 + 10995, 1369 (sbj_22 left-leg push-ups → push-ups (complex)) | 0.93728 | −0.00056: wrong direction |
+| 57062497 | O11_P2b | P2 + 5605, 6328 (sbj_22 right-arm push-ups (complex) → push-ups) | 0.93784 | 0 (private windows) |
+| 57062511 | O11_P2c | P2 + 7608, 5777 (same direction) | 0.93784 | 0 (private windows) |
+
+| 57063606 | O11_FINAL | P2 + 7146 (sbj_23 push-ups → push-ups (complex)) + 9376 (sbj_25 null → shoulder stretch); refit meta-model, P(pos) ≥ 0.88 | 0.93774 | −0.00010 |
+
+**Final pick: O11_P2 (ref 57061822, 0.93784, #5).** What helped and what hurt across all submissions: `wear/LESSONS.md`.
+
 ### DataVerse Hindi speech emotion (`dataverse-detecting-emotions-from-hindi-speech`), 5 of 5 used
 
 The user asked for the final five of the day. New today: bagged / self-trained / multi-layer / TTA attention heads and
