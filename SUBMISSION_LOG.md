@@ -88,3 +88,17 @@ The user said to submit one at a time and learn from each. Base file for all thr
 | 57034921 | M8_jogarm2 | M6 + 6629 (null→jogging) + 11652 (null→jogging (butt-kicks)) | 0.93640 | 0 (private windows or cancelling) |
 | 57035427 | L11_s24_limbbalance | M6 + 11 sbj_24 arm windows jogging → jogging (butt-kicks) (limb-balance anomaly + link neighbours) | **0.93756** | **+0.00116 vs M6 (new best)** |
 | 57035458 | L15_s24_limbbalance | L11 + 4 more sbj_24 arm windows (link neighbour share 0.33–0.50) | 0.93678 | −0.00078 vs L11: weaker-link windows really are jogging |
+
+## 2026-10-11
+
+### WEAR @HASCA 2026: automatic run at 00:05 UTC (user-requested), 3 of 10 used
+
+Base: L11 (ref 57035427, 0.93756, #6). Probe-and-keep rule: keep a probe only if public rises by at least +0.00005.
+
+| Ref | File | Change vs L11 | Public | Δ |
+|---|---|---|---|---|
+| 57055922 | O11_V3 | variant-share band: 3 sbj_23 push-ups (complex) → push-ups | 0.93756 | 0 (discarded) |
+| 57055952 | O11_A2 | 2197 (sbj_25 triceps stretch) and 9783 (sbj_23 lunges) → null; all sources agree | 0.93741 | −0.00015 (discarded) |
+| 57055989 | O11_L8 | L11 minus its 3 weakest moves (6548, 2158, 5264 back to jogging) | 0.93699 | −0.00057: those moves were right; L11 stays |
+
+7 slots held: no remaining candidate has supporting evidence (meta-model exhausted; generic limb repair is a coin flip out-of-fold). No unlock arrived: the 2nd-challenge data still returns 403 and no PC probability files were supplied.

@@ -44,6 +44,14 @@ Each test window carries one *randomly chosen* limb, so every true bout should h
 
 `scripts/limbfix.py` has the link-neighbour inspector. A global per-window scan is noisy (links are about 65% exact); the mechanism works when a whole bout is anomalous.
 
+## 2026-10-11 automatic run
+
+- **O11_V3** (variant-share band, 3 windows): 0.93756, Δ 0.
+- **O11_A2** (2 all-source activity→null): 0.93741, −0.00015. All-source agreement is not reliable even for easily separated classes.
+- **O11_L8** (L11 minus the 3 weakest-link moves): 0.93699, −0.00057. All 11 L11 moves are right. The decision boundary is a link-neighbour share of about 0.36 before the move: L11 at ≥ 0.36 all right, L15 at 0.25–0.33 all wrong.
+
+Best remains **L11, 0.93756**.
+
 ## What is left that can move the score
 
 1. **Re-decode the f4n/mv4/mv6 family.** In goodpjw's ablations, true counts are worth +0.011 out-of-fold and true boundary order +0.016. This needs the raw probabilities and link sets, which exist only on the user's PC (`E:\Claude code\wear`); none of the team's Kaggle kernels has them.
