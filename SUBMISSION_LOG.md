@@ -108,7 +108,7 @@ S3/S4/S5 differ by 2-9 test clips; one public clip is ~0.012, so the public spli
 
 ## 2026-10-11
 
-### WEAR @HASCA 2026: automatic run at 00:05 UTC (user-requested), 9 of 10 used
+### WEAR @HASCA 2026: automatic run at 00:05 UTC (user-requested), 10 of 10 used
 
 Base: L11 (ref 57035427, 0.93756, #6). Probe-and-keep rule: keep a probe only if public rises by at least +0.00005.
 
@@ -126,4 +126,6 @@ Base: L11 (ref 57035427, 0.93756, #6). Probe-and-keep rule: keep a probe only if
 | 57062497 | O11_P2b | P2 + 5605, 6328 (sbj_22 right-arm push-ups (complex) → push-ups) | 0.93784 | 0 (private windows) |
 | 57062511 | O11_P2c | P2 + 7608, 5777 (same direction) | 0.93784 | 0 (private windows) |
 
-Last slot held: no candidate with evidence for the +0.00065 that #3 needs. **Final pick: O11_P2 (ref 57061822, 0.93784, #5).**
+| 57063606 | O11_FINAL | P2 + 7146 (sbj_23 push-ups → push-ups (complex)) + 9376 (sbj_25 null → shoulder stretch); refit meta-model, P(pos) ≥ 0.88 | 0.93774 | −0.00010 |
+
+**Final pick: O11_P2 (ref 57061822, 0.93784, #5).** What helped and what hurt across all submissions: `wear/LESSONS.md`.
