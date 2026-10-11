@@ -1,7 +1,8 @@
 """Add round-3 head outputs (r3_<backbone>.npz) and the fusion head to the member pool -> work/probs/members_r3.pkl.
 
 New keys per backbone b (short name s): ML_s (multi-layer head), B_s (bagged last-layer head: round-2 seed + round-3
-seed, geometric mean), BT_s (B_s with the round-3 seed's TTA prediction added), FUS (fusion head, seeds a+b).
+seed, geometric mean), BT_s (B_s with the round-3 seed's TTA prediction added), B3_s (3 seeds), ST_s (self-trained
+head), B3ST_s (3 seeds + self-trained), FUS (fusion head, seeds a+b).
 """
 import sys, os, glob, pickle
 import numpy as np
@@ -20,10 +21,15 @@ if __name__ == '__main__':
         R[f'ML_{s}'] = (z['oof_ml'], z['test_ml'])
         R[f'B_{s}'] = (gm(old[0], z['oof_sl2']), gm(old[1], z['test_sl2']))
         R[f'BT_{s}'] = (gm(old[0], z['oof_sl2'], z['oof_sl2_tta']), gm(old[1], z['test_sl2'], z['test_sl2_tta']))
+    for f in sorted(glob.glob(f'{BH}/work/r3/bag_*.npz')):
+        b = os.path.basename(f)[4:-4]; s = SHORT[b]; z = np.load(f); r3 = np.load(f'{BH}/work/r3/r3_{b}.npz'); old = R[f'A_{s}']
+        R[f'B3_{s}'] = (gm(old[0], r3['oof_sl2'], z['oof_sl3']), gm(old[1], r3['test_sl2'], z['test_sl3']))
+        R[f'ST_{s}'] = (z['oof_st'], z['test_st'])
+        R[f'B3ST_{s}'] = (gm(old[0], r3['oof_sl2'], z['oof_sl3'], z['oof_st']), gm(old[1], r3['test_sl2'], z['test_sl3'], z['test_st']))
     f = f'{BH}/work/r3/fusion.npz'
     if os.path.exists(f):
         z = np.load(f); R['FUS'] = (gm(z['oof_a'], z['oof_b']), gm(z['test_a'], z['test_b']))
     pickle.dump(R, open(f'{BH}/work/probs/members_r3.pkl', 'wb'))
     for k in R:
-        if k.split('_')[0] in ('A', 'ML', 'B', 'BT', 'FUS'):
+        if k.split('_')[0] in ('A', 'ML', 'B', 'BT', 'B3', 'ST', 'B3ST', 'FUS'):
             print(f'{k:20s}', blend.evaluate(m, R[k][0]).round(4), flush=True)
