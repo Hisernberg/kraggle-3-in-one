@@ -1,0 +1,16 @@
+{
+ "id": "kragglenote2forwork/bhav-heads-r3a",
+ "title": "bhav-heads-r3a",
+ "code_file": "bhav_heads2a.py",
+ "language": "python",
+ "kernel_type": "script",
+ "is_private": true,
+ "enable_gpu": true,
+ "enable_internet": true,
+ "dataset_sources": [],
+ "competition_sources": [
+  "dataverse-detecting-emotions-from-hindi-speech"
+ ],
+ "kernel_sources": [],
+ "model_sources": []
+}
