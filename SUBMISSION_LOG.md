@@ -91,7 +91,7 @@ The user said to submit one at a time and learn from each. Base file for all thr
 
 ## 2026-10-11
 
-### WEAR @HASCA 2026: automatic run at 00:05 UTC (user-requested), 4 of 10 used
+### WEAR @HASCA 2026: automatic run at 00:05 UTC (user-requested), 6 of 10 used
 
 Base: L11 (ref 57035427, 0.93756, #6). Probe-and-keep rule: keep a probe only if public rises by at least +0.00005.
 
@@ -103,3 +103,5 @@ Base: L11 (ref 57035427, 0.93756, #6). Probe-and-keep rule: keep a probe only if
 
 7 slots held: no remaining candidate has supporting evidence (meta-model exhausted; generic limb repair is a coin flip out-of-fold). No unlock arrived: the 2nd-challenge data still returns 403 and no PC probability files were supplied.
 | 57061193 | cand_pair_q25 (4 research agents; only rule passing OOF) | L11 + 10 sbj_23 push-ups (complex) → push-ups (sibling-pair count rule, OOF precision 0.66–0.79) | 0.93727 | −0.00029: discarded, L11 stays best |
+| 57061812 | O11_J4 | L11 + 4 sbj_23 jog-rot → jog (limb imbalance + links, no style signature) | 0.93727 | −0.00029 |
+| 57061822 | O11_P2 | L11 + 2 sbj_22 push-ups (complex) → push-ups (5671, 8305: right-limb imbalance + links + window/IMU agree) | **0.93784** | **+0.00028, new best (#5)** |

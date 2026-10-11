@@ -63,7 +63,11 @@ Each agent had to pass an out-of-fold gate (precision above 0.6 and dF1 above 0 
 | limb | learned limb-signature mover | Passes out-of-fold only through decoded Q; never sees an sbj_24-type case; on test it reverts L11. |
 | counts | sibling-pair count balance (11↔12) | Passes out-of-fold (0.66–0.79). Submitted: **0.93727 (−0.00029)**. |
 
-Conclusion: nothing available here reaches 0.94. L11 is the final pick.
+Conclusion: nothing available here reaches 0.94.
+
+### User-requested two extra chances
+- O11_J4 (4 sbj_23 jogging (rotating arms) → jogging): 0.93727, −0.00029.
+- **O11_P2** (2 sbj_22 push-ups (complex) → push-ups, windows 5671 and 8305): **0.93784, +0.00028, new best (#5)**. Final pick: **O11_P2** (it contains L11).
 
 ## What is left that can move the score
 
