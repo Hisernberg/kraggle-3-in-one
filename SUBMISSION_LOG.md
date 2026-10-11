@@ -129,3 +129,19 @@ Base: L11 (ref 57035427, 0.93756, #6). Probe-and-keep rule: keep a probe only if
 | 57063606 | O11_FINAL | P2 + 7146 (sbj_23 push-ups → push-ups (complex)) + 9376 (sbj_25 null → shoulder stretch); refit meta-model, P(pos) ≥ 0.88 | 0.93774 | −0.00010 |
 
 **Final pick: O11_P2 (ref 57061822, 0.93784, #5).** What helped and what hurt across all submissions: `wear/LESSONS.md`.
+
+### DataVerse Hindi speech emotion (`dataverse-detecting-emotions-from-hindi-speech`), 5 of 5 used
+
+The user asked for the final five of the day. New today: bagged / self-trained / multi-layer / TTA attention heads and
+a fusion head (Kaggle T4 kernels `bhav-heads-r3a/b`, `bhav-bag-heads`, `bhav-fusion-head`), and an LR probe on
+concatenated Whisper + w2v-BERT features. Clip-level diffs to S4 are listed so the public scores can be read.
+
+| Ref | File | What | CV novel / all | Public | Public-relevant change vs S4 |
+|---|---|---|---|---|---|
+| 57064183 | t2_heads4_w2vb | bagged heads (L2, L1, Vaani-L3, Hindi-M) + w2v-BERT | 0.933 / 0.954 | 0.93019 | 9 clips changed, net −1 |
+| 57065167 | t3_s4_b3stl2 | S4 + bagged/self-trained large-v2 head ×2 | 0.930 / 0.952 | **0.94230** | clips 570, 873 changed: not public (or cancel) |
+| 57065202 | t4_heads_w2vb_wl1 | 3-seed heads + w2v-BERT + Whisper-L1 LR | 0.933 / 0.953 | 0.93019 | 244, 331, 431, 1013: net −1 |
+| 57065274 | t5_heads_w2vb_cat5 | 3-seed heads + w2v-BERT + concat-feature LR | **0.938 / 0.957** | 0.93019 | 41, 244, 331, 573, 1013: net −1 |
+| 57065294 | t6_big_rule | rule-based: 6 Whisper LR probes + 6 heads + concat LR + w2v-BERT ×2 | 0.927 / 0.949 | **0.94230** | 1013 changed: not public (or cancels) |
+
+Leaderboard after T6: 0.94230 = 9th of 44 on the tie-break; top 3 at 0.96544. All blends agree on 197 of 209 test clips.
