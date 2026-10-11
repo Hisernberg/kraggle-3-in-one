@@ -1,6 +1,6 @@
 {
- "best_score": 0.29433,
- "best_name": "d14_S5_fl033",
+ "best_score": 0.26097,
+ "best_name": "d15_S5_junfl092",
  "best_args": [
   "--w",
   "0.65",
@@ -29,7 +29,13 @@
   "--row-w",
   "daily/inputs/roww_d12s4.csv",
   "--fl-scale",
-  "0.98232"
+  "0.98232",
+  "--fam-fl-scale",
+  "left_ticks_800",
+  "1.016",
+  "--fam-fl-scale",
+  "juniper_right",
+  "0.92"
  ],
  "settled": [
   "d14 LB: MT level -0.2 mm +0.0037 -> MT median error ~0 (Laplace), public MT MAE ~0.5 mm; MT level/slope/clip settled",

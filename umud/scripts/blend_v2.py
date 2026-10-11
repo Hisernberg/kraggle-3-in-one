@@ -53,6 +53,11 @@ ap.add_argument("--row-w", default=None,
                      "e.g. visual forced-choice arbitration between the pipeline and the reference")
 ap.add_argument("--no-anchors", action="store_true",
                 help="do not pin IMG_00001/2 to the sample_submission values (host, topic 743111: they are made up)")
+ap.add_argument("--aniso", nargs=3, action="append", default=[], metavar=("FAMILY", "R", "TARGETS"),
+                help="non-square pixels: convert the final values of FAMILY rows from pixel to true geometry, R = "
+                     "horizontal / vertical px per mm (scale comes from the vertical depth ticks); TARGETS pa, fl or pafl")
+ap.add_argument("--fam-fl-scale", nargs=2, action="append", default=[], metavar=("FAMILY", "K"),
+                help="factor on the final FL of one device family (after smoothing)")
 ap.add_argument("--out", required=True)
 a = ap.parse_args()
 
@@ -117,6 +122,15 @@ out["mt_mm"] = out["mt_mm"] * a.mt_scale + a.mt_offset
 out["fl_mm"] *= a.fl_scale
 for t in T:
     out[t] = (1 - a.alpha) * out[t] + a.alpha * out.groupby(g)[t].transform("median")
+for fp, k in a.fam_fl_scale:
+    out.loc[fam.str.startswith(fp), "fl_mm"] *= float(k)
+for fp, rr, tg in a.aniso:  # true angle: tan = R * tan(pixel angle); true length: L_px / sqrt(R^2 cos^2 + sin^2)
+    m, rr = fam.str.startswith(fp), float(rr)
+    th = np.arctan(rr * np.tan(np.radians(out.loc[m, "pa_deg"])))
+    if "fl" in tg:
+        out.loc[m, "fl_mm"] = out.loc[m, "fl_mm"] / np.sqrt((rr * np.cos(th)) ** 2 + np.sin(th) ** 2)
+    if "pa" in tg:
+        out.loc[m, "pa_deg"] = np.degrees(th)
 if not a.no_anchors:
     for k, v in ANCHORS.items():
         out.loc[k] = v
