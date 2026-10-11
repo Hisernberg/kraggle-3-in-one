@@ -52,6 +52,19 @@ Each test window carries one *randomly chosen* limb, so every true bout should h
 
 Best remains **L11, 0.93756**.
 
+### Four parallel research agents (user asked for one shot at 0.94)
+
+Each agent had to pass an out-of-fold gate (precision above 0.6 and dF1 above 0 on both forks) and reproduce L11's 11 verified-correct and 4 verified-wrong moves. Reports are in `agents_oct11/`.
+
+| Agent | Idea | Verdict |
+|---|---|---|
+| video | per-bout video coherence | Fails out-of-fold (precision 0.06–0.60, dF1 ≤ 0). Fork errors are whole chunks that the video shares. |
+| redecode | joint energy (links, limb balance, evidence) | Link term +0.0014 on fork-level labels; limb term 0. On test it wants to undo L11's verified moves. |
+| limb | learned limb-signature mover | Passes out-of-fold only through decoded Q; never sees an sbj_24-type case; on test it reverts L11. |
+| counts | sibling-pair count balance (11↔12) | Passes out-of-fold (0.66–0.79). Submitted: **0.93727 (−0.00029)**. |
+
+Conclusion: nothing available here reaches 0.94. L11 is the final pick.
+
 ## What is left that can move the score
 
 1. **Re-decode the f4n/mv4/mv6 family.** In goodpjw's ablations, true counts are worth +0.011 out-of-fold and true boundary order +0.016. This needs the raw probabilities and link sets, which exist only on the user's PC (`E:\Claude code\wear`); none of the team's Kaggle kernels has them.
