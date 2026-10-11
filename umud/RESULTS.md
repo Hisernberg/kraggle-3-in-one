@@ -298,3 +298,19 @@ Rank 13 (1st 0.22868, 3rd 0.23371, 5th 0.24463).
 - The container was recycled overnight; the environment and expert sets were rebuilt and the live pipeline reproduces
   exactly.
 Rank 14 (1st 0.22868, 3rd 0.23371, 5th 0.24077).
+
+## Day 15 (2026-10-11): non-square pixels and per-family FL levels, best 0.26097 (rank 9)
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S1 | left_ticks FL converted to true geometry (lateral 134.5 vs depth 148.1 px per 10 mm) | 0.3156 (labels use pixel geometry there) |
+| **S2** | **left_ticks FL x1.016 (S1's loss implied a -1.8 mm median error)** | **0.29249** |
+| **S3** | **Juniper FL x0.984 (VL physics ratio 1.087 vs NeuAge VL experts 1.066)** | **0.2833** |
+| **S4** | **Juniper FL x0.95** | **0.26697** |
+| **S5** | **Juniper FL x0.92 (fitted vertex)** | **0.26097 (new best)** |
+
+- A new forum topic asked about "stretched 1200x800 images". Both 1200x800 families have non-square pixels. For the
+  Telemed screenshots (left_ticks) the labels share the pixel geometry; for the Siemens Juniper images (12L3 aperture
+  51.3 mm -> R ~1.12) the LB optimum FL (x0.92) matches true geometry (x0.90): the Juniper labels look native.
+- A large diagnostic shift plus a Laplace fit turns one LB probe into a family-level bias estimate; the follow-up
+  shots landed as predicted. Total day gain -0.0334 (rank 14 -> 9).
+Rank 9 (1st 0.22868, 3rd 0.23371, 5th 0.24077).
