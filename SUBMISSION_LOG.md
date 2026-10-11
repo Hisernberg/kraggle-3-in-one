@@ -108,7 +108,7 @@ S3/S4/S5 differ by 2-9 test clips; one public clip is ~0.012, so the public spli
 
 ## 2026-10-11
 
-### WEAR @HASCA 2026: automatic run at 00:05 UTC (user-requested), 6 of 10 used
+### WEAR @HASCA 2026: automatic run at 00:05 UTC (user-requested), 9 of 10 used
 
 Base: L11 (ref 57035427, 0.93756, #6). Probe-and-keep rule: keep a probe only if public rises by at least +0.00005.
 
@@ -122,3 +122,8 @@ Base: L11 (ref 57035427, 0.93756, #6). Probe-and-keep rule: keep a probe only if
 | 57061193 | cand_pair_q25 (4 research agents; only rule passing OOF) | L11 + 10 sbj_23 push-ups (complex) → push-ups (sibling-pair count rule, OOF precision 0.66–0.79) | 0.93727 | −0.00029: discarded, L11 stays best |
 | 57061812 | O11_J4 | L11 + 4 sbj_23 jog-rot → jog (limb imbalance + links, no style signature) | 0.93727 | −0.00029 |
 | 57061822 | O11_P2 | L11 + 2 sbj_22 push-ups (complex) → push-ups (5671, 8305: right-limb imbalance + links + window/IMU agree) | **0.93784** | **+0.00028, new best (#5)** |
+| 57062482 | O11_P4 | P2 + 10995, 1369 (sbj_22 left-leg push-ups → push-ups (complex)) | 0.93728 | −0.00056: wrong direction |
+| 57062497 | O11_P2b | P2 + 5605, 6328 (sbj_22 right-arm push-ups (complex) → push-ups) | 0.93784 | 0 (private windows) |
+| 57062511 | O11_P2c | P2 + 7608, 5777 (same direction) | 0.93784 | 0 (private windows) |
+
+Last slot held: no candidate with evidence for the +0.00065 that #3 needs. **Final pick: O11_P2 (ref 57061822, 0.93784, #5).**
