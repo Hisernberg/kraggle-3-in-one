@@ -44,6 +44,31 @@ Each test window carries one *randomly chosen* limb, so every true bout should h
 
 `scripts/limbfix.py` has the link-neighbour inspector. A global per-window scan is noisy (links are about 65% exact); the mechanism works when a whole bout is anomalous.
 
+## 2026-10-11 automatic run
+
+- **O11_V3** (variant-share band, 3 windows): 0.93756, Δ 0.
+- **O11_A2** (2 all-source activity→null): 0.93741, −0.00015. All-source agreement is not reliable even for easily separated classes.
+- **O11_L8** (L11 minus the 3 weakest-link moves): 0.93699, −0.00057. All 11 L11 moves are right. The decision boundary is a link-neighbour share of about 0.36 before the move: L11 at ≥ 0.36 all right, L15 at 0.25–0.33 all wrong.
+
+Best remains **L11, 0.93756**.
+
+### Four parallel research agents (user asked for one shot at 0.94)
+
+Each agent had to pass an out-of-fold gate (precision above 0.6 and dF1 above 0 on both forks) and reproduce L11's 11 verified-correct and 4 verified-wrong moves. Reports are in `agents_oct11/`.
+
+| Agent | Idea | Verdict |
+|---|---|---|
+| video | per-bout video coherence | Fails out-of-fold (precision 0.06–0.60, dF1 ≤ 0). Fork errors are whole chunks that the video shares. |
+| redecode | joint energy (links, limb balance, evidence) | Link term +0.0014 on fork-level labels; limb term 0. On test it wants to undo L11's verified moves. |
+| limb | learned limb-signature mover | Passes out-of-fold only through decoded Q; never sees an sbj_24-type case; on test it reverts L11. |
+| counts | sibling-pair count balance (11↔12) | Passes out-of-fold (0.66–0.79). Submitted: **0.93727 (−0.00029)**. |
+
+Conclusion: nothing available here reaches 0.94.
+
+### User-requested two extra chances
+- O11_J4 (4 sbj_23 jogging (rotating arms) → jogging): 0.93727, −0.00029.
+- **O11_P2** (2 sbj_22 push-ups (complex) → push-ups, windows 5671 and 8305): **0.93784, +0.00028, new best (#5)**. Final pick: **O11_P2** (it contains L11).
+
 ## What is left that can move the score
 
 1. **Re-decode the f4n/mv4/mv6 family.** In goodpjw's ablations, true counts are worth +0.011 out-of-fold and true boundary order +0.016. This needs the raw probabilities and link sets, which exist only on the user's PC (`E:\Claude code\wear`); none of the team's Kaggle kernels has them.
