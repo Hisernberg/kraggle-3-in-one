@@ -230,3 +230,9 @@ Later on 2026-10-12 (user: two more, only when confident):
 Also tested and dropped: gain-normalising the 32-bit PCM clips before Whisper (Hindi-medium probe accuracy on them
 0.755 → 0.733). No remaining variant is predicted above 0.94230, so the last slot was not used.
 **Final selection: V1 + T3** (they differ on 41, 244, 573, 1013, the clips where the two families disagree off the public split).
+
+| Ref | File | What | CV novel / all | Public | Change vs V1 |
+|---|---|---|---|---|---|
+| 57111810 | w1_grand | user: combine all the best. 0.9 × (bagged heads + fusion head + w2v-BERT + concat LR) + 0.1 × T3, + transcript TF-IDF 0.03, waveform + transcript overrides | 0.936 / 0.956 | 0.94230 | clip 41 only (not public) |
+
+Combining everything did not beat V1 in CV (V1 0.937; all-member equal blend 0.931; 2nd-level stacking 0.935). Final selection unchanged: **V1 + T3**.
