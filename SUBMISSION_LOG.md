@@ -129,3 +129,16 @@ Base: L11 (ref 57035427, 0.93756, #6). Probe-and-keep rule: keep a probe only if
 | 57063606 | O11_FINAL | P2 + 7146 (sbj_23 push-ups → push-ups (complex)) + 9376 (sbj_25 null → shoulder stretch); refit meta-model, P(pos) ≥ 0.88 | 0.93774 | −0.00010 |
 
 **Final pick: O11_P2 (ref 57061822, 0.93784, #5).** What helped and what hurt across all submissions: `wear/LESSONS.md`.
+
+## 2026-10-12 (last day)
+
+### WEAR @HASCA 2026, 2 of 10 used
+
+The user asked for 5 submissions to reach the top 3. Overnight #3 moved to 0.93862 (Santiago Maniches) and we dropped to #7. New public kernels: CAGE (0.583, simple LightGBM) and yeashu "Leaf It" (0.9304, public family), so no new evidence.
+
+| Ref | File | Change vs O11_P2 | Public | Δ |
+|---|---|---|---|---|
+| 57094519 | O12_S1 | sbj_22 right-limb push-ups (complex) → push-ups (2766, 1186, 11257) | 0.93756 | −0.00028 |
+| 57094530 | O12_S2 | 9376 alone (sbj_25 null → shoulder stretch) | 0.93774 | −0.00010: 9376 was the wrong half of O11_FINAL; 7146 is 0 |
+
+3 slots held: no remaining candidate has evidence. **Final pick: O11_P2 (ref 57061822, 0.93784).**
