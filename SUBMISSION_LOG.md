@@ -236,3 +236,6 @@ Also tested and dropped: gain-normalising the 32-bit PCM clips before Whisper (H
 | 57111810 | w1_grand | user: combine all the best. 0.9 × (bagged heads + fusion head + w2v-BERT + concat LR) + 0.1 × T3, + transcript TF-IDF 0.03, waveform + transcript overrides | 0.936 / 0.956 | 0.94230 | clip 41 only (not public) |
 
 Combining everything did not beat V1 in CV (V1 0.937; all-member equal blend 0.931; 2nd-level stacking 0.935). Final selection unchanged: **V1 + T3**.
+| 57111941 | v1_t5x09_t3x01_tm (again) | user: one final, best possible. Self-trained probe members (st 0.8) were tried first: same test labels as V1, lower CV (0.935), so V1 itself was re-submitted | 0.937 / 0.956 | 0.94230 | none |
+
+5 of 5 used on 2026-10-12. Final standing at 15:45 UTC: 0.94230, 11th. Final selection: **V1 + T3**.
