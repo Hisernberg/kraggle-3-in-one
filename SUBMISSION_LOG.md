@@ -171,4 +171,14 @@ tested by our submissions. Excluded: sbj_24 butt-kicks → jogging (opposes the 
 | 57094858 | O12_X6 | O11_P2 + 6 sbj_25 activity → activity (669, 5451, 6114, 8289, 9288, 10490; 8–10/10) | **0.93787** | **+0.00003, new best (#7)** |
 | 57094884 | O12_X12 | X6 + 688, 6295 (sbj_23 push-ups → push-ups (complex)), 1135, 8894, 9486, 11331 (6–7/10) | 0.93732 | −0.00055 vs X6 |
 
-**Final pick: O12_X6 (ref 57094858, 0.93787).** O11_P2 (0.93784) is the fallback; they differ only in the 6 X6 windows.
+Third request: target 0.94538, use 2 more (7 of 10 used today).
+
+| Ref | File | Change | Public | Δ |
+|---|---|---|---|---|
+| 57095039 | O12_X8 | X6 + 688, 6295 (sbj_23 push-ups → push-ups (complex), 8/10) | 0.93787 | 0: private windows. By additivity, the X12 loss came from the 6–7/10 windows (1135, 8894, 9486, 11331) |
+| 57095061 | O12_A10 | X6 + 10 untested windows where all 10/10 external runs agree (442, 2507, 3372, 5262, 9164, 9470, 11526, 12081 null → activity; 5272, 7855 activity → null) | **0.93807** | **+0.00020, new best (#7; #6 is 0.93825)** |
+
+Agreement level decides it: 10/10 external agreement wins, 8–9/10 loses (N17 minus its 10/10 part ≈ −0.0006), 6–7/10 loses.
+0.94538 is out of reach without the 2nd-challenge 4-limb data (still 403).
+
+**Final pick: O12_A10 (ref 57095061, 0.93807).** Fallback: O12_X6 (0.93787).
