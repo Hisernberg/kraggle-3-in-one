@@ -1,6 +1,6 @@
 {
- "best_score": 0.23215,
- "best_name": "d16_S2_lumpa0841",
+ "best_score": 0.21841,
+ "best_name": "d16_S3_lumfl110",
  "best_args": [
   "--w",
   "0.65",
@@ -43,7 +43,10 @@
   "--aniso",
   "lumify_png",
   "0.841",
-  "pa"
+  "pa",
+  "--fam-fl-scale",
+  "lumify_png",
+  "1.10"
  ],
  "settled": [
   "d15: left_ticks_800 pixels are non-square (lateral 134.5 vs depth 148.1 px per 10 mm) but its labels share the pixel geometry (true-geometry FL conversion +0.021); its FL is slightly low: x1.016 -0.0018 (Laplace m -1.8 mm, vertex x1.019)",
