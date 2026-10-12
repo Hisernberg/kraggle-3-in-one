@@ -1,6 +1,6 @@
 {
- "best_score": 0.2442,
- "best_name": "d16_S1_junpa110",
+ "best_score": 0.23215,
+ "best_name": "d16_S2_lumpa0841",
  "best_args": [
   "--w",
   "0.65",
@@ -39,6 +39,10 @@
   "--aniso",
   "juniper_right",
   "1.10",
+  "pa",
+  "--aniso",
+  "lumify_png",
+  "0.841",
   "pa"
  ],
  "settled": [
