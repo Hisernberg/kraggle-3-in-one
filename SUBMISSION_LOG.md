@@ -220,3 +220,13 @@ that moves a test label with confidence: no new discussions; the only new public
 mirrors our pipeline and publishes no outputs; the residual CV errors sit at low blend confidence (70 % accuracy below
 p = 0.5, mostly happy↔neutral and neutral↔sad) and in the 32-bit PCM subset (0.856 vs 0.948), where the text member does
 not help (right on 20 % of the acoustic errors). **Last three slots not used.**
+
+Later on 2026-10-12 (user: two more, only when confident):
+
+| Ref | File | What | CV novel / all | Public | Change vs S4 |
+|---|---|---|---|---|---|
+| 57111456 | v1_t5x09_t3x01_tm | log-mix 0.9 × T5 + 0.1 × T3 + transcript override | 0.937 / 0.956 | **0.94230** (predicted 0.94230) | 41, 244, 570, 573, 873, 1013: T5's labels without the 331 flip |
+
+Also tested and dropped: gain-normalising the 32-bit PCM clips before Whisper (Hindi-medium probe accuracy on them
+0.755 → 0.733). No remaining variant is predicted above 0.94230, so the last slot was not used.
+**Final selection: V1 + T3** (they differ on 41, 244, 573, 1013, the clips where the two families disagree off the public split).

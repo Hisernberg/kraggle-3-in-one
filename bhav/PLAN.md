@@ -86,10 +86,12 @@ What the day showed:
 
 ## Final selection (two files; do it on the Kaggle Submissions page before 18:30 UTC)
 
-1. **U2 `u2_t5_txt25_tm`** (public 0.94230, CV 0.932): best public, keeps the head family's labels on the private-
-   neutral clips, includes the text modality.
-2. **T5 `t5_heads_w2vb_cat5`** (public 0.93019, CV 0.938): the CV-best blend, the hedge if the private split follows CV.
+1. **V1 `v1_t5x09_t3x01_tm`** (public 0.94230, CV 0.937): 0.9 × T5 + 0.1 × T3 with the transcript override, the
+   CV-favoured head-family labels everywhere except clip 331, where the public split showed that family is wrong.
+2. **T3 `t3_s4_b3stl2`** (public 0.94230, CV 0.930 / 0.934 with the override): the probe family; differs from V1 on
+   41, 244, 573, 1013, so the pair hedges the clips where the families disagree off the public split.
 
+(V1 and T5 differ only on 331, and U2 sits between V1 and T3, so neither adds a hedge.)
 T3 is almost identical to U2 (2-3 clips), so picking both would waste the second slot.
 
 Not done before the deadline (needs GPU or ~2 h of CPU per encoder): re-extract Whisper features with loudness
