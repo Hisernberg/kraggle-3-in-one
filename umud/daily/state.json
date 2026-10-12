@@ -1,6 +1,6 @@
 {
- "best_score": 0.26097,
- "best_name": "d15_S5_junfl092",
+ "best_score": 0.2442,
+ "best_name": "d16_S1_junpa110",
  "best_args": [
   "--w",
   "0.65",
@@ -35,7 +35,11 @@
   "1.016",
   "--fam-fl-scale",
   "juniper_right",
-  "0.92"
+  "0.92",
+  "--aniso",
+  "juniper_right",
+  "1.10",
+  "pa"
  ],
  "settled": [
   "d15: left_ticks_800 pixels are non-square (lateral 134.5 vs depth 148.1 px per 10 mm) but its labels share the pixel geometry (true-geometry FL conversion +0.021); its FL is slightly low: x1.016 -0.0018 (Laplace m -1.8 mm, vertex x1.019)",
