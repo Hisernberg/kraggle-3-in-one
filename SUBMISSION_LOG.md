@@ -190,4 +190,13 @@ windows that past files had touched were screened by their past probe pairs.
 | 57107768 | O12_A13 | A10 + 656 (sbj_22 burpees → null), 5582 (sbj_22 stretch → null), 2206 (sbj_25 null → sit-ups (complex)); 9–10/10 agreement and positive past pairs (+0.00065, +0.00017) | **0.93820** | **+0.00013, new best (#7; #6 is 0.93825)** |
 | 57107777 | O12_A16 | A13 + 11986, 10074, 4675 (10/10, mixed past evidence) | 0.93804 | −0.00016 |
 
-**Final pick: O12_A13 (ref 57107768, 0.93820).** Fallback: O12_A10 (0.93807).
+Final request: one last slot with full research. The forum (7 topics, no leader posts) and the newest notebooks add nothing new.
+A meta-regression refit on all 199 files with external-agreement features finds no strong positive flips. Two new filters came out of
+today's 35 probed windows: the per-window fusion and UEC models agree with 37% of winning flips but only 6% of losing ones;
+out-of-fold, stretch → null (40–60%) and null → push-ups (complex) (20–38%) are coin flips or worse for the outside consensus.
+
+| Ref | File | Change | Public | Δ |
+|---|---|---|---|---|
+| 57108583 | O12_FINAL | A13 + 4187 (sbj_25 burpees → push-ups), 7054 (sbj_25 2 → 3), 7772 (sbj_25 3 → 1), 5482 (sbj_25 null → shoulder stretch): 8–9/10 outside runs and the fusion/UEC window models agree, untested or positive history; plus private-only 688, 6295, 7146 (sbj_23 push-ups → push-ups (complex), count gap 128 vs 142) | **0.93855** | **+0.00035, new best (#5; #4 0.93856, #3 0.93862)** |
+
+**Final pick: O12_FINAL (ref 57108583, 0.93855).** Fallback: O12_A13 (0.93820).
