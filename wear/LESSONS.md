@@ -39,3 +39,4 @@
   adding the weaker (6–7/10) and sbj_23 push-ups → complex ones lost −0.00055.
 - Committee strength measured within one family does not transfer to a stronger family: check public pairwise
   evidence (Leaf It 0.9304 vs our 0.9378 on 269 differing windows) before trusting an external committee.
+- External committee flips only pay at full agreement: 10/10 runs +0.00020 (10 windows); 8–9/10 and 6–7/10 lose.
