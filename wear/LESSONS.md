@@ -30,3 +30,12 @@
 3. Never extend a winning repair beyond its evidence boundary (link-neighbour share about 0.36).
 4. Every candidate must pass an out-of-fold gate. Generic rules (video coherence, re-decode, learned limb mover) fail it.
 5. The remaining big lever is external: the 2nd-challenge test file (same seconds, 4 limbs). See GAP_ANALYSIS.md.
+
+## 2026-10-12: public boundary-refiner notebooks
+
+- The new public forks (goodpjw Part 2 + chain boundary refiner, OOF 0.927–0.930) lose to our fusion on null ↔ activity
+  disagreements: 17 null → activity flips cost −0.00046 even with 8–10 of 10 runs agreeing.
+- Activity → activity flips from their committee were the only non-negative group (+0.00003 on 6 sbj_25 windows);
+  adding the weaker (6–7/10) and sbj_23 push-ups → complex ones lost −0.00055.
+- Committee strength measured within one family does not transfer to a stronger family: check public pairwise
+  evidence (Leaf It 0.9304 vs our 0.9378 on 269 differing windows) before trusting an external committee.

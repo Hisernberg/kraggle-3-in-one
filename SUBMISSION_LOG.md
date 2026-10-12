@@ -145,3 +145,30 @@ concatenated Whisper + w2v-BERT features. Clip-level diffs to S4 are listed so t
 | 57065294 | t6_big_rule | rule-based: 6 Whisper LR probes + 6 heads + concat LR + w2v-BERT ×2 | 0.927 / 0.949 | **0.94230** | 1013 changed: not public (or cancels) |
 
 Leaderboard after T6: 0.94230 = 9th of 44 on the tie-break; top 3 at 0.96544. All blends agree on 197 of 209 test clips.
+
+## 2026-10-12 (last day)
+
+### WEAR @HASCA 2026, 5 of 10 used
+
+The user asked for 5 submissions to reach the top 3. Overnight #3 moved to 0.93862 (Santiago Maniches) and we dropped to #7. New public kernels: CAGE (0.583, simple LightGBM) and yeashu "Leaf It" (0.9304, public family), so no new evidence.
+
+| Ref | File | Change vs O11_P2 | Public | Δ |
+|---|---|---|---|---|
+| 57094519 | O12_S1 | sbj_22 right-limb push-ups (complex) → push-ups (2766, 1186, 11257) | 0.93756 | −0.00028 |
+| 57094530 | O12_S2 | 9376 alone (sbj_25 null → shoulder stretch) | 0.93774 | −0.00010: 9376 was the wrong half of O11_FINAL; 7146 is 0 |
+
+Second request: analyse the newest public notebooks and use the last 3. Nine newer notebooks were read
+(sujanmajhisuzan bagged boundary refiner; chaitanyajamble HASCA 2; kilianzimmermann's four stage exports; yeashu
+ranked timelines). All are goodpjw Part 2 forks with one addition: a LightGBM **boundary refiner along the link chains**
+(OOF +0.003, 0.924 → 0.927–0.930) plus single-window island cleanup. Their files differ from O11_P2 in 264–295 windows.
+Out-of-fold, a 4–5-run committee beats a single run of the same family mainly on activity → activity flips
+(about 3–5 : 1); null ↔ activity is near even. 137 windows where the 4 strong runs agree against O11_P2; 74 never
+tested by our submissions. Excluded: sbj_24 butt-kicks → jogging (opposes the L11 win), sbj_22 push-ups → push-ups (complex) (P4 lost).
+
+| Ref | File | Change | Public | Δ |
+|---|---|---|---|---|
+| 57094845 | O12_N17 | O11_P2 + 17 null → activity (8–10/10 runs agree; sbj_23 push-ups (complex) excluded by count band) | 0.93738 | −0.00046: O11_P2's null boundaries beat the refiner runs |
+| 57094858 | O12_X6 | O11_P2 + 6 sbj_25 activity → activity (669, 5451, 6114, 8289, 9288, 10490; 8–10/10) | **0.93787** | **+0.00003, new best (#7)** |
+| 57094884 | O12_X12 | X6 + 688, 6295 (sbj_23 push-ups → push-ups (complex)), 1135, 8894, 9486, 11331 (6–7/10) | 0.93732 | −0.00055 vs X6 |
+
+**Final pick: O12_X6 (ref 57094858, 0.93787).** O11_P2 (0.93784) is the fallback; they differ only in the 6 X6 windows.
