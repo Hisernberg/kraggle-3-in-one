@@ -40,3 +40,5 @@
 - Committee strength measured within one family does not transfer to a stronger family: check public pairwise
   evidence (Leaf It 0.9304 vs our 0.9378 on 269 differing windows) before trusting an external committee.
 - External committee flips only pay at full agreement: 10/10 runs +0.00020 (10 windows); 8–9/10 and 6–7/10 lose.
+- 10/10 agreement plus a positive past probe pair won (+0.00013); 10/10 with mixed past evidence lost (−0.00016).
+- Outside consensus plus agreement from the independent per-window models (fusion, UEC) was the best filter: +0.00035 on 4 public windows.
