@@ -92,6 +92,9 @@ What the day showed:
 
 T3 is almost identical to U2 (2-3 clips), so picking both would waste the second slot.
 
+Not done before the deadline (needs GPU or ~2 h of CPU per encoder): re-extract Whisper features with loudness
+normalisation. The 32-bit PCM clips (80 train, 22 test) are louder (median peak 27k vs 17k) and score 0.856 vs 0.948.
+
 ## GPU budget
 
 Kaggle T4, moderate: extraction round 1 = 14 min, round 2 ~40 min, partial fine-tune ~25 min per variant. Everything

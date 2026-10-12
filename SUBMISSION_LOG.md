@@ -214,3 +214,9 @@ wider concatenated-feature probes did not help.
 | 57111029 | u2_t5_txt25_tm | T5 + text member (w 0.25) + transcript override | 0.932 / 0.953 | **0.94230** | 265, 873, 1013: public-neutral |
 
 Leaderboard at 15:06 UTC: 0.94230 = 11th of 44+ (TechNova 0.96603 new 1st; 0.96544 ×3; 0.95387 ×3; 0.94280).
+
+After U2 the user allowed further submissions only when a top-3 score is likely. Remaining CPU checks found no change
+that moves a test label with confidence: no new discussions; the only new public notebook (`sanskriti250305/final-october`)
+mirrors our pipeline and publishes no outputs; the residual CV errors sit at low blend confidence (70 % accuracy below
+p = 0.5, mostly happy↔neutral and neutral↔sad) and in the 32-bit PCM subset (0.856 vs 0.948), where the text member does
+not help (right on 20 % of the acoustic errors). **Last three slots not used.**
