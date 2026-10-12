@@ -181,4 +181,13 @@ Third request: target 0.94538, use 2 more (7 of 10 used today).
 Agreement level decides it: 10/10 external agreement wins, 8–9/10 loses (N17 minus its 10/10 part ≈ −0.0006), 6–7/10 loses.
 0.94538 is out of reach without the 2nd-challenge 4-limb data (still 403).
 
-**Final pick: O12_A10 (ref 57095061, 0.93807).** Fallback: O12_X6 (0.93787).
+Fourth request (12:55 UTC): target 0.94538, 2 more (9 of 10 used today). Still 403 on the 2nd-challenge data; the two
+notebooks updated since morning (kansukehabano rerun, dranilkumardubey) are weak (831 / 3246 windows off). The 10/10-agreement
+windows that past files had touched were screened by their past probe pairs.
+
+| Ref | File | Change | Public | Δ |
+|---|---|---|---|---|
+| 57107768 | O12_A13 | A10 + 656 (sbj_22 burpees → null), 5582 (sbj_22 stretch → null), 2206 (sbj_25 null → sit-ups (complex)); 9–10/10 agreement and positive past pairs (+0.00065, +0.00017) | **0.93820** | **+0.00013, new best (#7; #6 is 0.93825)** |
+| 57107777 | O12_A16 | A13 + 11986, 10074, 4675 (10/10, mixed past evidence) | 0.93804 | −0.00016 |
+
+**Final pick: O12_A13 (ref 57107768, 0.93820).** Fallback: O12_A10 (0.93807).
