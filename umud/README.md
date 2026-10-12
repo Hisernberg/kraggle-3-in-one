@@ -7,7 +7,7 @@ predict pennation angle (PA, °), fascicle length (FL, mm) and muscle thickness 
 Metric: `mean(MAE_PA/6, MAE_FL/12, MAE_MT/3)`, lower is better.
 
 ## Status (2026-10-08)
-Best public LB **0.26097** (rank 9): `submissions/d15_S5_junfl092.csv` (fascicle maps from resnet34 @512x768 + two resnext50 seeds @640x960, physiological failure check, Lumify weights PA 0.30 / FL 0.15, visually arbitrated FL on 3 gross Lumify rows, IMG_00303 FL patch, pipeline weights PA 0.65 / FL 0.33 / MT 1.0, per-family FL levels: Siemens Juniper x0.92 (non-square pixels, labels in true geometry), left_ticks x1.016).
+Best public LB **0.21657** (public rank 1): `submissions/d16_S5_lumpa087.csv` (fascicle maps from resnet34 @512x768 + two resnext50 seeds @640x960, pipeline weights PA 0.65 / FL 0.33 / MT 1.0, Lumify weights PA 0.30 / FL 0.15, true-geometry corrections for non-square pixels: Siemens Juniper PA (R 1.12) and FL x0.92, Philips Lumify PA (R 0.87) and FL x1.10; left_ticks FL x1.016; IMG_00303 FL patch).
 Reproduce it with `python daily/run.py build NAME` (args in `daily/state.json`): pipeline `configs/a5_pa_avg.json`
 (FL = mean of extrapolated-fragment FL and depth-fitted chord FL; PA = mean of all-fragment and deep-half PA) blended
 per target with the public Vera CSV. The pipeline alone (`kaggle/build_kernel.py --mode submit`) is the prize-eligible

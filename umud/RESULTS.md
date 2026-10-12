@@ -314,3 +314,20 @@ Rank 14 (1st 0.22868, 3rd 0.23371, 5th 0.24077).
 - A large diagnostic shift plus a Laplace fit turns one LB probe into a family-level bias estimate; the follow-up
   shots landed as predicted. Total day gain -0.0334 (rank 14 -> 9).
 Rank 9 (1st 0.22868, 3rd 0.23371, 5th 0.24077).
+
+## Day 16 (2026-10-12): true-geometry corrections for two devices -> 0.21657, PUBLIC RANK 1
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| **S1** | **Juniper PA converted to true geometry (R 1.10)** | **0.2442** |
+| **S2** | **Lumify PA converted to true geometry (R 0.841, L12-4 aperture 34 mm)** | **0.23215** |
+| **S3** | **Lumify FL x1.10** | **0.21841 (rank 1)** |
+| **S4** | **Juniper PA at the physical R 1.12** | **0.21731** |
+| **S5** | **Lumify PA trimmed to R 0.87 (Laplace fit of S2)** | **0.21657 (new best)** |
+
+- The Siemens Juniper and Philips Lumify test images (149 of 309 rows) have non-square pixels (the B-mode area spans a
+  constant 57.5 / 28.6 mm in vertical-scale units at every depth, while the probe apertures are 51.3 / 34 mm). Their
+  labels are in true geometry; the pipeline (and the Vera reference) measure in pixels. Correcting PA (angle) and FL
+  (length) of these two families moved the public score from 0.26097 to 0.21657 in one day.
+- Telemed native exports and h512 have square pixels; the stretched Telemed screenshots (left_ticks) were labelled
+  as provided (pixel geometry).
+Public rank 1 (2nd 0.22084, 3rd 0.22682).
