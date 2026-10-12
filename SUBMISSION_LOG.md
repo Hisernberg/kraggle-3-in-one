@@ -130,15 +130,18 @@ Base: L11 (ref 57035427, 0.93756, #6). Probe-and-keep rule: keep a probe only if
 
 **Final pick: O11_P2 (ref 57061822, 0.93784, #5).** What helped and what hurt across all submissions: `wear/LESSONS.md`.
 
-## 2026-10-12 (last day)
+### DataVerse Hindi speech emotion (`dataverse-detecting-emotions-from-hindi-speech`), 5 of 5 used
 
-### WEAR @HASCA 2026, 2 of 10 used
+The user asked for the final five of the day. New today: bagged / self-trained / multi-layer / TTA attention heads and
+a fusion head (Kaggle T4 kernels `bhav-heads-r3a/b`, `bhav-bag-heads`, `bhav-fusion-head`), and an LR probe on
+concatenated Whisper + w2v-BERT features. Clip-level diffs to S4 are listed so the public scores can be read.
 
-The user asked for 5 submissions to reach the top 3. Overnight #3 moved to 0.93862 (Santiago Maniches) and we dropped to #7. New public kernels: CAGE (0.583, simple LightGBM) and yeashu "Leaf It" (0.9304, public family), so no new evidence.
+| Ref | File | What | CV novel / all | Public | Public-relevant change vs S4 |
+|---|---|---|---|---|---|
+| 57064183 | t2_heads4_w2vb | bagged heads (L2, L1, Vaani-L3, Hindi-M) + w2v-BERT | 0.933 / 0.954 | 0.93019 | 9 clips changed, net −1 |
+| 57065167 | t3_s4_b3stl2 | S4 + bagged/self-trained large-v2 head ×2 | 0.930 / 0.952 | **0.94230** | clips 570, 873 changed: not public (or cancel) |
+| 57065202 | t4_heads_w2vb_wl1 | 3-seed heads + w2v-BERT + Whisper-L1 LR | 0.933 / 0.953 | 0.93019 | 244, 331, 431, 1013: net −1 |
+| 57065274 | t5_heads_w2vb_cat5 | 3-seed heads + w2v-BERT + concat-feature LR | **0.938 / 0.957** | 0.93019 | 41, 244, 331, 573, 1013: net −1 |
+| 57065294 | t6_big_rule | rule-based: 6 Whisper LR probes + 6 heads + concat LR + w2v-BERT ×2 | 0.927 / 0.949 | **0.94230** | 1013 changed: not public (or cancels) |
 
-| Ref | File | Change vs O11_P2 | Public | Δ |
-|---|---|---|---|---|
-| 57094519 | O12_S1 | sbj_22 right-limb push-ups (complex) → push-ups (2766, 1186, 11257) | 0.93756 | −0.00028 |
-| 57094530 | O12_S2 | 9376 alone (sbj_25 null → shoulder stretch) | 0.93774 | −0.00010: 9376 was the wrong half of O11_FINAL; 7146 is 0 |
-
-3 slots held: no remaining candidate has evidence. **Final pick: O11_P2 (ref 57061822, 0.93784).**
+Leaderboard after T6: 0.94230 = 9th of 44 on the tie-break; top 3 at 0.96544. All blends agree on 197 of 209 test clips.

@@ -51,34 +51,38 @@ Lessons from today:
   class-bias tuning and self-training of the blend gave nothing.
 * CV saturates near 0.93 novel; S3-S5 differ by 2-9 clips; public (≈84 rows) cannot separate them.
 
-## Tomorrow (2026-10-11), 5 submissions
+## 2026-10-11, 5 of 5 used
 
-Priority is variance reduction and a stronger single family, not more greedy selection (greedy on 566 rows is
-noisy: two different pools gave 0.926 and 0.925 with different members).
+| Slot | Content | CV novel / all | Public |
+|---|---|---|---|
+| T2 | bagged heads (L2, L1, Vaani-L3, Hindi-M) + w2v-BERT | 0.933 / 0.954 | 0.93019 |
+| T3 | S4 + bagged/self-trained large-v2 head ×2 | 0.930 / 0.952 | **0.94230** |
+| T4 | 3-seed heads + w2v-BERT + Whisper-L1 LR | 0.933 / 0.953 | 0.93019 |
+| T5 | 3-seed heads + w2v-BERT + LR on concatenated features | **0.938 / 0.957** | 0.93019 |
+| T6 | rule-based all-strong ensemble | 0.927 / 0.949 | **0.94230** |
 
-GPU work (one kernel each, moderate):
-1. **Bagged heads**: 5 seeds per backbone for the large-v2, large-v1, Vaani-L3 and Hindi-medium heads (head
-   training is ~2 min per backbone on a T4 once frames are computed).
-2. **Multi-layer heads**: learnable softmax weights over the last 4 encoder layers of large-v2 / large-v1 before
-   pooling (late layers 29-32 all score > 0.86).
-3. **TTA frames**: re-extract with 0.1 s and 0.2 s leading silence and average head/probe outputs (Whisper is
-   position-sensitive; cheap robustness).
-4. Partial fine-tune retry only on large-v2 with K=4, lr 1e-5, 8 epochs; keep it only if novel > 0.90.
+What the day showed:
+* Bagging heads helps single members (+0.004-0.008); TTA, multi-layer heads, self-training and the fusion head do not
+  add to the blend. CV is flat at 0.93-0.94 novel.
+* All strong blends agree on 197 of 209 test clips. The head family changes a handful of public clips (in the set
+  41, 244, 265, 331, 431, 542, 573) and loses one of them net on public; its changes on 570, 873, 1013 are
+  public-neutral. One public clip is ~0.012, so this is noise-level and says little about the private 60 %.
+* Top-3 (0.96544) needs ~2 more public clips right that **every** model gets wrong. Blending cannot reach that; only
+  a stronger model could, and none of today's attempts produced one.
 
-Ladder (one change per slot):
-* T1 = S4 members + bagged large-v2 head (fixed weights, no greedy): robust successor of the public best.
-* T2 = T1 + multi-layer heads.
-* T3 = T2 + TTA.
-* T4 = equal-weight average of the best LR-probe blend and the best head blend (two families, 50/50).
-* T5 = hedge: whichever of T1-T4 has the best CV with members picked by rule (all Whisper members with novel > 0.87),
-  not by greedy.
+## Final selection (two files; do it on the Kaggle Submissions page)
 
-Final selection (2 slots): the best-CV rule-based blend and the best public of S3/S4/T*; never two near-identical
-files.
+Two families, so one of them is right on the private split whichever the public noise hides:
+1. **T3 `t3_s4_b3stl2`** (public 0.94230, CV 0.930): the public-best family with the bagged large-v2 head.
+2. **T5 `t5_heads_w2vb_cat5`** (public 0.93019, CV 0.938): the CV-best blend.
 
-## Day 3 (2026-10-12, until 18:30 UTC)
+## 2026-10-12 (deadline 18:30 UTC), 5 slots
 
-Remaining 5 slots only for confirmed improvements; final selection by 17:00 UTC.
+Only for genuine model changes, not public-split clip picking:
+* a 4th/5th seed for the large-v2 and Vaani heads (bagging was the only change that helped members);
+* bagged concat-feature LR (different C / feature sets);
+* if any of these lifts CV novel above 0.94 on a rule-based blend, submit it and consider it as final 2.
+
 
 ## GPU budget
 
