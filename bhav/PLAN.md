@@ -70,19 +70,27 @@ What the day showed:
 * Top-3 (0.96544) needs ~2 more public clips right that **every** model gets wrong. Blending cannot reach that; only
   a stronger model could, and none of today's attempts produced one.
 
-## Final selection (two files; do it on the Kaggle Submissions page)
+## 2026-10-12 (CPU only, 2 submissions)
 
-Two families, so one of them is right on the private split whichever the public noise hides:
-1. **T3 `t3_s4_b3stl2`** (public 0.94230, CV 0.930): the public-best family with the bagged large-v2 head.
-2. **T5 `t5_heads_w2vb_cat5`** (public 0.93019, CV 0.938): the CV-best blend.
+| Slot | Content | CV novel / all | Public |
+|---|---|---|---|
+| U1 | T5 + transcript TF-IDF member (w 0.15) + transcript near-duplicate override | 0.936 / 0.956 | 0.93019 |
+| U2 | T5 + transcript TF-IDF member (w 0.25) + transcript near-duplicate override | 0.932 / 0.953 | **0.94230** |
 
-## 2026-10-12 (deadline 18:30 UTC), 5 slots
+* Words alone predict emotion (text member 0.712 novel): the acted sentences are emotion-specific (every sentence
+  recorded more than once carries one emotion). Whisper encoders already carry most of it, so the text member mainly
+  re-weights the contested clips.
+* The transcript override is 98.9 % accurate in CV but changes no test clip: the blends already agree with every test
+  clip it covers, and the 4 test-test sentence pairs agree too.
+* U1 vs U2 isolates clip 331 as the head family's single public loss; 570, 873, 1013 and 265 are public-neutral.
 
-Only for genuine model changes, not public-split clip picking:
-* a 4th/5th seed for the large-v2 and Vaani heads (bagging was the only change that helped members);
-* bagged concat-feature LR (different C / feature sets);
-* if any of these lifts CV novel above 0.94 on a rule-based blend, submit it and consider it as final 2.
+## Final selection (two files; do it on the Kaggle Submissions page before 18:30 UTC)
 
+1. **U2 `u2_t5_txt25_tm`** (public 0.94230, CV 0.932): best public, keeps the head family's labels on the private-
+   neutral clips, includes the text modality.
+2. **T5 `t5_heads_w2vb_cat5`** (public 0.93019, CV 0.938): the CV-best blend, the hedge if the private split follows CV.
+
+T3 is almost identical to U2 (2-3 clips), so picking both would waste the second slot.
 
 ## GPU budget
 

@@ -200,3 +200,17 @@ out-of-fold, stretch → null (40–60%) and null → push-ups (complex) (20–3
 | 57108583 | O12_FINAL | A13 + 4187 (sbj_25 burpees → push-ups), 7054 (sbj_25 2 → 3), 7772 (sbj_25 3 → 1), 5482 (sbj_25 null → shoulder stretch): 8–9/10 outside runs and the fusion/UEC window models agree, untested or positive history; plus private-only 688, 6295, 7146 (sbj_23 push-ups → push-ups (complex), count gap 128 vs 142) | **0.93855** | **+0.00035, new best (#5; #4 0.93856, #3 0.93862)** |
 
 **Final pick: O12_FINAL (ref 57108583, 0.93855).** Fallback: O12_A13 (0.93820).
+
+### DataVerse Hindi speech emotion (`dataverse-detecting-emotions-from-hindi-speech`), 2 submissions (user: two today, CPU only)
+
+New, all on CPU: Hindi-ASR transcripts (`vasista22/whisper-hindi-small`, 38 min for 1,035 clips), a char-n-gram TF-IDF
+text member (CV novel 0.712 on words alone), and a transcript near-duplicate override (character similarity >= 0.9 with
+train clips from other duplicate clusters; 98.9 % accurate in CV, +0.002-0.004 novel). eGeMAPS prosody (0.61) and
+wider concatenated-feature probes did not help.
+
+| Ref | File | What | CV novel / all | Public | Change vs S4 |
+|---|---|---|---|---|---|
+| 57111010 | u1_t5_txt15_tm | T5 + text member (w 0.15) + transcript override | 0.936 / 0.956 | 0.93019 | 331, 570, 873, 1013: shows clip 331 is the head family's one public loss |
+| 57111029 | u2_t5_txt25_tm | T5 + text member (w 0.25) + transcript override | 0.932 / 0.953 | **0.94230** | 265, 873, 1013: public-neutral |
+
+Leaderboard at 15:06 UTC: 0.94230 = 11th of 44+ (TechNova 0.96603 new 1st; 0.96544 ×3; 0.95387 ×3; 0.94280).
