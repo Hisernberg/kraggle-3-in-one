@@ -58,6 +58,8 @@ ap.add_argument("--aniso", nargs=3, action="append", default=[], metavar=("FAMIL
                      "horizontal / vertical px per mm (scale comes from the vertical depth ticks); TARGETS pa, fl or pafl")
 ap.add_argument("--fam-fl-scale", nargs=2, action="append", default=[], metavar=("FAMILY", "K"),
                 help="factor on the final FL of one device family (after smoothing)")
+ap.add_argument("--fam-mt-offset", nargs=2, action="append", default=[], metavar=("FAMILY", "MM"),
+                help="mm added to the final MT of one device family (after smoothing)")
 ap.add_argument("--out", required=True)
 a = ap.parse_args()
 
@@ -122,6 +124,8 @@ out["mt_mm"] = out["mt_mm"] * a.mt_scale + a.mt_offset
 out["fl_mm"] *= a.fl_scale
 for t in T:
     out[t] = (1 - a.alpha) * out[t] + a.alpha * out.groupby(g)[t].transform("median")
+for fp, mm in a.fam_mt_offset:
+    out.loc[fam.str.startswith(fp), "mt_mm"] += float(mm)
 for fp, k in a.fam_fl_scale:
     out.loc[fam.str.startswith(fp), "fl_mm"] *= float(k)
 for fp, rr, tg in a.aniso:  # true angle: tan = R * tan(pixel angle); true length: L_px / sqrt(R^2 cos^2 + sin^2)
