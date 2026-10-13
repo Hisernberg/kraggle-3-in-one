@@ -331,3 +331,16 @@ Rank 9 (1st 0.22868, 3rd 0.23371, 5th 0.24077).
 - Telemed native exports and h512 have square pixels; the stretched Telemed screenshots (left_ticks) were labelled
   as provided (pixel geometry).
 Public rank 1 (2nd 0.22084, 3rd 0.22682).
+
+## Day 17 (2026-10-13): per-device MT levels, best 0.21437 (public rank 1)
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S1 | Telemed FL x1.02 | 0.2178 (Telemed FL is centred) |
+| **S2** | **Telemed MT -0.5 mm** | **0.21437 (new best)** |
+| S3 | Juniper MT -0.2 mm | 0.21664 (Juniper MT is centred) |
+
+- Host (topic 748126): the labels were scaled with the vertical scale bars only, PA is measured against the lower
+  aponeurosis, and the public/private split is random (so device-level corrections carry over to the private split).
+- Telemed MT was ~0.45 mm thick (labels sit about halfway between our inner edges and Vera); other devices' MT levels
+  are centred. Two slots left unused (no card with evidence).
+Public rank 1 (2nd 0.22084, 3rd 0.22102).
