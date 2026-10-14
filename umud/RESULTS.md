@@ -344,3 +344,18 @@ Public rank 1 (2nd 0.22084, 3rd 0.22682).
 - Telemed MT was ~0.45 mm thick (labels sit about halfway between our inner edges and Vera); other devices' MT levels
   are centred. Two slots left unused (no card with evidence).
 Public rank 1 (2nd 0.22084, 3rd 0.22102).
+
+## Day 18 (2026-10-14): Lumify weights after the geometry fix, best 0.21127 (public rank 1)
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S1 | gray853 / h512 FL x0.87 / x0.92 (physics ratio) | 0.22477 (ratio unreliable there) |
+| S2 | gray853 / h512 FL x1.06 | 0.2144 (flat: FL ~centred) |
+| S3 | Telemed-device (left_ticks + Telemed) PA +0.6 deg | 0.221 |
+| S4 | Telemed-device PA -0.4 deg | 0.21658 (both sides lose: centred) |
+| **S5** | **Lumify PA pipeline weight 0.30 -> 0.65, Lumify mean PA kept** | **0.21127 (new best)** |
+
+- The Lumify-specific weights were tuned before the geometry fix; leaning toward Vera then also moved the level. With
+  the level corrected separately, the global PA weight is better for Lumify too (-0.0031). The FL weight is next.
+- One-sided level probes cannot separate bias and spread (S3 alone suggested a 0.55 deg bias; S4 showed it is
+  centred with tight errors).
+Public rank 1 (2nd 0.21805, 3rd 0.22102).

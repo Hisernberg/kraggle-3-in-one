@@ -1,6 +1,6 @@
 {
- "best_score": 0.21437,
- "best_name": "d17_S2_telmt05",
+ "best_score": 0.21127,
+ "best_name": "d18_S5_lumpaw065",
  "best_args": [
   "--w",
   "0.65",
@@ -20,12 +20,12 @@
   "--sanity",
   "--fam-w",
   "lumify_png",
-  "0.30",
+  "0.65",
   "0.15",
   "1.0",
   "--fam-pa-offset",
   "lumify_png",
-  "1.0392",
+  "-1.1200",
   "--row-w",
   "daily/inputs/roww_d12s4.csv",
   "--fl-scale",
@@ -52,6 +52,7 @@
   "-0.5"
  ],
  "settled": [
+  "d18: small-family (gray853/h512) FL: x0.87/0.92 +0.0104, x1.06 flat -> physics ratio unreliable there, FL ~centred; Telemed-device PA level: +0.6 +0.0066, -0.4 +0.0022 -> centred (b ~0.6 deg); Lumify PA weight 0.30 -> 0.65 level-matched -0.0031 (the low weight compensated the old geometry bias)",
   "d17: host (topic 748126): labels scaled with the vertical scale bars only; PA between the lower aponeurosis and the extrapolated fascicle; random public/private split",
   "d17: Telemed FL x1.02 +0.0012 (centred); Telemed MT -0.5 -0.0022 (median error +0.4..0.5 mm, vertex); Juniper MT -0.2 +0.0023 (centred) -> MT family levels done",
   "d16: non-square pixels: Siemens Juniper (12L3 aperture 51.3 mm -> R 1.12) and Philips Lumify (L12-4 aperture 34 mm -> R 0.841) labels are in TRUE geometry: Juniper PA aniso R 1.10 -0.0168, R 1.12 -0.0011 (vertex); Lumify PA R 0.841 -0.0121, trimmed to 0.87 -0.0007; Lumify FL x1.10 -0.0137 (vertex ~x1.10). Telemed native 1088x644 and h512 have square pixels; left_ticks (stretched Telemed screenshots) labels use pixel geometry",
@@ -103,9 +104,8 @@
   "public LB ~103 rows (~1/3); metric additive per target: tune one target per shot"
  ],
  "queue": [
-  "final selection (due 2026-11-07): A = best public (d17_S2_telmt05); B = hedge (candidates in d18.md)",
-  "gray853 (12 rows): scale from lateral ticks only; MT assumes square pixels (no evidence either way)",
-  "daily: new forum topics / notebooks; unused slots are fine",
-  "pending user decision: human test-set measurements (declared external data)"
+  "d19 S1: Lumify FL weight 0.15 -> 0.33, level-matched (same mechanism as d18 S5)",
+  "final selection (due 2026-11-07): A = best public; B = hedge",
+  "daily: new forum topics / notebooks; unused slots are fine"
  ]
 }
