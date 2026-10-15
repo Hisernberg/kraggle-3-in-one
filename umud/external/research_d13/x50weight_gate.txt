@@ -1,0 +1,18 @@
+
+=== pa_deg: debiased MAE per set (paired, identical rows); CI of mean(|e_cand| - |e_pair|)
+  osf    n= 35 pair=0.912 w12=0.936 x50=0.974 | w12-pair +0.024 [-0.018,+0.065] ns | x50-pair +0.063 [-0.024,+0.143] ns
+  neuage n=175 pair=2.404 w12=2.476 x50=2.485 | w12-pair +0.072 [-0.008,+0.209] ns | x50-pair +0.081 [-0.010,+0.224] ns
+  gm     n= 84 pair=0.839 w12=0.790 x50=0.804 | w12-pair -0.049 [-0.094,-0.005] BETTER | x50-pair -0.035 [-0.086,+0.017] ns
+
+=== fl_mm: debiased MAE per set (paired, identical rows); CI of mean(|e_cand| - |e_pair|)
+  osf    n= 35 pair=3.532 w12=3.609 x50=3.813 | w12-pair +0.077 [-0.195,+0.354] ns | x50-pair +0.281 [-0.092,+0.672] ns
+  neuage n=172 pair=15.439 w12=15.657 x50=15.402 | w12-pair +0.218 [-0.091,+0.530] ns | x50-pair -0.037 [-1.090,+0.778] ns
+  gm     n= 84 pair=2.492 w12=2.521 x50=2.574 | w12-pair +0.029 [-0.078,+0.141] ns | x50-pair +0.082 [-0.080,+0.246] ns
+
+=== OSF blend sim vs DLTrack (both debiased), score units (PA/6, FL/12)
+  pair   pa_deg: n=35 at live w=0.62: 0.1076  best w=0.62: 0.1076  pipe alone 0.1520  err corr -0.25
+  pair   fl_mm: n=35 at live w=0.31: 0.2489  best w=0.58: 0.2243  pipe alone 0.2943  err corr +0.09
+  w12    pa_deg: n=35 at live w=0.62: 0.1069  best w=0.60: 0.1065  pipe alone 0.1560  err corr -0.26
+  w12    fl_mm: n=35 at live w=0.31: 0.2464  best w=0.58: 0.2249  pipe alone 0.3007  err corr +0.07
+  x50    pa_deg: n=35 at live w=0.62: 0.1091  best w=0.62: 0.1091  pipe alone 0.1624  err corr -0.26
+  x50    fl_mm: n=35 at live w=0.31: 0.2522  best w=0.52: 0.2376  pipe alone 0.3178  err corr +0.08

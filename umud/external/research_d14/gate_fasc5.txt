@@ -1,0 +1,14 @@
+
+=== pa_deg: debiased MAE (paired, identical rows); CI of mean(|e_cand| - |e_pair|)
+  osf    n= 35 pair=0.912 r34x50x50s7=0.918 x50x50s7=1.023 | r34x50x50s7 +0.007 [-0.065,+0.083] ns | x50x50s7 +0.111 [+0.001,+0.234] WORSE
+  neuage n=175 pair=2.404 r34x50x50s7=2.424 x50x50s7=2.470 | r34x50x50s7 +0.020 [-0.024,+0.061] ns | x50x50s7 +0.066 [+0.022,+0.113] WORSE
+  gm     n= 84 pair=0.839 r34x50x50s7=0.843 x50x50s7=0.832 | r34x50x50s7 +0.004 [-0.039,+0.048] ns | x50x50s7 -0.007 [-0.052,+0.041] ns
+
+=== fl_mm: debiased MAE (paired, identical rows); CI of mean(|e_cand| - |e_pair|)
+  osf    n= 35 pair=3.532 r34x50x50s7=3.566 x50x50s7=3.763 | r34x50x50s7 +0.034 [-0.149,+0.214] ns | x50x50s7 +0.231 [-0.099,+0.562] ns
+  neuage n=172 pair=15.439 r34x50x50s7=14.805 x50x50s7=15.229 | r34x50x50s7 -0.633 [-1.775,+0.241] ns | x50x50s7 -0.210 [-1.209,+0.484] ns
+  gm     n= 84 pair=2.492 r34x50x50s7=2.439 x50x50s7=2.476 | r34x50x50s7 -0.053 [-0.185,+0.078] ns | x50x50s7 -0.016 [-0.187,+0.156] ns
+
+=== mt_mm: debiased MAE (paired, identical rows); CI of mean(|e_cand| - |e_pair|)
+  osf    n= 35 pair=0.500 r34x50x50s7=0.500 x50x50s7=0.500 | r34x50x50s7 +0.000 [+0.000,+0.000] ns | x50x50s7 +0.000 [+0.000,+0.000] ns
+  neuage n=224 pair=2.665 r34x50x50s7=2.665 x50x50s7=2.665 | r34x50x50s7 +0.000 [+0.000,+0.000] ns | x50x50s7 +0.000 [+0.000,+0.000] ns

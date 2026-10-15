@@ -1,0 +1,10 @@
+=== pa_deg: debiased MAE (paired, identical rows); CI of mean(|e_cand| - |e_three|)
+  osf    n= 35 three=0.918 four=0.908 pair=0.912 | four -0.011 [-0.103,+0.069] ns | pair -0.007 [-0.083,+0.068] ns
+  neuage n=174 three=2.392 four=2.401 pair=2.376 | four +0.008 [-0.025,+0.043] ns | pair -0.017 [-0.057,+0.024] ns
+  gm     n= 84 three=0.843 four=0.877 pair=0.839 | four +0.034 [-0.010,+0.090] ns | pair -0.004 [-0.047,+0.038] ns
+
+=== fl_mm: debiased MAE (paired, identical rows); CI of mean(|e_cand| - |e_three|)
+  osf    n= 35 three=3.566 four=3.557 pair=3.532 | four -0.009 [-0.207,+0.194] ns | pair -0.034 [-0.209,+0.154] ns
+  neuage n=172 three=14.805 four=15.073 pair=15.439 | four +0.267 [-0.044,+0.601] ns | pair +0.633 [-0.271,+1.794] ns
+  gm     n= 84 three=2.439 four=2.437 pair=2.492 | four -0.001 [-0.102,+0.095] ns | pair +0.053 [-0.081,+0.184] ns
+

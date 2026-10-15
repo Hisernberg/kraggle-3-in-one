@@ -260,3 +260,102 @@ Research before the day (no submissions): protocol-matched FL aggregations, MT c
 - The PA weight optimum moved up after the PA estimator became less noisy (d8/d9); next test 0.68.
 Rank 14 (1st 0.23364, 3rd 0.23780, 5th 0.25309).
 
+
+## Day 13 (2026-10-09): resnext50 fascicle model, best 0.29594 (rank 13)
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S1 | PA pipeline weight 0.62 -> 0.68, offset re-matched | 0.29961 (flat; vertex 0.632, keep 0.62) |
+| **S2** | **pipeline PA from the resnet34 + resnext50 (640x960) fascicle pair instead of resnet34 + effb3, level-matched** | **0.29644 (-0.0023)** |
+| S3 | S2 + pipeline FL from the same pair, level-matched | 0.29601 (-0.0004, flat by rule) |
+| S4 | S2 + PA pipeline weight 0.65, level-matched | 0.29637 (-0.00007, adopted) |
+| **S5** | **S4 PA + S3 FL (score predicted 0.29594 by per-target additivity)** | **0.29594 (new best)** |
+
+- A third fascicle model (resnext50 at 640x960, Kaggle GPU) failed the strict offline gate (only the GM video
+  significant), but replacing effb3 with it improved PA in direction on all three expert sets. On the LB the PA swap
+  gained more than predicted (-0.0023): the test images (mostly cine clips) behave like the GM video.
+- The metric is a sum of per-target MAEs, so single-target shots combine exactly: S5 = S4 + S3's FL effect, scored
+  as predicted to the fifth decimal. This makes the best combination selectable at the end at no risk.
+- The top of the board (~0.23-0.24) matches rater-level test measurements blended with a pipeline, which the host
+  allows as declared external data for calibration (topic 690868).
+- Training for the next days: resnet34 fascicles at 640x960 (resolution vs encoder) and resnext50 aponeuroses at
+  640x960 (MT).
+Rank 13 (1st 0.22868, 3rd 0.23371, 5th 0.24463).
+
+## Day 14 (2026-10-10): three-map ensemble and FL weight re-tune, best 0.29433 (rank 14)
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S1 | final MT -0.2 mm (first MT level test) | 0.29968 (worse: MT level is centred) |
+| **S2** | **FL from r34 + x50 + x50 (seed 7) maps** | **0.29477 (-0.0012)** |
+| **S3** | **PA from the same three maps** | **0.29455 (-0.0002)** |
+| **S4** | **FL pipeline weight 0.31 -> 0.34** | **0.29434 (-0.0002)** |
+| **S5** | **FL pipeline weight 0.33 (fitted vertex)** | **0.29433 (new best)** |
+
+- MT: the -0.2 mm shift isolates the MT term (per-target additivity): the MT median error is ~0 and the public MT
+  MAE ~0.5 mm. MT level, slope, residual clip and gross rows are settled.
+- The test set rewards more fascicle maps more than the expert sets predict (third and fourth time), up to three
+  maps; a fourth map (another x50 seed or r34 at 640x960) and a resnext50 aponeurosis model fail offline.
+- Less noisy FL moved the FL weight optimum from ~0.31 to ~0.33, as the PA weight moved on day 12.
+- The container was recycled overnight; the environment and expert sets were rebuilt and the live pipeline reproduces
+  exactly.
+Rank 14 (1st 0.22868, 3rd 0.23371, 5th 0.24077).
+
+## Day 15 (2026-10-11): non-square pixels and per-family FL levels, best 0.26097 (rank 9)
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S1 | left_ticks FL converted to true geometry (lateral 134.5 vs depth 148.1 px per 10 mm) | 0.3156 (labels use pixel geometry there) |
+| **S2** | **left_ticks FL x1.016 (S1's loss implied a -1.8 mm median error)** | **0.29249** |
+| **S3** | **Juniper FL x0.984 (VL physics ratio 1.087 vs NeuAge VL experts 1.066)** | **0.2833** |
+| **S4** | **Juniper FL x0.95** | **0.26697** |
+| **S5** | **Juniper FL x0.92 (fitted vertex)** | **0.26097 (new best)** |
+
+- A new forum topic asked about "stretched 1200x800 images". Both 1200x800 families have non-square pixels. For the
+  Telemed screenshots (left_ticks) the labels share the pixel geometry; for the Siemens Juniper images (12L3 aperture
+  51.3 mm -> R ~1.12) the LB optimum FL (x0.92) matches true geometry (x0.90): the Juniper labels look native.
+- A large diagnostic shift plus a Laplace fit turns one LB probe into a family-level bias estimate; the follow-up
+  shots landed as predicted. Total day gain -0.0334 (rank 14 -> 9).
+Rank 9 (1st 0.22868, 3rd 0.23371, 5th 0.24077).
+
+## Day 16 (2026-10-12): true-geometry corrections for two devices -> 0.21657, PUBLIC RANK 1
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| **S1** | **Juniper PA converted to true geometry (R 1.10)** | **0.2442** |
+| **S2** | **Lumify PA converted to true geometry (R 0.841, L12-4 aperture 34 mm)** | **0.23215** |
+| **S3** | **Lumify FL x1.10** | **0.21841 (rank 1)** |
+| **S4** | **Juniper PA at the physical R 1.12** | **0.21731** |
+| **S5** | **Lumify PA trimmed to R 0.87 (Laplace fit of S2)** | **0.21657 (new best)** |
+
+- The Siemens Juniper and Philips Lumify test images (149 of 309 rows) have non-square pixels (the B-mode area spans a
+  constant 57.5 / 28.6 mm in vertical-scale units at every depth, while the probe apertures are 51.3 / 34 mm). Their
+  labels are in true geometry; the pipeline (and the Vera reference) measure in pixels. Correcting PA (angle) and FL
+  (length) of these two families moved the public score from 0.26097 to 0.21657 in one day.
+- Telemed native exports and h512 have square pixels; the stretched Telemed screenshots (left_ticks) were labelled
+  as provided (pixel geometry).
+Public rank 1 (2nd 0.22084, 3rd 0.22682).
+
+## Day 17 (2026-10-13): per-device MT levels, best 0.21437 (public rank 1)
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S1 | Telemed FL x1.02 | 0.2178 (Telemed FL is centred) |
+| **S2** | **Telemed MT -0.5 mm** | **0.21437 (new best)** |
+| S3 | Juniper MT -0.2 mm | 0.21664 (Juniper MT is centred) |
+
+- Host (topic 748126): the labels were scaled with the vertical scale bars only, PA is measured against the lower
+  aponeurosis, and the public/private split is random (so device-level corrections carry over to the private split).
+- Telemed MT was ~0.45 mm thick (labels sit about halfway between our inner edges and Vera); other devices' MT levels
+  are centred. Two slots left unused (no card with evidence).
+Public rank 1 (2nd 0.22084, 3rd 0.22102).
+
+## Day 18 (2026-10-14): Lumify weights after the geometry fix, best 0.21127 (public rank 1)
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S1 | gray853 / h512 FL x0.87 / x0.92 (physics ratio) | 0.22477 (ratio unreliable there) |
+| S2 | gray853 / h512 FL x1.06 | 0.2144 (flat: FL ~centred) |
+| S3 | Telemed-device (left_ticks + Telemed) PA +0.6 deg | 0.221 |
+| S4 | Telemed-device PA -0.4 deg | 0.21658 (both sides lose: centred) |
+| **S5** | **Lumify PA pipeline weight 0.30 -> 0.65, Lumify mean PA kept** | **0.21127 (new best)** |
+
+- The Lumify-specific weights were tuned before the geometry fix; leaning toward Vera then also moved the level. With
+  the level corrected separately, the global PA weight is better for Lumify too (-0.0031). The FL weight is next.
+- One-sided level probes cannot separate bias and spread (S3 alone suggested a 0.55 deg bias; S4 showed it is
+  centred with tight errors).
+Public rank 1 (2nd 0.21805, 3rd 0.22102).

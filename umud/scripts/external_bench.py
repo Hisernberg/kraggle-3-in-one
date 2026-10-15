@@ -66,7 +66,9 @@ def infer(a):
     import torch
     from umud import seg
     torch.set_num_threads(4)
-    models = {k: seg.load_model(Path(a.weights), k) for k in ("apo", "fasc")}
+    if a.size:  # network input HxW; match the size the weights were trained at
+        seg.IN_H, seg.IN_W = (int(v) for v in a.size.split("x"))
+    models = {k: seg.load_model(Path(a.weights), k) for k in a.kinds.split(",")}
     out = Path(a.out)
     (out / "probs").mkdir(parents=True, exist_ok=True)
     rows = []
@@ -132,6 +134,8 @@ def main():
     ap.add_argument("--weights", default=None)
     ap.add_argument("--out", required=True)
     ap.add_argument("--ms", action="store_true", help="multi-scale TTA (0.875 / 1 / 1.125)")
+    ap.add_argument("--size", default=None, help="network input HxW (default: umud.seg.IN_H x IN_W)")
+    ap.add_argument("--kinds", default="apo,fasc", help="models to run, e.g. fasc only")
     ap.add_argument("--test-data", default=None, help="also infer the competition test images (B-mode crop) into out")
     a = ap.parse_args()
     Path(a.out).mkdir(parents=True, exist_ok=True)
