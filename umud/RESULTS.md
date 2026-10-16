@@ -359,3 +359,21 @@ Public rank 1 (2nd 0.22084, 3rd 0.22102).
 - One-sided level probes cannot separate bias and spread (S3 alone suggested a 0.55 deg bias; S4 showed it is
   centred with tight errors).
 Public rank 1 (2nd 0.21805, 3rd 0.22102).
+
+## Day 19 (2026-10-15): no submissions (api.kaggle.com denied by the environment's network policy)
+
+## Day 20 (2026-10-16): global weights after the geometry fix, best 0.20863 (public rank 1)
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| **S1** | **Lumify FL pipeline weight 0.15 -> 0.33, Lumify mean FL kept** | **0.20889 (new best)** |
+| S2 | global FL pipeline weight 0.33 -> 0.40, every family's mean FL kept | 0.21404 (weight settled at 0.33) |
+| S3 | final-selection hedge B: best without left_ticks FL x1.016 and Telemed MT -0.5 | 0.21293 (exactly as predicted) |
+| S4 | per-row angle-dependent true-geometry FL for Juniper / Lumify, family means kept | 0.20911 (flat factors stay) |
+| **S5** | **gray853 / h512 FL x1.03 (midpoint of the flat d18 x1.0 / x1.06 pair)** | **0.20863 (new best)** |
+
+- The Lumify-specific FL weight compensated the old geometry bias, like the PA weight on day 18. The global FL
+  weight did not: level-matched 0.40 cost +0.19 mm public FL MAE.
+- Per-row additivity makes a hedge's public score exactly predictable (S3: 0.21293 predicted and observed).
+- Summed |error| is convex in a per-family scale or shift. Two flat probes on unchanged rows therefore bound the
+  midpoint (S5 could lose at most 0.000015).
+Public rank 1 (2nd 0.21478, 3rd 0.21805).
