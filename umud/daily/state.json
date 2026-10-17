@@ -1,6 +1,6 @@
 {
- "best_score": 0.20863,
- "best_name": "d20_S5_smallfl103",
+ "best_score": 0.2064,
+ "best_name": "d21_S5_junpaw080",
  "best_args": [
   "--w",
   "0.65",
@@ -20,8 +20,8 @@
   "--sanity",
   "--fam-w",
   "lumify_png",
-  "0.65",
-  "0.33",
+  "0.80",
+  "0.45",
   "1.0",
   "--fam-pa-offset",
   "lumify_png",
@@ -46,7 +46,7 @@
   "pa",
   "--fam-fl-scale",
   "lumify_png",
-  "1.11144",
+  "1.11920",
   "--fam-mt-offset",
   "telemed_644",
   "-0.5",
@@ -55,9 +55,21 @@
   "1.03",
   "--fam-fl-scale",
   "h512",
-  "1.03"
+  "1.03",
+  "--fam-pa-final",
+  "lumify_png",
+  "-0.2715",
+  "--fam-w",
+  "juniper_right",
+  "0.80",
+  "0.33",
+  "1.0",
+  "--fam-pa-final",
+  "juniper_right",
+  "-0.1193"
  ],
  "settled": [
+  "d21: level-matched weights per family: global PA 0.62 +0.00014 (joint vertex ~0.641); Lumify FL 0.45 -0.00051 (vertex ~0.46); Lumify PA 0.80 -0.00072, 1.0 +0.00076 (V-shaped, vertex 0.8 +/- 0.07); Juniper PA 0.80 -0.0010. Refined Laplace fits: Juniper FL vertex x0.922 (b 2.98 mm), Telemed-device PA centred (m +0.05, b 0.56). AnatomyNet FL = Vera + 0.5 mm residual (r 0.06 with ours): no third source",
   "d20: Lumify FL weight 0.15 -> 0.33 level-matched -0.0024 (pre-geometry weight compensated the bias); global FL weight 0.40 level-matched +0.0052 (vertex 0.30-0.33, curvature steeper than the old unmatched probes) -> FL weight settled at 0.33; per-row angle-dependent true-geometry FL for Juniper/Lumify (level-matched) +0.00022 -> flat factors stay; gray853/h512 FL x1.03 -0.00026 (convexity-bounded midpoint of the flat d18 x1.0/x1.06 pair); hedge B (best minus left_ticks FL x1.016 and Telemed MT -0.5) = 0.21293 exactly as predicted by additivity -> on record for 11-07",
   "d18: small-family (gray853/h512) FL: x0.87/0.92 +0.0104, x1.06 flat -> physics ratio unreliable there, FL ~centred; Telemed-device PA level: +0.6 +0.0066, -0.4 +0.0022 -> centred (b ~0.6 deg); Lumify PA weight 0.30 -> 0.65 level-matched -0.0031 (the low weight compensated the old geometry bias)",
   "d17: host (topic 748126): labels scaled with the vertical scale bars only; PA between the lower aponeurosis and the extrapolated fascicle; random public/private split",
@@ -111,8 +123,10 @@
   "public LB ~103 rows (~1/3); metric additive per target: tune one target per shot"
  ],
  "queue": [
-  "d21: research day: no card meets the evidence bar (LB level/weight levers settled; Juniper FL vertex x0.92 from the 3-point d15 fit; family MT levels centred except Telemed); slots stay unused unless a new forum topic/notebook or offline result gives evidence",
-  "final selection (due 2026-11-07): A = best public (d20_S5_smallfl103, 0.20863); B = d20_S3_hedgeB (0.21293; best minus the three LB-only family levels; rebuild + resubmit only if A changes outside those levels)",
-  "daily: new forum topics / notebooks; LB watch; unused slots are fine"
+  "d22 S1 (built: d22_S1_junflw045): Juniper FL weight 0.33 -> 0.45, Juniper mean FL kept (scale 0.91701); analog of Lumify FL 0.33 -> 0.45 (-0.00051)",
+  "d22: PA weight for the remaining families (left_ticks, Telemed, gray853, h512) below 0.65 (e.g. 0.58), level-matched: the joint vertex 0.641 included Juniper, which prefers >= 0.80",
+  "d22: Juniper PA weight 0.90 (bracket above 0.80; Lumify was V-shaped at 0.80)",
+  "final selection (due 2026-11-07): A = best public (d21_S5_junpaw080, 0.2064); B = hedge without the three LB-only family levels: rebuilt as daily/out/d22_hedgeB (predicted 0.21070 by additivity); decide whether B keeps the d21 weights (level-matched, per device) and submit it once A is final",
+  "daily: new forum topics / notebooks; LB watch"
  ]
 }

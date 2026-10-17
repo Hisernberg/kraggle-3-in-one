@@ -377,3 +377,18 @@ Public rank 1 (2nd 0.21805, 3rd 0.22102).
 - Summed |error| is convex in a per-family scale or shift. Two flat probes on unchanged rows therefore bound the
   midpoint (S5 could lose at most 0.000015).
 Public rank 1 (2nd 0.21478, 3rd 0.21805).
+
+## Day 21 (2026-10-17): device-specific weights after the geometry fix, best 0.2064 (public rank 1)
+| Shot | Change vs best (device mean kept in every shot) | Public LB |
+|---|---|---|
+| S1 | global PA pipeline weight 0.65 -> 0.62 (Lumify kept) | 0.20877 (vertex ~0.641) |
+| **S2** | **Lumify FL weight 0.33 -> 0.45** | **0.20812** |
+| **S3** | **Lumify PA weight 0.65 -> 0.80** | **0.2074** |
+| S4 | Lumify PA weight 1.0 | 0.20816 (V-shaped, vertex ~0.80) |
+| **S5** | **Juniper PA weight 0.65 -> 0.80** | **0.2064 (new best)** |
+
+- On both non-square-pixel devices (Philips Lumify, Siemens Juniper), the pipeline beats the Vera reference by
+  more than the global weights assume, once the geometry is corrected.
+- All shots touched disjoint target x device cells, so their effects combine exactly.
+- Refined row-level Laplace fits confirm the earlier level vertices: Juniper FL x0.922; Telemed-device PA centred.
+Public rank 1.
