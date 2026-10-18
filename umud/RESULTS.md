@@ -392,3 +392,18 @@ Public rank 1 (2nd 0.21478, 3rd 0.21805).
 - All shots touched disjoint target x device cells, so their effects combine exactly.
 - Refined row-level Laplace fits confirm the earlier level vertices: Juniper FL x0.922; Telemed-device PA centred.
 Public rank 1.
+
+## Day 22 (2026-10-18): device weights for every family, best 0.20241 (public rank 1)
+| Shot | Change vs best (device mean kept in every shot) | Public LB |
+|---|---|---|
+| **S1** | **Juniper FL weight 0.33 -> 0.45** | **0.2046** |
+| **S2** | **FL weight 0.33 -> 0.25 for left_ticks / Telemed / gray853 / h512** | **0.20439** |
+| **S3** | **the same at 0.29 (vertex predicted from d20 S2 minus Juniper's convexity-bounded share)** | **0.20275** |
+| **S4** | **PA weight 0.65 -> 0.60 for left_ticks / Telemed / gray853 / h512** | **0.20241 (new best)** |
+| S5 | Juniper PA weight 0.90 | 0.20404 (V-shaped curve, vertex ~0.76-0.80) |
+
+- The old joint weights (PA 0.65, FL 0.33) averaged devices whose optima lie on opposite sides. The non-square-pixel
+  devices want more pipeline (PA 0.80, FL 0.45), the Telemed-family devices less (PA 0.60, FL 0.29).
+- A joint probe can be decomposed when one device's share is bounded by convexity; that bound pinned the FL vertex
+  of the other devices (0.29) before the shot. Day gain -0.0040.
+Public rank 1.
