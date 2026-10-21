@@ -1,0 +1,37 @@
+# Lessons — mistakes, learnings, improvements (append-only)
+
+> One line per lesson, newest section per day. Sources: daily cards, RESULTS.md, kernel logs, LB probes.
+> The leviathan ratchet rule applies to process too: never silently repeat a mistake.
+
+## 2026-10-21 (day 23 + evening session)
+
+**Mistakes made and fixed:**
+1. `daily/run.py submit` on a fresh container hung 10 min polling a missing CSV — `daily/out/` is gitignored, so a
+   "built" submission listed in the queue does NOT exist after a container recycle. **Fix: always `run.py build` before
+   `submit`; verify the CSV exists and diff-check it against the best before every submission.**
+2. Family-flag name mismatch (`left_ticks` vs the actual flag `left_ticks_800`) produced a wrong level-match scale in a
+   first build. **Fix: always resolve family flags from the actual args (`--fam-fl-scale <flag>`), not from family stems.**
+3. Two-step level-matching must rebuild from the SAME base args as the reference (S5 step 1 was built from state args
+   instead of S4 args → wrong scales; caught by the final diff check). **Fix: the diff check after every build is mandatory.**
+4. Kernel whack-a-mole (4 failed pushes): nested repo path (`sys.path` must point at the repo ROOT that CONTAINS the
+   package), GUI deps imported by `__init__.py` (bypass with stub packages + importlib), Keras 3 rejecting TF2.x H5
+   (`TF_USE_LEGACY_KERAS=1` + `tf-keras`), and test images being 251 tif + 58 png (glob both). **Fix: reproduce the
+   import chain locally before pushing a kernel; assert expected file counts in the kernel.**
+
+**Learnings (verified):**
+1. Every public reference (Vera 0.45134, variational 0.49332, eas "LB 0.374") is a hard-coded CSV disguised as a
+   notebook; the variational one embeds a DLTrack prior whose PA is EXACTLY Vera's PA. There is no re-runnable public
+   member — DL_Track_US 0.3.1 (host-authored, Apache-2.0, weights on OSF 7mjsc) is the only viable one.
+2. The host's prize criterion is "re-runnable on a new dataset where no leaderboard exists" (topic 744191 + Overview);
+   manual blend weights are explicitly allowed. LB-probed automatic weighting is not.
+3. Per-target additivity held to the 5th decimal again (Juniper PA vertex predicted −0.00015, measured −0.00014).
+4. Expert-set biases failed to transfer to test for the 4th time (d23 S3) — the offline gates exist for a reason.
+5. Curvature bounds from a single level-matched probe (S3) bound ALL remaining family-weight gains <0.0001 —
+   the blend-weight space is exhausted; further Track-A gains need a better estimator, not different weights.
+
+**Improvements shipped:**
+- `umud/mission/` war room (dossier + ledger backfilled with the d22/d23 experiments).
+- `umud/kaggle/build_dltrack_kernel.py` — self-contained DLTrack re-run kernel (OSF weights, DLTrack v0.3.1 code,
+  umud scale fallback, mask dumping). EXP-2401.
+- `umud/scripts/build_dl_blend.py` — automated two-pass level-matched anchor-swap builder (ends the manual 2-step dance).
+- Pre-registered d24 cards (hedge B S1 + gated DL-rerun shots S2–S5).

@@ -20,7 +20,9 @@ ROOT = Path(__file__).resolve().parents[1]
 KERNEL = r'''
 # umud EXP-2401: DL_Track_US 0.3.1 re-run (prize-eligible member)
 # Apache-2.0 models by the competition host (Paul Ritsche); DLTrack geometry defaults; umud scale fallback.
-import os, sys, glob, json, subprocess, time, shutil
+import os
+os.environ["TF_USE_LEGACY_KERAS"] = "1"  # the .h5 weights are TF2.x/Keras2; Keras 3 rejects them
+import sys, glob, json, subprocess, time, shutil
 import numpy as np
 import pandas as pd
 import cv2
@@ -28,6 +30,9 @@ import cv2
 OUT = "/kaggle/working"
 os.makedirs(f"{OUT}/masks", exist_ok=True)
 t0 = time.time()
+
+# ---- 0. deps: legacy keras (h5 loading) + GUI deps needed at import time ----
+subprocess.run([sys.executable, "-m", "pip", "install", "-q", "tf-keras", "customtkinter", "darkdetect"], check=True)
 
 # ---- 1. DLTrack code (tag v0.3.1) ----
 REPO = "/kaggle/tmp/dltrack_repo"
@@ -77,8 +82,20 @@ img_fasc = [n for n in h5s if "fasc" in n.lower() and "ifss" not in n.lower()]  
 fasc_name = pick(img_fasc, "fasc-vgg") or (img_fasc[0] if img_fasc else pick(h5s, "vgg") or h5s[-1])
 print("apo model:", apo_name, "| fasc model:", fasc_name, flush=True)
 
-# ---- 3. DLTrack imports ----
-from DL_Track_US.gui_helpers import calculate_architecture as ca
+# ---- 3. DLTrack imports (bypass the package __init__: it drags in GUI deps) ----
+import types
+import importlib.util
+
+def _load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[name] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+pkg = types.ModuleType("DL_Track_US"); pkg.__path__ = [REPO + "/DL_Track_US"]; sys.modules["DL_Track_US"] = pkg
+gh = types.ModuleType("DL_Track_US.gui_helpers"); gh.__path__ = [REPO + "/DL_Track_US/gui_helpers"]; sys.modules["DL_Track_US.gui_helpers"] = gh
+ca = _load("DL_Track_US.gui_helpers.calculate_architecture", REPO + "/DL_Track_US/gui_helpers/calculate_architecture.py")
 from DL_Track_US.gui_helpers.do_calculations import doCalculations
 from DL_Track_US.gui_helpers.calibrate import calibrateDistanceStatic
 
@@ -91,8 +108,8 @@ import umud_scale as us
 
 # ---- 4. data ----
 DATA = sorted(glob.glob("/kaggle/input/**/test_images_v2/test_set_v2", recursive=True))[0]
-files = sorted(glob.glob(DATA + "/*.tif"))
-print("test images:", len(files), flush=True)
+files = sorted(glob.glob(DATA + "/*.tif") + glob.glob(DATA + "/*.png"))
+print("test images:", len(files), "(tif", len(glob.glob(DATA + '/*.tif')), "+ png", len(glob.glob(DATA + '/*.png')), ")", flush=True)
 
 SETTINGS = json.load(open(REPO + "/DL_Track_US/gui_helpers/gui_files/settings.json"))
 model_apo = ca.tf.keras.models.load_model(
