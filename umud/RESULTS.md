@@ -407,3 +407,26 @@ Public rank 1.
 - A joint probe can be decomposed when one device's share is bounded by convexity; that bound pinned the FL vertex
   of the other devices (0.29) before the shot. Day gain -0.0040.
 Public rank 1.
+
+## Day 23 (2026-10-21): Juniper PA 0.75 -> 0.20227 (public rank 1); prize-eligibility research, re-runnable track opened
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S1 | Juniper FL weight 0.55 (was 0.45), mean kept | 0.20259 (+0.00018 -> settled at 0.45) |
+| **S2** | **Juniper PA weight 0.75 (was 0.80), mean kept** | **0.20227 (new best; vertex fit predicted -0.00015, observed -0.00014)** |
+| S3 | Telemed_644 FL weight 0.24 (was 0.29 joint), mean kept | 0.20283 (+0.00056 -> settled at 0.29) |
+| S4 | diagnostic: reference Vera -> DLTrack prior, level-matched | 0.22451 (eligibility price +0.0222) |
+| S5 | S4 with FL pipeline weight x0.7 | 0.23213 (refuted: DL anchor wants the Vera-calibrated weights) |
+
+- The per-family weight space is now exhausted: S3's cost implies Telemed FL curvature c~0.22, bounding every remaining
+  family-weight gain (incl. left_ticks) below 0.0001; S1 confirms Juniper FL at 0.45.
+- **Prize eligibility (research, no submission needed):** the Overview's compliance check requires the final submission
+  to be re-runnable on a new dataset without a leaderboard (host, topic 744191). Verified in the notebook sources: the
+  public Vera notebook (0.45134), the "variational ensemble" (0.49332) and the new "[LB 0.374] Geometry Over Masks"
+  notebook are ALL hard-coded CSVs - the variational one embeds a "DLTrack-US Reference Norms" table whose PA is exactly
+  Vera's PA. There is no re-runnable public member at Vera quality.
+- The re-runnable track: DL_Track_US 0.3.1 (host-authored, Apache-2.0, pip-installable) re-run on the test set as the
+  member; the level-matched blend with it starts at 0.22451 (S4). S5 shows the binding constraint is our pipeline's FL,
+  not the blend weights. Plan: re-run DLTrack in a GPU kernel, validate against the embedded prior, re-implement Vera's
+  seg-centerline MT correction re-runnably, then re-tune.
+- Submission helper note: `daily/run.py build` outputs are gitignored; a fresh container must rebuild before submitting
+  (the first submit attempt polled on a missing file for 10 min).
