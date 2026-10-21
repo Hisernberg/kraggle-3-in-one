@@ -53,9 +53,32 @@ Old schedule (dead since 2026-09-28, kept for reference): 00:07 daily chain, 12:
    (**Backup** below).
 
 ## Current best
-**`H17_og_v12v11.zip` = 0.87377** (2026-10-09). Day: H11P 0.87249 → H15b 0.87257 → H16b 0.87310 → H17 0.87377.
+**`J2_fdrecon.zip` = 0.88203** (2026-10-21). Line: H11P 0.87249 → (S2/O1/I5 public-blend line, another session, 2026-10-15..19) I5 0.88181 → J2 0.88203.
 
-**Final-pair recommendation (so far): H17 (public line) + H19 (private line = H17 + April adaptation).**
+**J-line base (this session, 2026-10-21).** The I5 recipe was reconstructed exactly from the restored
+tfb-work backup (H11P CSV), the yeashu public kernel output, and the documented T05/T08/O1 rules:
+state = 0.92 H11P + 0.08 public speed / 0.62 H11P + 0.38 public flow (submission_id join);
+onset rows = public (T08) + our v8 cells in the 5+6 safe windows (O1, +12/+15 cells); ongoing = H11P v5; ODME = L2proj.
+`J0_i5recon` scored **0.88181 = I5 exactly** (pipeline validated). Base file: `work/subs/I5_recon.csv`.
+
+| File | Public | What it is |
+|---|---|---|
+| `J2_fdrecon.zip` | **0.88203** | I5 + FD congested-branch flow reconciliation at v < 0.6·vf (267,543 dense state rows): q = v·w·kj/(v+w)·lanes. Restores q/v consistency after the 38% public flow blend. |
+| J5 gate 0.7 | 0.88183 | wider band loses (transition-zone flow risk) → vertex ≈ 0.6; try 0.55/0.65 next |
+
+**I5 decomposition (probes, for the endgame):** S_queue = 0.8170 (onset IoU 0.792 via P7 analog, ongoing IoU 0.842),
+0.35·S_state + 0.15·S_phys = 0.43796 (J4 queue-zero probe 0.63672), S_ODME ≈ 0.994 (S1). Headroom:
+S_queue +0.016, S_phys +0.015, S_state +0.002 (noise floor), S_ODME +0.001.
+
+**Final-pair recommendation (so far): J2 (public line) + the private-line analogue of J2 once the April adaptation is rebuilt.**
+
+**Session infra (2026-10-21):** fresh container. Data release extracted at `/tmp/my-project/data/kaggle_public`
+(29PB PolarFS — the root fs has a ~9.9GB quota with async reclaim, use it for anything big). Caches build there with
+`TFB_REL=/tmp/my-project/data/kaggle_public TFB_CACHE=/tmp/my-project/cache python3 -m trafficflow.data <panels>`.
+`submission_key.parquet` at `work/pub/` (submit.py reads it). yeashu public output compacted at `work/pub/pub_state.parquet` +
+`pub_queue.csv` + `pub_odme.csv`. Candidate builder: `scripts/build_candidate.py` / `build_j2.py`; verifier `scripts/verify_csv.py`;
+packer `scripts/pack.py`; env `scripts/env.sh`. Missing/restoreable artifacts: H11P CSV + state_ens_H11P.parquet + t1 models
+(deleted for disk; re-download from tfb-work dataset), t2 v12v11 components (must re-run t2/run_all.sh).
 
 | Line | File | Public | What it is |
 |---|---|---|---|

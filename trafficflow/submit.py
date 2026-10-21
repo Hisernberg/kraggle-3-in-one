@@ -36,6 +36,13 @@ class Checks:
 
 
 def load_key() -> pd.DataFrame:
+    kpq = REL.parent.parent / "work" / "pub" / "submission_key.parquet"
+    if kpq.exists():
+        k = pd.read_parquet(kpq)
+        for c in k.columns:
+            if c != "submission_id":
+                k[c] = k[c].fillna("").astype(str)
+        return k
     return pd.read_csv(KEY, dtype=str, keep_default_na=False)
 
 
@@ -43,7 +50,13 @@ def assemble(state: pd.DataFrame, queue: pd.DataFrame, odme: pd.DataFrame, out: 
              force: bool = False, note: str = "") -> Path:
     C = Checks()
     key = load_key()
-    sample = pd.read_csv(SAMPLE, usecols=["submission_id", "task"], dtype=str)
+    spq = REL.parent.parent / "work" / "pub" / "sample_submission.parquet"
+    if spq.exists():
+        sample = pd.read_parquet(spq, columns=["submission_id", "task"])
+        sample["submission_id"] = sample.submission_id.astype(str)
+        sample["task"] = sample.task.astype(str)
+    else:
+        sample = pd.read_csv(SAMPLE, usecols=["submission_id", "task"], dtype=str)
     C("key/sample same ids", (key.submission_id.values == sample.submission_id.values).all())
     sub = pd.DataFrame({"submission_id": key.submission_id.astype(np.int64), "task": key.task})
     for c in ("speed_kmh", "flow_vph", "queue_pred", "path_flow"):

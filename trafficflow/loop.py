@@ -35,8 +35,8 @@ COMP = "2026-ieee-big-data-traffic-flow-bench"
 DAILY = 5
 LAST_SUBMIT = dt.time(23, 45)
 DEADLINE = dt.datetime(2026, 11, 7, 6, 55)
-SUBS = Path("/home/user/work/subs")
-LB = Path("/home/user/research/lb")
+SUBS = Path(os.environ.get("TFB_WORK", "/home/user/work") + "/subs")
+LB = Path(os.environ.get("TFB_RESEARCH", "/home/user/research/lb"))
 LOG = Path(__file__).resolve().parent / "docs" / "lb_log.csv"
 CRITICAL = ["/home/user/data/kaggle_public/submission_key.csv", "/home/user/cache",
             "/home/user/work/t1/pred/state_full3.parquet", "/home/user/work/t2/lgb_v6.csv",
@@ -106,7 +106,7 @@ def forum(n: int = 3) -> list[str]:
 def status():
     now = utcnow()
     info = {"utc": now.strftime("%Y-%m-%d %H:%M"), "credentials": creds() or "MISSING",
-            "disk_free_gb": round(shutil.disk_usage("/home/user").free / 1e9, 1),
+            "disk_free_gb": round(shutil.disk_usage("/home/z/my-project").free / 1e9, 1),
             "days_to_deadline": round((DEADLINE - now).total_seconds() / 86400, 1),
             "missing_files": [p for p in CRITICAL if not Path(p).exists()]}
     if info["credentials"] != "MISSING":

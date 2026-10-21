@@ -72,9 +72,15 @@ def state_frame(tag: str, a: float = 0.25, gate: float | None = None, fdband=Non
     out = []
     for p in PANELS:
         for split in ("validation", "private"):
-            t = pd.read_csv(REL / "task1" / p / split / "sample_submission_state.csv", dtype=str)
+            tpq = REL / "task1" / p / split / "sample_submission_state.parquet"
+            if tpq.exists():
+                t = pd.read_parquet(tpq, columns=["timestamp", "link_id", "mask_regime"])
+                for c in ("timestamp", "link_id", "mask_regime"):
+                    t[c] = t[c].astype(str)
+            else:
+                t = pd.read_csv(REL / "task1" / p / split / "sample_submission_state.csv", dtype=str)
             t["t"] = tindex(t.timestamp)
-            m = t.drop(columns=["speed_kmh", "flow_vph"]).merge(
+            m = t.drop(columns=[c for c in ("speed_kmh", "flow_vph") if c in t.columns]).merge(
                 pr.loc[pr.panel == p, ["t", "link_id", "speed_kmh", "flow_vph"]], on=["t", "link_id"], how="left")
             out.append(m.drop(columns=["t"]))
     return pd.concat(out, ignore_index=True)

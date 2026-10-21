@@ -79,7 +79,13 @@ def build_panel(panel: str) -> Path:
             elig[ti, li] = d.is_score_eligible.astype(bool).to_numpy()
             regime[np.unique(ti // SLOTS)] = REGIME_ID[reg]
         tp = REL / "task1" / panel / split / "sample_submission_state.csv"
-        t = pd.read_csv(tp, usecols=["timestamp", "link_id", "mask_regime"], dtype=str)
+        tpq = REL / "task1" / panel / split / "sample_submission_state.parquet"
+        if tpq.exists():
+            t = pd.read_parquet(tpq, columns=["timestamp", "link_id", "mask_regime"])
+            for c in ("timestamp", "link_id", "mask_regime"):
+                t[c] = t[c].astype(str)
+        else:
+            t = pd.read_csv(tp, usecols=["timestamp", "link_id", "mask_regime"], dtype=str)
         target[tindex(t.timestamp), t.link_id.map(lidx).to_numpy()] = t.mask_regime.map(REGIME_ID).to_numpy(np.int8)
     ps = sorted((base / "train" / "mainline_states").glob("**/*.parquet"))
     d = _read(ps, ["timestamp", "link_id", "speed_kmh", "flow_vph"])
