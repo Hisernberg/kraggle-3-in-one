@@ -6,8 +6,9 @@ predict pennation angle (PA, °), fascicle length (FL, mm) and muscle thickness 
 
 Metric: `mean(MAE_PA/6, MAE_FL/12, MAE_MT/3)`, lower is better.
 
-## Status (2026-10-08)
-Best public LB **0.21127** (public rank 1): `submissions/d18_S5_lumpaw065.csv` (fascicle maps from resnet34 @512x768 + two resnext50 seeds @640x960, pipeline weights PA 0.65 / FL 0.33 / MT 1.0, Lumify weights PA 0.65 / FL 0.15, true-geometry corrections for non-square pixels: Siemens Juniper PA (R 1.12) and FL x0.92, Philips Lumify PA (R 0.87) and FL x1.10; left_ticks FL x1.016; IMG_00303 FL patch; Telemed MT -0.5 mm).
+## Status (2026-10-18)
+Best public LB **0.20241** (public rank 1): `submissions/d22_S4_restpaw060.csv` (fascicle maps from resnet34 @512x768 + two resnext50 seeds @640x960; device-specific pipeline weights PA / FL: Lumify 0.80 / 0.45, Juniper 0.80 / 0.45, Telemed + left_ticks + small families 0.60 / 0.29, MT 1.0; true-geometry corrections for non-square pixels: Siemens Juniper PA (R 1.12), Philips Lumify PA (R 0.87); device FL levels (Juniper ~x0.92, Lumify ~x1.12, left_ticks ~x1.016, gray853/h512 ~x1.03) kept by level-matched scales; IMG_00303 FL patch; Telemed MT -0.5 mm).
+Final-selection hedge B drops the three LB-only family levels (`submissions/d20_S3_hedgeB.csv`, 0.21293; to be rebuilt on the final best).
 Reproduce it with `python daily/run.py build NAME` (args in `daily/state.json`): pipeline `configs/a5_pa_avg.json`
 (FL = mean of extrapolated-fragment FL and depth-fitted chord FL; PA = mean of all-fragment and deep-half PA) blended
 per target with the public Vera CSV. The pipeline alone (`kaggle/build_kernel.py --mode submit`) is the prize-eligible
