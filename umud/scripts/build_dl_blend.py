@@ -120,7 +120,16 @@ def main():
         for i, t in enumerate(args):
             if t == "--fam-mt-offset" and args[i + 1] == f:
                 cur = float(args[i + 2])
-        args = set_flag(args, "--fam-mt-offset", f, [f"{cur + dmt:.5f}"]) if abs(dmt) > 1e-4 else args
+        if abs(dmt) > 1e-4:
+            args = set_flag(args, "--fam-mt-offset", f, [f"{cur + dmt:.5f}"])
+        # PA level-match (post-smoothing offsets); global --pa-offset stays (pipeline-side)
+        dpa = float(best.loc[sel, "pa_deg"].mean() - p1.loc[sel, "pa_deg"].mean())
+        cur = 0.0
+        for i, t in enumerate(args):
+            if t == "--fam-pa-final" and args[i + 1] == f:
+                cur = float(args[i + 2])
+        if abs(dpa) > 1e-4:
+            args = set_flag(args, "--fam-pa-final", f, [f"{cur + dpa:.5f}"])
 
     # 3. pass 2: final build + verification
     build(args + ["--ref", "daily/inputs/ref_member_agg.csv", "--out", a.out], a.out)
