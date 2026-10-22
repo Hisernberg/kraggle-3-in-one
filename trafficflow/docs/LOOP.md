@@ -131,7 +131,20 @@ v5 -> v7v11 (H16b) -> v12v11 (H17) gave +0.00053 + 0.00067 = **+0.0012** public,
    Expect +0.0008..+0.0015. Adopt if >= +0.0003. If <= -0.001: the public-onset line interacts with ongoing; diagnose.
 2. **K3 = K2 + April-adapted ongoing (`lgb_v8og_v12v11_aprAD.csv`, private rows only)** - public must equal K2 exactly
    (file validity check; private-line final).
-3. Remaining slots: only cards with pseudo-holdout evidence (onset April adaptation E3; second v12 seed).
+   Verified 2026-10-22 21:20: K1's ongoing rows are byte-identical to `lgb_v8_seeds9_stack03.csv` (the H-line v5
+   base): 0 / 87,000 rows differ; only 17+17 onset rows differ (the O1 safe-union cells). Ongoing and onset windows are
+   scored separately, so K2's public delta should equal H17 - H15b = +0.0012 if the rebuild reproduces H17's ongoing
+   rows (check before submitting: v12v11 vs v5 must differ on 105+37-ish March and 88+31-ish April cells, as on 10-09).
+3. **K4 (gated): K2 + second v12 seed in the mix** (`og_components v12 1`, averaged with seed 0). Gate: pseudo3
+   official-style >= +0.0005 on BOTH months, else unused.
+4. **K5 (gated): K2 + April-adapted onset (E3)** for the private line only; public must equal K2 exactly. Only if the
+   adaptation beats the incumbent on the April pseudo windows by > 2 paired SE.
+5. Unused slots are acceptable (comp4 lesson L63-L73: four queue replacements without a reproducing harness lost).
+
+**Cross-repo check (kaggle-triple-crown/comp4_trafficflow, 10-16..10-18):** the I-line was built there (S2 -> O1 ->
+I5); its lessons: queue *replacements* trained on detector-label harnesses lost 4/4 on March, the incumbent ongoing is a
+sharp optimum against forward-fill/consensus adds. K2 is not a new model: it replays the H-line's measured +0.0012
+(two LB-confirmed steps) onto identical ongoing rows.
 
 **Prize admin (user action):** registration e-mail to trafficflowbench@gmail.com by **Oct 25 23:59 AoE**, subject
 "Traffic Flow Bench Registration" (team name, Kaggle usernames, full names, affiliations, e-mails, primary contact).

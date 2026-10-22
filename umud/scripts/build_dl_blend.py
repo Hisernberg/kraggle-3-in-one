@@ -86,7 +86,7 @@ def main():
             f = famof[x]
             fill = fills.get(f) or next((v for k, v in fills.items() if f.startswith(k)), {c: np.nan for c in ["pa_deg", "fl_mm", "mt_mm"]})
             m.loc[len(m)] = {"image_id": x, **fill, "fam": f}
-    ref_path = UMUD / "daily/inputs/ref_member_agg.csv"
+    ref_path = UMUD / "daily/inputs" / f"ref_member_{Path(a.out).stem}.csv"  # one stable file per build, so its .args reproduce it
     m.drop_duplicates("image_id").set_index("image_id").loc[best.index].round(4).to_csv(ref_path)
     print(f"member rows: {len(m)} -> {ref_path.name}")
 
@@ -108,7 +108,8 @@ def main():
 
     # 2. pass 1: measure family-mean shifts
     tmp1 = UMUD / "daily/out/_dl_pass1.csv"
-    build(args + ["--ref", "daily/inputs/ref_member_agg.csv", "--out", tmp1.name], tmp1)
+    ref_arg = ["--ref", str(ref_path.relative_to(UMUD))]
+    build(args + ref_arg, tmp1)
     p1 = pd.read_csv(tmp1).set_index("image_id")
     for f in FAMS:
         sel = fam.str.startswith(REF_NAME[f])
@@ -132,8 +133,8 @@ def main():
             args = set_flag(args, "--fam-pa-final", f, [f"{cur + dpa:.5f}"])
 
     # 3. pass 2: final build + verification
-    build(args + ["--ref", "daily/inputs/ref_member_agg.csv", "--out", a.out], a.out)
-    (UMUD / "daily/out" / (Path(a.out).stem + ".args")).write_text(" ".join(args))
+    build(args + ref_arg, a.out)
+    (UMUD / "daily/out" / (Path(a.out).stem + ".args")).write_text(" ".join(args + ref_arg))
     fin = pd.read_csv(a.out).set_index("image_id")
     print("family means vs best (should be ~0):")
     for f in FAMS:
