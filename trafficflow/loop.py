@@ -106,7 +106,7 @@ def forum(n: int = 3) -> list[str]:
 def status():
     now = utcnow()
     info = {"utc": now.strftime("%Y-%m-%d %H:%M"), "credentials": creds() or "MISSING",
-            "disk_free_gb": round(shutil.disk_usage("/home/z/my-project").free / 1e9, 1),
+            "disk_free_gb": round(shutil.disk_usage("/home/user").free / 1e9, 1),
             "days_to_deadline": round((DEADLINE - now).total_seconds() / 86400, 1),
             "missing_files": [p for p in CRITICAL if not Path(p).exists()]}
     if info["credentials"] != "MISSING":

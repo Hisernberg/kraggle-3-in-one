@@ -37,3 +37,4 @@
 | EXP-2303 | OSF −0.0003..−0.0007 (predicted gain) | +0.00056 | n/a | DIVERGENT (expert-set bias did not transfer — 4th occurrence, gates tightened accordingly) |
 
 **Crisis protocol:** correlation across recent pairs < 0.5 → freeze ADOPT decisions → differential diagnosis (shift / CV leak / LB noise / metric mismatch) → resume with written cause.
+| EXP-2501 | 2026-10-23 | rank defence | FL anchor 0.85 Vera + 0.15 DLTrack prior (level-matched) adds information beyond Vera | brain/zero | d25_S1_vdl15 | 1 | n/a | pending | - | card: daily/plans/d25.md |

@@ -75,3 +75,16 @@
    reached it tonight; the prior's FL (sd ~7) embeds author magic we have not reproduced.
 3. The blend weights are anchor-invariant (S3 + d23 S5 bracket the same vertex), so Track-B improvement is purely a
    member-quality problem now - or a rules clarification from the host.
+
+## 2026-10-22 (late session, d25 prep)
+
+**Learnings:**
+1. The leaderboard is now a knife-edge: #2 Kainwang Roger 0.20231 vs our 0.20227 (20:44 UTC). Rank defence needs a
+   new information source, not more Vera-anchor weights (exhausted).
+2. The DLTrack prior passes the d24 member gate as a PARTIAL anchor (FL sd 6.7 mm vs Vera, r 0.40 with our deviations);
+   it was only tested as a full swap. A 0.15 share costs at most ~+0.0005 if it carries nothing (quadratic from the full
+   swap's +0.0222) -> d25 S1 card (`daily/plans/d25.md`).
+
+**Improvements:**
+- `daily/inputs/ref_mix_vdl15.csv` / `ref_mix_vdl30.csv` (Vera with FL mixed toward the DLTrack prior) + level-matched
+  builds via `scripts/build_dl_blend.py --member ...` (FL-only diff verified: 309 rows, PA/MT identical, family means 0).
