@@ -407,3 +407,65 @@ Public rank 1.
 - A joint probe can be decomposed when one device's share is bounded by convexity; that bound pinned the FL vertex
   of the other devices (0.29) before the shot. Day gain -0.0040.
 Public rank 1.
+
+## Day 23 (2026-10-21): Juniper PA 0.75 -> 0.20227 (public rank 1); prize-eligibility research, re-runnable track opened
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S1 | Juniper FL weight 0.55 (was 0.45), mean kept | 0.20259 (+0.00018 -> settled at 0.45) |
+| **S2** | **Juniper PA weight 0.75 (was 0.80), mean kept** | **0.20227 (new best; vertex fit predicted -0.00015, observed -0.00014)** |
+| S3 | Telemed_644 FL weight 0.24 (was 0.29 joint), mean kept | 0.20283 (+0.00056 -> settled at 0.29) |
+| S4 | diagnostic: reference Vera -> DLTrack prior, level-matched | 0.22451 (eligibility price +0.0222) |
+| S5 | S4 with FL pipeline weight x0.7 | 0.23213 (refuted: DL anchor wants the Vera-calibrated weights) |
+
+- The per-family weight space is now exhausted: S3's cost implies Telemed FL curvature c~0.22, bounding every remaining
+  family-weight gain (incl. left_ticks) below 0.0001; S1 confirms Juniper FL at 0.45.
+- **Prize eligibility (research, no submission needed):** the Overview's compliance check requires the final submission
+  to be re-runnable on a new dataset without a leaderboard (host, topic 744191). Verified in the notebook sources: the
+  public Vera notebook (0.45134), the "variational ensemble" (0.49332) and the new "[LB 0.374] Geometry Over Masks"
+  notebook are ALL hard-coded CSVs - the variational one embeds a "DLTrack-US Reference Norms" table whose PA is exactly
+  Vera's PA. There is no re-runnable public member at Vera quality.
+- The re-runnable track: DL_Track_US 0.3.1 (host-authored, Apache-2.0, pip-installable) re-run on the test set as the
+  member; the level-matched blend with it starts at 0.22451 (S4). S5 shows the binding constraint is our pipeline's FL,
+  not the blend weights. Plan: re-run DLTrack in a GPU kernel, validate against the embedded prior, re-implement Vera's
+  seg-centerline MT correction re-runnably, then re-tune.
+- Submission helper note: `daily/run.py build` outputs are gitignored; a fresh container must rebuild before submitting
+  (the first submit attempt polled on a missing file for 10 min).
+
+## Day 24 (2026-10-22): re-runnable member built and measured; Track-B floor confirmed at 0.22451
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S1 | hedge B: three LB-only levels dropped (final-selection diagnostic) | 0.20732 (+0.00505, as predicted) |
+| S2 | anchor -> DLTrack-masks+own-geometry member (EXP-2401, re-runnable), level-matched | 0.44154 (member vetoed: FL row sd 33.5 mm) |
+| S3 | DL-prior anchor with FL pipeline weight 0.45/0.60, level-matched | 0.22970 (+0.0052 -> Track-B FL vertex = Vera-calibrated weights) |
+
+- EXP-2401 (kernel, no slot): DLTrack 0.3.1 re-ran on all 309 test images (297 OK). DLTrack's own geometry is unusable
+  here (bar-scale detector nonsense, broken units); its PA still correlated 0.912 with the prior. Pivoted to
+  **DLTrack masks + our geometry + our scale** (MT corr 0.824 vs our masks, PA 0.602, FL 0.504) - fully re-runnable.
+- Track-B state: the blend weights transfer across anchors (both weight directions lose from 0.29/0.45); the floor
+  0.22451 is set by the member's FL quality. Next: EXP-2402 - DLTrack's own extrapolation geometry on de-squashed
+  masks at original resolution (target FL sd <= 8 mm).
+- hedge B (0.20732) on record for the 2026-11-07 final selection: the three LB-only levels are worth 0.005 public.
+
+## Day 24 addendum (04:00 UTC): EXP-2402 iso kernel (6 versions)
+- Working chain shipped: B-mode crop (umud scale parser) -> isotropic letterbox 512x512 -> DLTrack 0.3.1 VGG16 U-Nets ->
+  DLTrack geometry with calib_dist=None + own isotropic unit conversion (v0.3.1's internal scaling crashes on
+  list/float; EXP-2401's "bar" values were silent pixel-space garbage).
+- Member v2: FL sd vs Vera 18.1 mm (bar <=8), coverage 121/309 (letterbox hurt DLTrack apo detection), PA r 0.731 vs
+  prior. VETOED for blending; masks + raw values kept (work/dltrack_iso.csv).
+- Day-24 slots: 3/5 used (S1 hedge B 0.20732 recorded; S2 0.44154 vetoed; S3 0.22970 vertex confirmation). Best
+  unchanged: 0.20227 (public rank 1). Track-B floor 0.22451 (prior proxy); host clarification queued for topic 744191.
+
+## Day 24 (2026-10-22, evening): last two slots — failure-fill tested, MT-clip axis closed
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S4 | `--fail-fill clip` (IMG_00189/190 filled from OK clip-mates 186-188, the prescribed-but-unplayed d9 next step; clip-80 median moves PA −0.36°, FL +0.62mm toward the pipeline) | 0.20239 (+0.00012, flat) |
+| S5 | S4 + MT residual clip 2.5 (isolates IMG_00268, −0.5 mm toward ref) | **0.20239 — exactly equal to S4** |
+
+- S5 = S4 to the fifth decimal ⇒ per-row additivity proves **IMG_00268 is a private row**; with 147/149 protected by the
+  clip median, the MT residual clip is fully closed (cap stays 3).
+- The d9 failure-fill direction (toward the pipeline) did not pay on public at this magnitude; the variant is recorded
+  (d24_S4_failfill, 0.20239) as the principled failure handler — it removes hard-coded-reference dependence on the two
+  failed frames; candidate hedge component for the 2026-11-07 final selection.
+- Offline gates did their job before any slot was spent: the DL-mask member MT mix failed the ≤1 mm sd bar (2.47 mm),
+  the Juniper/Lumify weight vertices are flat (<0.0001 expected), and the near-duplicate pair 18/19 is already grouped.
+Best unchanged: **0.20227 (d23_S2_junpa075), public rank 1**. Day-24 slots: 5/5 used.

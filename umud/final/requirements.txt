@@ -1,0 +1,13 @@
+# own pipeline
+numpy>=1.26
+pandas>=2.0
+opencv-python-headless>=4.8
+pillow>=10.0
+scipy>=1.10
+torch>=2.1
+segmentation-models-pytorch>=0.3.3
+# DLTrack member (v0.3.1 tag; tf-keras for legacy .h5 loading)
+tensorflow>=2.15
+tf-keras
+# blend
+openpyxl
