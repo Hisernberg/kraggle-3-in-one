@@ -445,3 +445,12 @@ Public rank 1.
   0.22451 is set by the member's FL quality. Next: EXP-2402 - DLTrack's own extrapolation geometry on de-squashed
   masks at original resolution (target FL sd <= 8 mm).
 - hedge B (0.20732) on record for the 2026-11-07 final selection: the three LB-only levels are worth 0.005 public.
+
+## Day 24 addendum (04:00 UTC): EXP-2402 iso kernel (6 versions)
+- Working chain shipped: B-mode crop (umud scale parser) -> isotropic letterbox 512x512 -> DLTrack 0.3.1 VGG16 U-Nets ->
+  DLTrack geometry with calib_dist=None + own isotropic unit conversion (v0.3.1's internal scaling crashes on
+  list/float; EXP-2401's "bar" values were silent pixel-space garbage).
+- Member v2: FL sd vs Vera 18.1 mm (bar <=8), coverage 121/309 (letterbox hurt DLTrack apo detection), PA r 0.731 vs
+  prior. VETOED for blending; masks + raw values kept (work/dltrack_iso.csv).
+- Day-24 slots: 3/5 used (S1 hedge B 0.20732 recorded; S2 0.44154 vetoed; S3 0.22970 vertex confirmation). Best
+  unchanged: 0.20227 (public rank 1). Track-B floor 0.22451 (prior proxy); host clarification queued for topic 744191.

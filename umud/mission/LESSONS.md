@@ -55,3 +55,23 @@
    0.912 with the prior/Vera PA; its own scale/geometry layer is unreliable on these devices (use umud scale + masks).
 3. hedge B = 0.20732 (+0.00505): the three LB-only levels are worth exactly that on public - the private-split risk of
    keeping them is now quantified for the final decision.
+
+## 2026-10-22 (night session, EXP-2402)
+
+**Mistakes made and fixed:**
+1. Trusted doCalculations' internal unit scaling in EXP-2401 without reading its code - the v0.3.1 scaling line
+   (`fasc_l / (calib_dist/spacing)` on a Python list) crashes whenever calib is passed, and with calib absent it
+   returns pixel-space values. EXP-2401's "bar"-scaled FL/MT were silent garbage (only PA was valid). **Rule: read the
+   library's unit-conversion code before trusting its outputs; validate one image end-to-end against physics.**
+2. Six kernel pushes for one experiment (input-shape, GUI deps, json syntax, % escaping, trailing paren, calib). The
+   fixes were cheap but the loop was slow (~4 h). **Rule: smoke-test the full import + one-image path locally (or in a
+   tiny CPU kernel with a 10-image slice) before the full push.**
+
+**Learnings (verified):**
+1. DLTrack 0.3.1's models segment the UMUD test devices imperfectly: letterboxed crops break its aponeurosis
+   detection on 47% of images; full-frame squashed input works but its geometry is unit-broken. Its PA still lands
+   within 2.75 deg of the prior.
+2. Member bar for the blend (empirically): FL row-sd vs the anchor <= 8 mm AND coverage >= ~95%. Nothing re-runnable
+   reached it tonight; the prior's FL (sd ~7) embeds author magic we have not reproduced.
+3. The blend weights are anchor-invariant (S3 + d23 S5 bracket the same vertex), so Track-B improvement is purely a
+   member-quality problem now - or a rules clarification from the host.
