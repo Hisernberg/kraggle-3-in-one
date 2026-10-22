@@ -454,3 +454,18 @@ Public rank 1.
   prior. VETOED for blending; masks + raw values kept (work/dltrack_iso.csv).
 - Day-24 slots: 3/5 used (S1 hedge B 0.20732 recorded; S2 0.44154 vetoed; S3 0.22970 vertex confirmation). Best
   unchanged: 0.20227 (public rank 1). Track-B floor 0.22451 (prior proxy); host clarification queued for topic 744191.
+
+## Day 24 (2026-10-22, evening): last two slots — failure-fill tested, MT-clip axis closed
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S4 | `--fail-fill clip` (IMG_00189/190 filled from OK clip-mates 186-188, the prescribed-but-unplayed d9 next step; clip-80 median moves PA −0.36°, FL +0.62mm toward the pipeline) | 0.20239 (+0.00012, flat) |
+| S5 | S4 + MT residual clip 2.5 (isolates IMG_00268, −0.5 mm toward ref) | **0.20239 — exactly equal to S4** |
+
+- S5 = S4 to the fifth decimal ⇒ per-row additivity proves **IMG_00268 is a private row**; with 147/149 protected by the
+  clip median, the MT residual clip is fully closed (cap stays 3).
+- The d9 failure-fill direction (toward the pipeline) did not pay on public at this magnitude; the variant is recorded
+  (d24_S4_failfill, 0.20239) as the principled failure handler — it removes hard-coded-reference dependence on the two
+  failed frames; candidate hedge component for the 2026-11-07 final selection.
+- Offline gates did their job before any slot was spent: the DL-mask member MT mix failed the ≤1 mm sd bar (2.47 mm),
+  the Juniper/Lumify weight vertices are flat (<0.0001 expected), and the near-duplicate pair 18/19 is already grouped.
+Best unchanged: **0.20227 (d23_S2_junpa075), public rank 1**. Day-24 slots: 5/5 used.
