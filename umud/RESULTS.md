@@ -430,3 +430,18 @@ Public rank 1.
   seg-centerline MT correction re-runnably, then re-tune.
 - Submission helper note: `daily/run.py build` outputs are gitignored; a fresh container must rebuild before submitting
   (the first submit attempt polled on a missing file for 10 min).
+
+## Day 24 (2026-10-22): re-runnable member built and measured; Track-B floor confirmed at 0.22451
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| S1 | hedge B: three LB-only levels dropped (final-selection diagnostic) | 0.20732 (+0.00505, as predicted) |
+| S2 | anchor -> DLTrack-masks+own-geometry member (EXP-2401, re-runnable), level-matched | 0.44154 (member vetoed: FL row sd 33.5 mm) |
+| S3 | DL-prior anchor with FL pipeline weight 0.45/0.60, level-matched | 0.22970 (+0.0052 -> Track-B FL vertex = Vera-calibrated weights) |
+
+- EXP-2401 (kernel, no slot): DLTrack 0.3.1 re-ran on all 309 test images (297 OK). DLTrack's own geometry is unusable
+  here (bar-scale detector nonsense, broken units); its PA still correlated 0.912 with the prior. Pivoted to
+  **DLTrack masks + our geometry + our scale** (MT corr 0.824 vs our masks, PA 0.602, FL 0.504) - fully re-runnable.
+- Track-B state: the blend weights transfer across anchors (both weight directions lose from 0.29/0.45); the floor
+  0.22451 is set by the member's FL quality. Next: EXP-2402 - DLTrack's own extrapolation geometry on de-squashed
+  masks at original resolution (target FL sd <= 8 mm).
+- hedge B (0.20732) on record for the 2026-11-07 final selection: the three LB-only levels are worth 0.005 public.

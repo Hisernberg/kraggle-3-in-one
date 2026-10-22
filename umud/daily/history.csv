@@ -82,3 +82,6 @@ utc,name,score,new_best,args,message
 2026-10-21 20:05,d23_S2_junpa075,0.20227,1,--fam-w juniper_right 0.75 0.45 1.0 --fam-pa-final juniper_right -0.0796 (merged onto best base args),"d23 S2: Juniper PA pipeline weight 0.75 (was 0.80), mean kept. PA only. Card: daily/plans/d23.md"
 2026-10-21 20:18,d23_S3_telFLw024,0.20283,0,--fam-w telemed_644 0.60 0.24 1.0 --fam-fl-scale telemed_644 1.01652 (merged onto best base args),"d23 S3: Telemed_644 FL pipeline weight 0.24 (was 0.29 joint), mean kept. FL only. Card: daily/plans/d23.md"
 2026-10-21 20:55,d23_S5_dlw020,0.23213,0,DL anchor + --w FL 0.20/0.32 x0.7 + level-matched scales (see daily/out/d23_S5_dlw020.args),"d23 S5: DLTrack anchor with FL pipeline weight x0.7 (0.20/0.32), level-matched. Tunes the re-runnable final. Card: daily/plans/d23.md"
+2026-10-22 00:05,d24_S1_hedgeB,0.20732,0,see daily/out/d24_S1_hedgeB.args,"d24 S1: hedge B diagnostic (three LB-only levels dropped). Card: daily/plans/d24.md"
+2026-10-22 00:14,d24_S2_dlmask,0.44154,0,see daily/out/d24_S2_dlmask.args,"d24 S2: DLmask-member anchor (re-runnable), level-matched. VETOED. Card: daily/plans/d24.md"
+2026-10-22 00:30,d24_S3_dlFLw045,0.22970,0,see daily/out/d24_S3_dlFLw045.args,"d24 S3: DL-anchor FL weight 0.45/0.60 level-matched. Vertex confirmed ~0.29. Card: daily/plans/d24.md"

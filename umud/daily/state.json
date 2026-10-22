@@ -84,6 +84,7 @@
   "0.1160"
  ],
  "settled": [
+  "d24: hedge B measured 0.20732 (+0.00505, at the predicted top edge) - the three LB-only levels are worth 0.005 public; on record for 11-07 final selection. S2 DLmask-member anchor 0.44154 VETOED (FL row sd 33.5mm >> 8mm bar: anchor needs bounded deviation, not just independence). S3 DL-anchor FL w 0.45/0.60 +0.0052 and d23 S5 w 0.20 +0.0076 -> vertex ~0.29-0.33 BOTH directions: the Vera-calibrated weights TRANSFER across anchors; Track-B floor 0.22451 is member-quality-bound",
   "d23 eligibility: Vera/eas/variational public references are ALL hard-coded CSVs (verified in notebook sources); host criterion = re-runnable on a new dataset without a leaderboard (topic 744191 + overview). DLTrack-prior-anchored blend (level-matched) = 0.22451 = the re-runnable starting point (+0.0222 vs Vera blend); DL_Track_US 0.3.1 is Apache-2.0, pip-installable, host-authored -> the re-runnable member. eas 0.374 notebook is a hard-coded CSV too (rejected as reference: provenance unknown, LB-probe risk)",
   "d23: Juniper FL weight 0.55 +0.00018 (settled 0.45); Juniper PA weight 0.75 -0.00014 (ADOPTED, best 0.20227, vertex fit exact); Telemed FL weight 0.24 +0.00056 (settled 0.29; implied curvature c~0.22 -> further family weight gains <0.0001: per-family weight space exhausted); S5 DL-anchor FL weight x0.7 (0.20/0.32) +0.0076 -> REFUTED: under the weaker DLTrack anchor the Vera-calibrated weights are already at/below optimal (our pipeline FL is the binding constraint; consistent with OSF DLTrack FL 3.74 vs ours 4.69)",
   "d22: device weights: Juniper FL 0.45 -0.0018; FL for left_ticks/Telemed/small 0.25 -0.00021, 0.29 -0.00164 (vertex 0.289; d20 S2 minus Juniper's convexity-bounded share gave f(0.40) >= +0.0062); PA for left_ticks/Telemed/small 0.60 -0.00034 (vertex ~0.59-0.61); Juniper PA 0.90 +0.00163 (V-shaped, vertex ~0.76-0.80). Current: PA Lumify 0.80 / Juniper 0.80 / others 0.60; FL 0.45 / 0.45 / 0.29; MT 1.0",
@@ -141,9 +142,10 @@
   "public LB ~103 rows (~1/3); metric additive per target: tune one target per shot"
  ],
  "queue": [
-  "eligibility: locate DL_Track_US model weights (GUI downloads them; check Zenodo) and build a Kaggle GPU kernel that re-runs DLTrack 0.3.1 apo+fascicle inference on the test set -> re-runnable member CSV; validate vs the embedded prior (r / per-family gaps)",
-  "eligibility: re-implement Vera's MT trick re-runnably (DLTrack + own apo-seg centerline MT correction) if it closes part of the +0.0222; re-tune the DL-anchor blend weights on the OSF sim first, spend LB probes only on gated candidates",
-  "final selection (due 2026-11-07): A = best public (d23_S2_junpa075, 0.20227, Vera blend - LB-only); B = re-runnable blend (DL anchor, currently 0.22451) - B is now the PRIZE candidate, not just a hedge; decide the two finals accordingly",
-  "daily: new forum topics / notebooks; LB watch (rank 2 at 0.20337, active)"
+  "Track-B member v2 (kernel umud-dltrack-geom, no slot): run DLTrack's own post-predict geometry (linear_extrapolation) on the DE-SQUASHED masks at original resolution with our px_per_mm - port do_calculations internals to accept precomputed masks; validate the FL sd vs Vera (~<=8mm target; our extrapolation gave 33.5)",
+  "Track-B: if member v2 FL sd <= 8mm -> blend probe (expect ~0.210-0.225); else consider declaring the prior-based blend with full provenance disclosure to the host (topic 744191 ask)",
+  "Track-A: exhausted (weight space + levels settled); monitor LB daily (rank 2 at 0.20337 active); hedge B = 0.20732 recorded",
+  "final selection (due 2026-11-07): A = d23_S2_junpa075 (0.20227, Vera blend); B = best re-runnable (currently the DL-prior blend 0.22451 as upper bound proxy; replace with a re-runnable member of equal quality if member v2 works)",
+  "daily: new forum topics / notebooks; LB watch"
  ]
 }

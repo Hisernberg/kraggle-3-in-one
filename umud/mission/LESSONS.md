@@ -35,3 +35,23 @@
   umud scale fallback, mask dumping). EXP-2401.
 - `umud/scripts/build_dl_blend.py` — automated two-pass level-matched anchor-swap builder (ends the manual 2-step dance).
 - Pre-registered d24 cards (hedge B S1 + gated DL-rerun shots S2–S5).
+
+## 2026-10-22 (day 24)
+
+**Mistakes made and fixed:**
+1. Adopted a blend member on independence alone (r 0.33) without checking row-level deviation magnitude -> S2 scored
+   0.44154 (worst of the project). **New gate: a member must have BOTH r < 0.9 vs the incumbent AND row-level sd vs the
+   anchor <= ~8 mm (FL) / ~1.5 deg (PA) / ~1 mm (MT). Compute the deviation stats BEFORE spending a slot.**
+2. Inferred "pipeline FL beats the prior" from a one-sided probe (d23 S5) and spent S3 on the untested direction -
+   both directions lose; the vertex was already settled. **One-sided probes give a bound, not a vertex; never infer a
+   vertex direction from a single side.**
+3. Kaggle competition data downloads die mid-stream at ~0.5-1.3 GB in this environment - worked around by using the
+   kernel-side data + committed frozen inputs instead of local copies.
+
+**Learnings (verified):**
+1. Blend weights transfer across anchors of similar quality (both FL directions lose from 0.29/0.45 on the DL anchor
+   too). The member's row-level quality is the only Track-B lever left.
+2. DLTrack 0.3.1 re-runs cleanly headless (customtkinter stub, TF_USE_LEGACY_KERAS=1, tif+png glob); its PA correlates
+   0.912 with the prior/Vera PA; its own scale/geometry layer is unreliable on these devices (use umud scale + masks).
+3. hedge B = 0.20732 (+0.00505): the three LB-only levels are worth exactly that on public - the private-split risk of
+   keeping them is now quantified for the final decision.
