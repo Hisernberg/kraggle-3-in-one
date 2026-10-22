@@ -1,6 +1,6 @@
 {
- "best_score": 0.20241,
- "best_name": "d22_S4_restpaw060",
+ "best_score": 0.20227,
+ "best_name": "d23_S2_junpa075",
  "best_args": [
   "--w",
   "0.60",
@@ -61,12 +61,12 @@
   "-0.2715",
   "--fam-w",
   "juniper_right",
-  "0.80",
+  "0.75",
   "0.45",
   "1.0",
   "--fam-pa-final",
   "juniper_right",
-  "-0.1193",
+  "-0.0796",
   "--fam-fl-scale",
   "telemed_644",
   "1.00728",
@@ -84,6 +84,10 @@
   "0.1160"
  ],
  "settled": [
+  "d24 S4/S5 (slots 4-5, user-requested): S4 --fail-fill clip (IMG_00189/190 filled from clip-mates per the d9 prescription) 0.20239 (+0.00012, flat-to-slightly-worse: the d9 direction did not pay on public at this magnitude); S5 = S4 + MT clip 2.5 scored EXACTLY 0.20239 = S4 -> per-row additivity proves IMG_00268 is PRIVATE and the MT residual clip is fully closed (147/149 protected by the clip median, 268 private). Best unchanged: d23_S2_junpa075 0.20227 (public rank 1). d24_S4_failfill (0.20239) recorded as a principled near-neutral variant: it removes hard-coded-reference dependence on the 2 failed frames - candidate hedge component for 11-07.",
+  "d24: hedge B measured 0.20732 (+0.00505, at the predicted top edge) - the three LB-only levels are worth 0.005 public; on record for 11-07 final selection. S2 DLmask-member anchor 0.44154 VETOED (FL row sd 33.5mm >> 8mm bar: anchor needs bounded deviation, not just independence). S3 DL-anchor FL w 0.45/0.60 +0.0052 and d23 S5 w 0.20 +0.0076 -> vertex ~0.29-0.33 BOTH directions: the Vera-calibrated weights TRANSFER across anchors; Track-B floor 0.22451 is member-quality-bound",
+  "d23 eligibility: Vera/eas/variational public references are ALL hard-coded CSVs (verified in notebook sources); host criterion = re-runnable on a new dataset without a leaderboard (topic 744191 + overview). DLTrack-prior-anchored blend (level-matched) = 0.22451 = the re-runnable starting point (+0.0222 vs Vera blend); DL_Track_US 0.3.1 is Apache-2.0, pip-installable, host-authored -> the re-runnable member. eas 0.374 notebook is a hard-coded CSV too (rejected as reference: provenance unknown, LB-probe risk)",
+  "d23: Juniper FL weight 0.55 +0.00018 (settled 0.45); Juniper PA weight 0.75 -0.00014 (ADOPTED, best 0.20227, vertex fit exact); Telemed FL weight 0.24 +0.00056 (settled 0.29; implied curvature c~0.22 -> further family weight gains <0.0001: per-family weight space exhausted); S5 DL-anchor FL weight x0.7 (0.20/0.32) +0.0076 -> REFUTED: under the weaker DLTrack anchor the Vera-calibrated weights are already at/below optimal (our pipeline FL is the binding constraint; consistent with OSF DLTrack FL 3.74 vs ours 4.69)",
   "d22: device weights: Juniper FL 0.45 -0.0018; FL for left_ticks/Telemed/small 0.25 -0.00021, 0.29 -0.00164 (vertex 0.289; d20 S2 minus Juniper's convexity-bounded share gave f(0.40) >= +0.0062); PA for left_ticks/Telemed/small 0.60 -0.00034 (vertex ~0.59-0.61); Juniper PA 0.90 +0.00163 (V-shaped, vertex ~0.76-0.80). Current: PA Lumify 0.80 / Juniper 0.80 / others 0.60; FL 0.45 / 0.45 / 0.29; MT 1.0",
   "d21: level-matched weights per family: global PA 0.62 +0.00014 (joint vertex ~0.641); Lumify FL 0.45 -0.00051 (vertex ~0.46); Lumify PA 0.80 -0.00072, 1.0 +0.00076 (V-shaped, vertex 0.8 +/- 0.07); Juniper PA 0.80 -0.0010. Refined Laplace fits: Juniper FL vertex x0.922 (b 2.98 mm), Telemed-device PA centred (m +0.05, b 0.56). AnatomyNet FL = Vera + 0.5 mm residual (r 0.06 with ours): no third source",
   "d20: Lumify FL weight 0.15 -> 0.33 level-matched -0.0024 (pre-geometry weight compensated the bias); global FL weight 0.40 level-matched +0.0052 (vertex 0.30-0.33, curvature steeper than the old unmatched probes) -> FL weight settled at 0.33; per-row angle-dependent true-geometry FL for Juniper/Lumify (level-matched) +0.00022 -> flat factors stay; gray853/h512 FL x1.03 -0.00026 (convexity-bounded midpoint of the flat d18 x1.0/x1.06 pair); hedge B (best minus left_ticks FL x1.016 and Telemed MT -0.5) = 0.21293 exactly as predicted by additivity -> on record for 11-07",
@@ -139,10 +143,9 @@
   "public LB ~103 rows (~1/3); metric additive per target: tune one target per shot"
  ],
  "queue": [
-  "d23 S1 (built: d23_S1_junflw055): Juniper FL weight 0.45 -> 0.55, Juniper mean FL kept (scale 0.91454); bracket above (Lumify FL vertex 0.46; device vertices so far landed near the first step's end, so expect flat-to-worse unless Juniper differs)",
-  "d23: split left_ticks vs Telemed FL weights (joint vertex 0.29; Telemed's pipeline FL is far above Vera raw) and PA weights (joint 0.60)",
-  "d23: Juniper PA 0.75 (quadratic vertex 0.76, ~ -0.00015; convexity bound +0.00033)",
-  "final selection (due 2026-11-07): A = best public (d22_S4_restpaw060, 0.20241); B = daily/out/d23_hedgeB (A minus left_ticks FL x1.016, small-family FL x1.03 and Telemed MT -0.5 inside the level-matched scales; not exactly predictable any more: ~ +0.0043); decide whether B keeps the device weights; submit B once A is final",
+  "Track-B decision (2026-10-22): member v2 (iso kernel) also vetoed (FL sd 18.1mm, coverage 121/309). Next: (a) ASK THE HOST on topic 744191 re hard-coded-Vera-as-declared-external with a re-runnable DLTrack path shipped alongside; (b) optional: averaged-member FL (extrap+iso+trig) sd ~12-15mm -> ~0.23-0.24 blend probe; (c) all 5 slots used today",
+  "Track-A: FULLY exhausted (weights, levels, MT clip, failure fill all settled or closed 2026-10-22); monitor LB daily (rank 2 at 0.20337 active); hedge B = 0.20732, fail-fill variant = 0.20239 recorded",
+  "final selection (due 2026-11-07/14): A = d23_S2_junpa075 (0.20227, Vera blend); B = hedge 0.20732 (less LB-only-level reliance) or d24_S4_failfill (0.20239, principled failure handling) - decide a week ahead",
   "daily: new forum topics / notebooks; LB watch"
  ]
 }

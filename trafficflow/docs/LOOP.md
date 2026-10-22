@@ -109,6 +109,33 @@ before the container is lost.
 
 Previous best: `H11P_transductive3.zip` = 0.87249 (2026-09-28), build below in the decision log.
 
+
+## 2026-10-22 night session (K1, S_LWR floor, J-line ongoing gap)
+**New best: `K1_cm05.zip` = 0.88207** (J2 + common-mode flow correction, +0.00004, inside the pre-registered +0.0000..+0.0003).
+Day 2026-10-22 slots: J6, J7 (ERROR), J7b, J8b, K1 = 5.
+
+**S_LWR is at its noise floor (measured, `scripts/lwr_*.py`).** Official scorer read in jacky850/trafficflowbench-public:
+rhs = organizer boundary flux projected onto the released observations, so rhs = released dN (noisy). On train, log q
+time-residual sd 3.6 % (iid in time apart from lag-1 acf 0.35, uncorrelated with speed noise), and time-linear
+interpolation of N scores only 0.535 on the proxy (target transitions keep 86 % of their |dN|). The only predictable part
+of the "noise" is a same-time corridor common mode (residual corr 0.5 between neighbouring links). J2 already uses it
+(implied beta 0.62-0.93 vs train optimum 0.62-1.12, 10/10 panels below). K1 adds half the gap: +0.00004; the full gap
+would add ~+0.00001 more (quadratic) -> **axis closed.** The leaders' +0.04 is not in Task 3.
+
+**J-line ongoing gap (the biggest known, unplayed lever).** I5/J2/K1 still use H11P **v5** ongoing. On the H-line,
+v5 -> v7v11 (H16b) -> v12v11 (H17) gave +0.00053 + 0.00067 = **+0.0012** public, and the April adaptation (H19) is worth
+~+0.0014 on private. Rebuild running: `scripts/chain_v12_adapt.sh` (log /home/user/work/chain_v12.log).
+
+### Cards for 2026-10-23 (one at a time; read each score first)
+1. **K2 = K1 + ongoing rows from `lgb_v8og_v12v11.csv`** (onset rows of K1 untouched; only ongoing queue rows change).
+   Expect +0.0008..+0.0015. Adopt if >= +0.0003. If <= -0.001: the public-onset line interacts with ongoing; diagnose.
+2. **K3 = K2 + April-adapted ongoing (`lgb_v8og_v12v11_aprAD.csv`, private rows only)** - public must equal K2 exactly
+   (file validity check; private-line final).
+3. Remaining slots: only cards with pseudo-holdout evidence (onset April adaptation E3; second v12 seed).
+
+**Prize admin (user action):** registration e-mail to trafficflowbench@gmail.com by **Oct 25 23:59 AoE**, subject
+"Traffic Flow Bench Registration" (team name, Kaggle usernames, full names, affiliations, e-mails, primary contact).
+
 ## Gates
 **Candidate:** one locally validated change against the current best.
 - **Adopt** as the new best if LB Δ ≥ +0.0005. A Δ between 0 and +0.0005 needs a matching local
