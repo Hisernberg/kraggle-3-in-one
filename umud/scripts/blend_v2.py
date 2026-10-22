@@ -62,6 +62,8 @@ ap.add_argument("--fam-mt-offset", nargs=2, action="append", default=[], metavar
                 help="mm added to the final MT of one device family (after smoothing)")
 ap.add_argument("--fam-pa-final", nargs=2, action="append", default=[], metavar=("FAMILY", "DEG"),
                 help="degrees added to the final PA of one device family (after smoothing)")
+ap.add_argument("--spread", nargs=2, action="append", default=[], metavar=("TARGET", "S"),
+                help="scale each device family's deviations from its own mean final value (means kept; applied last)")
 ap.add_argument("--out", required=True)
 a = ap.parse_args()
 
@@ -139,6 +141,11 @@ for fp, rr, tg in a.aniso:  # true angle: tan = R * tan(pixel angle); true lengt
         out.loc[m, "fl_mm"] = out.loc[m, "fl_mm"] / np.sqrt((rr * np.cos(th)) ** 2 + np.sin(th) ** 2)
     if "pa" in tg:
         out.loc[m, "pa_deg"] = np.degrees(th)
+if a.spread:  # Juniper presets and gray853 variants pooled into one device family each
+    dev = fam.where(~fam.str.startswith("juniper"), "juniper").where(~fam.str.startswith("gray"), "gray853")
+    for t, sc in a.spread:
+        mu = out.groupby(dev)[t].transform("mean")
+        out[t] = mu + float(sc) * (out[t] - mu)
 if not a.no_anchors:
     for k, v in ANCHORS.items():
         out.loc[k] = v
