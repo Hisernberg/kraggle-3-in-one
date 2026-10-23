@@ -38,3 +38,6 @@
 
 **Crisis protocol:** correlation across recent pairs < 0.5 → freeze ADOPT decisions → differential diagnosis (shift / CV leak / LB noise / metric mismatch) → resume with written cause.
 | EXP-2501 | 2026-10-23 | rank defence | FL anchor 0.85 Vera + 0.15 DLTrack prior (level-matched) adds information beyond Vera | brain/zero | d25_S1_vdl15 | 1 | n/a | pending | - | card: daily/plans/d25.md |
+| EXP-2501b | 2026-10-23 | rank defence | (result) FL anchor mix 0.15 | brain/zero | d25_S1_vdl15 | 1 | n/a | -0.00092 | ADOPT | partial anchor wins where the full swap lost; vertex ~0.17 |
+| EXP-2502 | 2026-10-23 | rank defence | PA spread x0.90 within device family | brain/zero | d25_S2_pas090 | 1 | n/a | -0.00099 | ADOPT | new axis; vertex ~0.91 (S4 x0.80 +0.00135) |
+| EXP-2503 | 2026-10-23 | rank defence | FL spread x0.92 / x1.04 | brain/zero | d25_S3/S5 | 1 | n/a | +0.00456 / +0.00097 | REJECT | FL spread settled at 1.0 |

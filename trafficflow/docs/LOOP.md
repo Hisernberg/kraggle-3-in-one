@@ -126,6 +126,11 @@ would add ~+0.00001 more (quadratic) -> **axis closed.** The leaders' +0.04 is n
 v5 -> v7v11 (H16b) -> v12v11 (H17) gave +0.00053 + 0.00067 = **+0.0012** public, and the April adaptation (H19) is worth
 ~+0.0014 on private. Rebuild running: `scripts/chain_v12_adapt.sh` (log /home/user/work/chain_v12.log).
 
+### 2026-10-23 results
+**New best: `K2_og_v12v11.zip` = 0.88314** (+0.00107 vs K1, predicted +0.0012 / range 0.8830-0.8834). The H-line
+ongoing gain transferred onto the I/J/K line almost exactly (89 %). Changed cells vs v5: 128 March / 91 April.
+The 22:3x container restart killed the chain once; `scripts/chain_v12_adapt.sh` is now resumable (step markers).
+
 ### Cards for 2026-10-23 (one at a time; read each score first)
 1. **K2 = K1 + ongoing rows from `lgb_v8og_v12v11.csv`** (onset rows of K1 untouched; only ongoing queue rows change).
    Expect +0.0008..+0.0015. Adopt if >= +0.0003. If <= -0.001: the public-onset line interacts with ongoing; diagnose.

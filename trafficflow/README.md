@@ -14,7 +14,7 @@ The repository also holds other competitions; see the root README.
 ## Status
 | | |
 |---|---|
-| Best public score | **0.88207** (`K1_cm05.zip`, 2026-10-22; line H11P → I5 public blend → J2 FD recon → K1 common mode). H-line best 0.87377 (H17) |
+| Best public score | **0.88314** (`K2_og_v12v11.zip`, 2026-10-23; line H11P → I5 public blend → J2 FD recon → K1 common mode → K2 v12v11 ongoing). H-line best 0.87377 (H17) |
 | Final-pair recommendation | K-line with the v12v11 ongoing (K2, planned 2026-10-23) + its April-adapted private-line twin (K3). See docs/LOOP.md, 2026-10-22 night session |
 | Deadline | 2026-11-07 06:55 UTC; 5 submissions a day |
 | Automation | None since 2026-10-10: submissions only on the user's instruction, following the runbook in [`docs/LOOP.md`](docs/LOOP.md) |

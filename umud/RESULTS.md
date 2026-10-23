@@ -469,3 +469,16 @@ Public rank 1.
 - Offline gates did their job before any slot was spent: the DL-mask member MT mix failed the ≤1 mm sd bar (2.47 mm),
   the Juniper/Lumify weight vertices are flat (<0.0001 expected), and the near-duplicate pair 18/19 is already grouped.
 Best unchanged: **0.20227 (d23_S2_junpa075), public rank 1**. Day-24 slots: 5/5 used.
+
+## Day 25 (2026-10-23): second anchor and dispersion, best 0.20036 (public rank 1)
+| Shot | Change vs best | Public LB |
+|---|---|---|
+| **S1** | **FL anchor 0.85 Vera + 0.15 DLTrack prior, family means kept** | **0.20135 (new best)** |
+| **S2** | **PA spread x0.90 within each device family (means kept)** | **0.20036 (new best)** |
+| S3 | FL spread x0.92 | 0.20492 |
+| S4 | PA spread x0.80 | 0.20171 (PA vertex ~0.91) |
+| S5 | FL spread x1.04 | 0.20133 (FL spread settled at 1.0) |
+
+- Full-history review: every past win came from better maps, device physics or device weights/levels; the two new
+  axes (partial second anchor, within-family dispersion) were the only untested ones and both paid.
+- Public rank 1 by 0.00195 (2nd 0.20231).
