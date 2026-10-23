@@ -126,6 +126,24 @@ would add ~+0.00001 more (quadratic) -> **axis closed.** The leaders' +0.04 is n
 v5 -> v7v11 (H16b) -> v12v11 (H17) gave +0.00053 + 0.00067 = **+0.0012** public, and the April adaptation (H19) is worth
 ~+0.0014 on private. Rebuild running: `scripts/chain_v12_adapt.sh` (log /home/user/work/chain_v12.log).
 
+### 2026-10-23 results
+**New best: `K2_og_v12v11.zip` = 0.88314** (+0.00107 vs K1, predicted +0.0012 / range 0.8830-0.8834). The H-line
+ongoing gain transferred onto the I/J/K line almost exactly (89 %). Changed cells vs v5: 128 March / 91 April.
+**K3 = 0.88314 = K2 exactly** (private line: 58 April ongoing cells from the March-adapted v11 components, the same
+58 cells as H19). **Final-pair recommendation now: K2 (public line) + K3 (private line).**
+**K4 gate FAILED (not submitted):** second v12 seed in the mix, pseudo3 official-style (332 March / 334 April windows):
+March +0.0009 (paired +0.0010 +- 0.0004, 32 better / 15 worse), April -0.0003 (-0.0004 +- 0.0004, 19 / 25). The
+baseline reproduces the 10-09 figures (v12v11 0.8385 / 0.8665). Variance reduction does not help April -> closed.
+**Shared account (2026-10-23):** another user submits the J-line from this Kaggle account (J3_ogswap 0.88318 on
+10-22 23:58, J4_v11heavy **0.88357** = team best, J_apr private twin). Their files are not in tfb-work; their kernel
+tfb-apradapt-1 outputs only caches. Slots are shared (count all team submissions per UTC day).
+**K4b (v11-heavy weights on OUR components) = 0.88256 (-0.00058 vs K2)**, although pseudo3 said +0.0026 March and J4
+gained +0.00039 with the same weights on THEIR models. Mixing weights do not transfer across retrained components
+(24 Mar cells, LB noise ~+-0.0015 for ongoing): not adopted. Lesson: re-gate weights per component set; the 40-window
+public condition can flip a +0.0026 pseudo gain.
+K5 (April onset adaptation) has no pseudo evidence yet -> not built today. Day 2026-10-23: 2 TFB slots used (K2, K3).
+The 22:3x container restart killed the chain once; `scripts/chain_v12_adapt.sh` is now resumable (step markers).
+
 ### Cards for 2026-10-23 (one at a time; read each score first)
 1. **K2 = K1 + ongoing rows from `lgb_v8og_v12v11.csv`** (onset rows of K1 untouched; only ongoing queue rows change).
    Expect +0.0008..+0.0015. Adopt if >= +0.0003. If <= -0.001: the public-onset line interacts with ongoing; diagnose.

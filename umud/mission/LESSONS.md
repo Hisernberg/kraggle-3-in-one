@@ -88,3 +88,14 @@
 **Improvements:**
 - `daily/inputs/ref_mix_vdl15.csv` / `ref_mix_vdl30.csv` (Vera with FL mixed toward the DLTrack prior) + level-matched
   builds via `scripts/build_dl_blend.py --member ...` (FL-only diff verified: 309 rows, PA/MT identical, family means 0).
+
+## 2026-10-23 (day 25)
+**Learnings (verified):**
+1. Partial second anchor: DLTrack-prior FL at 0.15 share = -0.00092, although the full swap cost +0.0222. A member
+   that fails as a replacement can still win at a small share; always probe the share near 0 before rejecting a member.
+2. Within-family dispersion is a separate axis from weights and levels: PA spread x0.90 = -0.00099 (vertex ~0.91);
+   FL spread is at its vertex (x0.92 +0.00456, x1.04 +0.00097).
+3. The two-rater variance estimate pointed the right way for PA but was biased low by ~0.2 (it assumes independent
+   errors, which the LB-tuned weights already contradict). Use it for direction only.
+**Process:** 5/5 slots in 5 minutes, all pre-registered branches; one branch swapped for a better-EV card after a
+quadratic vertex estimate (recorded in the card before submitting).
