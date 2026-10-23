@@ -53,11 +53,16 @@ Maps: public dariushafshar U-Net weights (trained only on the competition train 
 | F1 | F1_dari_r34_tuned.csv | r34 5-fold maps, t 0.45 merge 4 area 80 | 0.4265 | 0.36 |
 | F3 | F3_dari_rule.csv | same maps, the author's keep rule (t 0.15, peak 0.97, mean 0.70, area 250@2048) | 0.4154 | 0.34 |
 | F2 | F2_dari_r34_hyst.csv | t 0.45 merge 2 area 110 hyst 0.75 (wider search; edge search found nothing better) | 0.4310 | 0.36 |
+| P4 | F4p_area200.csv | F2 cfg, min_area 200 (vertex probe) | 0.4028 | 0.33 |
+| P5 | F5p_area60.csv | F2 cfg, min_area 60 (mirror probe) | 0.4212 | 0.35 |
 - LB ~= 0.83 x OOF@1024 again (F1/F3 order matches OOF): the local metric is trustworthy for ranking.
 - The r34-only post-processing is saturated at ~0.43 OOF. Next lever: the EfficientNetV2-S family (author: 0.39 LB
   alone) and the 10-model average; maps computing in ch2-dari-cpu-c (test) and ch2-dari-cpu-b (test + OOF).
 - Our best stays 0.55 (public hdjojo payload); honest models remain below it.
-- 2026-10-23 slots 4-5 unused: the EfficientNetV2-S test-map kernel (ch2-dari-cpu-c, CPU, no TTA) was still running at
+- P4/P5 (23:45 UTC, slots 4-5 filled after all) bracket the area vertex: 200 -> 0.33, 110 -> 0.36, 60 -> 0.35, same
+  order as OOF. The OOF-tuned cfg is at the LB vertex; the test set does not want harder pruning. min_score 0.60 on the
+  F2 cfg removes nothing (hysteresis already prunes) -> identical file, dropped. Post-processing on r34 is done.
+- (Earlier note) the EfficientNetV2-S test-map kernel (ch2-dari-cpu-c, CPU, no TTA) was still running at
   23:35 UTC (it is slower than r34: >3.5 h for 180 images). Cards for 2026-10-24 (daily block): F4 = eff maps alone with
   the author's eff rule (t 0.35, hyst 0.995, area 0, min_score 0.85); F5 = mean(r34, eff) maps with the author's
   10-model rule (t 0.35, hyst 0.99, area 50@1024, min_score 0.85), via `scripts/apply_maps.py`; then re-tune both on the
