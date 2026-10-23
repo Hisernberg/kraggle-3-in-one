@@ -33,3 +33,12 @@ Day 2:
 - Day-2 end: plateau at 0.35. The r34 encoder alone is not better than r18 (0.34), and the r34+r18 ensemble ties at 0.35. On OOF, FN dominates (TP 3091 / FP 1418 / FN 2531 at thr 0.40).
 - Next levers: 4500-step r18 (ch-unet-r18-full-s5, running), a 2048 crop refiner for SQ, YOLO11-seg on GPU after the Saturday quota reset, and fusing U-Net and YOLO instances.
 - 2026-09-26: +0.02 LB from longer training (4000–4500 steps), a filter retrained on 5-fold / 586-image OOF with richer features, and a stricter 2048 upsample threshold. GPU quota is back: YOLO11m-seg kernels ch-yolo-f0 (fold-0 OOF for tuning) and ch-yolo-full are training.
+
+## 2026-10-23 (no submission)
+- Public board: 0.69 / 0.64 / 0.62 / 0.62; ours 0.55 (public hdjojo payload, ~rank 70 / 1140).
+- New public evidence on the honest ceiling: dariushafshar "Solar Filament U-Net: OOF 0.45 vs Public 0.39" (weights public:
+  dariushafshar/solar-filament-unet-weights) and "Filament PQ: Two Experts Agree at 0.34" (inter-annotator PQ 0.34).
+  Honest models land at ~0.35-0.39 public, below our 0.55 payload, so no honest candidate can raise our best score;
+  the 0.62-0.69 entries very likely use the MAGFiLO test annotations (see ANALYSIS.md). No slot spent.
+- Kaggle GPU weekly quota (30 h) is exhausted until the weekly reset; another user on this account is running
+  solar-cpu-r18c-f0..f3 CPU kernels (not ours). ch2-dari-cpu-a (ours) computes maps for the public dariushafshar set.
