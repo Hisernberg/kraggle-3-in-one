@@ -57,3 +57,8 @@ Maps: public dariushafshar U-Net weights (trained only on the competition train 
 - The r34-only post-processing is saturated at ~0.43 OOF. Next lever: the EfficientNetV2-S family (author: 0.39 LB
   alone) and the 10-model average; maps computing in ch2-dari-cpu-c (test) and ch2-dari-cpu-b (test + OOF).
 - Our best stays 0.55 (public hdjojo payload); honest models remain below it.
+- 2026-10-23 slots 4-5 unused: the EfficientNetV2-S test-map kernel (ch2-dari-cpu-c, CPU, no TTA) was still running at
+  23:35 UTC (it is slower than r34: >3.5 h for 180 images). Cards for 2026-10-24 (daily block): F4 = eff maps alone with
+  the author's eff rule (t 0.35, hyst 0.995, area 0, min_score 0.85); F5 = mean(r34, eff) maps with the author's
+  10-model rule (t 0.35, hyst 0.99, area 50@1024, min_score 0.85), via `scripts/apply_maps.py`; then re-tune both on the
+  eff OOF maps from ch2-dari-cpu-b when they land.
