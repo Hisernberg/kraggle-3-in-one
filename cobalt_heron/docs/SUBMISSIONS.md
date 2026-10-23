@@ -42,3 +42,18 @@ Day 2:
   the 0.62-0.69 entries very likely use the MAGFiLO test annotations (see ANALYSIS.md). No slot spent.
 - Kaggle GPU weekly quota (30 h) is exhausted until the weekly reset; another user on this account is running
   solar-cpu-r18c-f0..f3 CPU kernels (not ours). ch2-dari-cpu-a (ours) computes maps for the public dariushafshar set.
+
+## 2026-10-23 evening (honest line; user asked for all 5 daily slots)
+Maps: public dariushafshar U-Net weights (trained only on the competition train set), re-run by us on Kaggle CPU
+(`kaggle/ch2/`, no flip TTA); post-processing tuned on the 707 fold-held-out maps with the exact PQ
+(`scripts/tune_maps.py`, 1024 proxy).
+
+| # | File | Change | OOF PQ@1024 | Public LB |
+|---|---|---|---|---|
+| F1 | F1_dari_r34_tuned.csv | r34 5-fold maps, t 0.45 merge 4 area 80 | 0.4265 | 0.36 |
+| F3 | F3_dari_rule.csv | same maps, the author's keep rule (t 0.15, peak 0.97, mean 0.70, area 250@2048) | 0.4154 | 0.34 |
+| F2 | F2_dari_r34_hyst.csv | t 0.45 merge 2 area 110 hyst 0.75 (wider search; edge search found nothing better) | 0.4310 | 0.36 |
+- LB ~= 0.83 x OOF@1024 again (F1/F3 order matches OOF): the local metric is trustworthy for ranking.
+- The r34-only post-processing is saturated at ~0.43 OOF. Next lever: the EfficientNetV2-S family (author: 0.39 LB
+  alone) and the 10-model average; maps computing in ch2-dari-cpu-c (test) and ch2-dari-cpu-b (test + OOF).
+- Our best stays 0.55 (public hdjojo payload); honest models remain below it.
