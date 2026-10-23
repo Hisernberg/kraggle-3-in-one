@@ -29,6 +29,9 @@ RECIPES = {
     # 2026-10-09 (H17): v7's og_v3 / og_v3_noloc replaced by v12 (same variants on hybrid labels at p3)
     "v12v11": [("t2h:v12_og_v3", 0.175), ("t2h:v12_og_v3_noloc", 0.175), ("v11_og_v3", 0.175), ("v11_og_v3_noloc", 0.175),
                ("t2h:v7_og_v2", 0.15), ("t2h:v7_og_v2_noloc", 0.15)],
+    # 2026-10-23 (J4/K4b): v11-heavy weights; pseudo3 official-style +0.0026 March / +0.0010 April vs v12v11
+    "v11heavy": [("t2h:v12_og_v3", 0.125), ("t2h:v12_og_v3_noloc", 0.125), ("v11_og_v3", 0.25), ("v11_og_v3_noloc", 0.25),
+                 ("t2h:v7_og_v2", 0.125), ("t2h:v7_og_v2_noloc", 0.125)],
     "v7": [("t2h:v7_og_v3", 0.35), ("t2h:v7_og_v3_noloc", 0.35), ("t2h:v7_og_v2", 0.15), ("t2h:v7_og_v2_noloc", 0.15)],
 }
 

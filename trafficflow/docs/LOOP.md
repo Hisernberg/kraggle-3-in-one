@@ -134,6 +134,13 @@ ongoing gain transferred onto the I/J/K line almost exactly (89 %). Changed cell
 **K4 gate FAILED (not submitted):** second v12 seed in the mix, pseudo3 official-style (332 March / 334 April windows):
 March +0.0009 (paired +0.0010 +- 0.0004, 32 better / 15 worse), April -0.0003 (-0.0004 +- 0.0004, 19 / 25). The
 baseline reproduces the 10-09 figures (v12v11 0.8385 / 0.8665). Variance reduction does not help April -> closed.
+**Shared account (2026-10-23):** another user submits the J-line from this Kaggle account (J3_ogswap 0.88318 on
+10-22 23:58, J4_v11heavy **0.88357** = team best, J_apr private twin). Their files are not in tfb-work; their kernel
+tfb-apradapt-1 outputs only caches. Slots are shared (count all team submissions per UTC day).
+**K4b (v11-heavy weights on OUR components) = 0.88256 (-0.00058 vs K2)**, although pseudo3 said +0.0026 March and J4
+gained +0.00039 with the same weights on THEIR models. Mixing weights do not transfer across retrained components
+(24 Mar cells, LB noise ~+-0.0015 for ongoing): not adopted. Lesson: re-gate weights per component set; the 40-window
+public condition can flip a +0.0026 pseudo gain.
 K5 (April onset adaptation) has no pseudo evidence yet -> not built today. Day 2026-10-23: 2 TFB slots used (K2, K3).
 The 22:3x container restart killed the chain once; `scripts/chain_v12_adapt.sh` is now resumable (step markers).
 
