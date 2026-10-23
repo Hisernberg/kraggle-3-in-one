@@ -131,6 +131,10 @@ v5 -> v7v11 (H16b) -> v12v11 (H17) gave +0.00053 + 0.00067 = **+0.0012** public,
 ongoing gain transferred onto the I/J/K line almost exactly (89 %). Changed cells vs v5: 128 March / 91 April.
 **K3 = 0.88314 = K2 exactly** (private line: 58 April ongoing cells from the March-adapted v11 components, the same
 58 cells as H19). **Final-pair recommendation now: K2 (public line) + K3 (private line).**
+**K4 gate FAILED (not submitted):** second v12 seed in the mix, pseudo3 official-style (332 March / 334 April windows):
+March +0.0009 (paired +0.0010 +- 0.0004, 32 better / 15 worse), April -0.0003 (-0.0004 +- 0.0004, 19 / 25). The
+baseline reproduces the 10-09 figures (v12v11 0.8385 / 0.8665). Variance reduction does not help April -> closed.
+K5 (April onset adaptation) has no pseudo evidence yet -> not built today. Day 2026-10-23: 2 TFB slots used (K2, K3).
 The 22:3x container restart killed the chain once; `scripts/chain_v12_adapt.sh` is now resumable (step markers).
 
 ### Cards for 2026-10-23 (one at a time; read each score first)
