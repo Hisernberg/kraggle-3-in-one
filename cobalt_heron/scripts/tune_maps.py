@@ -48,6 +48,8 @@ if __name__ == "__main__":
     ap.add_argument("--oof", nargs="+", required=True); ap.add_argument("--test", nargs="+", required=True)
     ap.add_argument("--out", required=True); ap.add_argument("--cfg", default=None, help="skip tuning, use this json cfg")
     ap.add_argument("--workers", type=int, default=4)
+    ap.add_argument("--start", default=None, help="json start cfg for the search")
+    ap.add_argument("--grid", default=None, help="json grid replacing the default")
     A = ap.parse_args()
     from ch.tune import gt1024
     GT = gt1024()
@@ -57,14 +59,16 @@ if __name__ == "__main__":
         if A.cfg:
             best = json.loads(A.cfg); acc = evaluate(best, stems, pool)
         else:
-            best = dict(t=0.5, merge=0, min_area=0, min_score=0.0)
+            best = json.loads(A.start) if A.start else dict(t=0.5, merge=0, min_area=0, min_score=0.0)
             acc = evaluate(best, stems, pool); print("start", best, acc, flush=True)
             grid = {"t": [0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6], "merge": [0, 4, 8, 16],
                     "min_area": [0, 30, 80, 200], "min_score": [0.0, 0.5, 0.55, 0.6, 0.65]}
+            if A.grid:
+                grid = json.loads(A.grid)
             for rnd in range(2):
                 for k, vals in grid.items():
                     for v in vals:
-                        if v == best[k]:
+                        if v == best.get(k):
                             continue
                         c = dict(best, **{k: v}); a = evaluate(c, stems, pool)
                         if a.pq > acc.pq:

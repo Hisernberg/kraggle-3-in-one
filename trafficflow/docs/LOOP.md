@@ -144,6 +144,29 @@ public condition can flip a +0.0026 pseudo gain.
 K5 (April onset adaptation) has no pseudo evidence yet -> not built today. Day 2026-10-23: 2 TFB slots used (K2, K3).
 The 22:3x container restart killed the chain once; `scripts/chain_v12_adapt.sh` is now resumable (step markers).
 
+
+### Results 2026-10-24
+| Card | File | Public | Verdict |
+|---|---|---|---|
+| K7 | K7_fd065.zip (FD recon gate 0.60 -> 0.65 vf, 5,558 band rows) | 0.88305 (-0.00009) | gate vertex = 0.60 (0.55 = 0.60, 0.65 / 0.70 lose) |
+| K6 | K6_cm10.zip (full common-mode beta gap) | 0.88310 (-0.00004) | vertex = half gap (K1/K2) |
+| K8 gate | ongoing decode calibration p^gamma before eIoU (`T2_PGAMMA`), pseudo3 | gamma 0.8: Mar -0.0035 / Apr -0.0048; 1.25: +0.0005 / -0.0074 | fails both-month gate; eIoU on raw p is the vertex; not submitted |
+| K5 | April-onset adaptation | - | not built: onset rows are the public kernel's (T08) + safe v8 cells, adapt.py is ongoing-only |
+
+Standing: public 0.88314 (K2) rank ~56/591; leader 0.92406 (+0.041). Every cheap state/decode knob is at its vertex;
+the gap is structural (Task 2), not reachable with one-knob probes. Final pair stays K2 (public line) + K3 (private line).
+
+### Cards for 2026-10-24 (user standing order: fill all 5 slots; one change each, read each score first)
+Base K2 (0.88314; finals K2 + K3). Evidence is thin after K4b (pseudo3 weight gains did not transfer), so cards 2-5 are
+labelled probes with small expected value.
+1. **K5 April-onset adaptation (private line)**: onset models adapted on March pseudo windows (t2/adapt.py, onset
+   condition), April rows only; public must equal K2. Build only if the April pseudo onset IoU gains > 2 paired SE.
+2. **K6 probe: K2 + full common-mode beta** (K1 used half the gap; quadratic says +0.00001): exact-transfer state probe.
+3. **K7 probe: FD congested-branch gate 0.6 -> 0.65 vf** on K2 (0.55 = 0.6 = 0.88203, 0.7 -0.0002 on the J-line).
+4. **K8 probe: v12v11 ongoing decode threshold / top-m +1 cell** on K2 (only if pseudo3 official-style >= +0.0005 on
+   BOTH months).
+5. Unused slot -> resubmit nothing; keep for the other account user unless after 22:00 UTC.
+
 ### Cards for 2026-10-23 (one at a time; read each score first)
 1. **K2 = K1 + ongoing rows from `lgb_v8og_v12v11.csv`** (onset rows of K1 untouched; only ongoing queue rows change).
    Expect +0.0008..+0.0015. Adopt if >= +0.0003. If <= -0.001: the public-onset line interacts with ongoing; diagnose.

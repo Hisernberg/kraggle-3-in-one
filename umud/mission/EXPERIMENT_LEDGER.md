@@ -41,3 +41,6 @@
 | EXP-2501b | 2026-10-23 | rank defence | (result) FL anchor mix 0.15 | brain/zero | d25_S1_vdl15 | 1 | n/a | -0.00092 | ADOPT | partial anchor wins where the full swap lost; vertex ~0.17 |
 | EXP-2502 | 2026-10-23 | rank defence | PA spread x0.90 within device family | brain/zero | d25_S2_pas090 | 1 | n/a | -0.00099 | ADOPT | new axis; vertex ~0.91 (S4 x0.80 +0.00135) |
 | EXP-2503 | 2026-10-23 | rank defence | FL spread x0.92 / x1.04 | brain/zero | d25_S3/S5 | 1 | n/a | +0.00456 / +0.00097 | REJECT | FL spread settled at 1.0 |
+| EXP-2601 | 2026-10-24 | rank defence | Juniper + Lumify PA spread 0.82 / 0.97 (others 0.90) | brain/zero | d26_S1/S2 | 1 | n/a | +0.00051 / +0.00026 | REJECT | per-device PA vertex = global 0.90 |
+| EXP-2602 | 2026-10-24 | rank defence | MT spread 0.92 / 1.05 | brain/zero | d26_mts092 / d26_S4_mts105 | 1 | n/a | +0.01701 / +0.00254 | REJECT | MT sharp vertex at 1.0; MT solved |
+| EXP-2603 | 2026-10-24 | rank defence | FL anchor mix 0.20 | brain/zero | d26_vdl20 | 1 | n/a | +0.00008 | REJECT | anchor-mix vertex 0.15-0.17 |

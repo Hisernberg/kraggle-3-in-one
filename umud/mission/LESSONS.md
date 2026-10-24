@@ -99,3 +99,14 @@
    errors, which the LB-tuned weights already contradict). Use it for direction only.
 **Process:** 5/5 slots in 5 minutes, all pre-registered branches; one branch swapped for a better-EV card after a
 quadratic vertex estimate (recorded in the card before submitting).
+
+## 2026-10-24 (day 26)
+**Learnings (verified):**
+1. Per-device dispersion does not beat a global one here: Juniper + Lumify PA spread at 0.82 and 0.97 both lose against
+   the shared 0.90 (+0.00051 / +0.00026). The PA spread vertex is common to the devices.
+2. MT is at a sharp vertex at spread 1.0 (0.92 +0.0170, 1.05 +0.0025). The loss at 0.92 is ~2/3 of the maximum
+   possible for its 0.23 mm mean move, so most MT rows are already within 0.2 mm of the label: MT is the solved
+   target; the remaining error is PA and FL. Do not spend slots on MT dispersion again.
+3. Asymmetric vertex: a shrink costs ~7x more than an equal-size expansion on MT, so mirror steps should be smaller than
+   the probe that lost.
+**Process:** 5/5 slots in ~10 minutes, all pre-registered branches. Rank pressure: #2 is 0.00002 behind.
