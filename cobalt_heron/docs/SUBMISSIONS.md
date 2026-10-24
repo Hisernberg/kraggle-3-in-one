@@ -67,3 +67,14 @@ Maps: public dariushafshar U-Net weights (trained only on the competition train 
   the author's eff rule (t 0.35, hyst 0.995, area 0, min_score 0.85); F5 = mean(r34, eff) maps with the author's
   10-model rule (t 0.35, hyst 0.99, area 50@1024, min_score 0.85), via `scripts/apply_maps.py`; then re-tune both on the
   eff OOF maps from ch2-dari-cpu-b when they land.
+
+## 2026-10-24
+| # | File | Change | OOF PQ@1024 | Public LB |
+|---|---|---|---|---|
+| G1 | G1_mean_r34eff.csv | maps = mean(r34, EfficientNetV2-S) 5-fold each (public dariushafshar U-Nets, train-only, our CPU re-run), F2 cfg | pending (eff OOF in ch2-dari-cpu-b) | **0.37 (new honest best)** |
+| G2 | G2_eff.csv | EfficientNetV2-S maps alone, F2 cfg | pending | 0.37 |
+- Our pipeline reproduces F2 byte-identically from the map dirs (apply_maps.py check), so G1/G2 differ from F2 only in maps.
+- The pre-registered F4/F5 used the author's keep rules; F3 showed those lose to our OOF-tuned cfg on the same maps
+  (0.34 vs 0.36), so the cfg stayed at F2's and only the maps changed (single factor).
+- Next (slots 3-5): re-tune the cfg on mean(r34, eff) OOF maps when ch2-dari-cpu-b lands (est. ~02:30 UTC), then an
+  eff-weighted mean (eff stronger: 0.37 vs 0.36).
