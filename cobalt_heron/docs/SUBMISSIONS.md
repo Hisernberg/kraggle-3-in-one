@@ -71,10 +71,15 @@ Maps: public dariushafshar U-Net weights (trained only on the competition train 
 ## 2026-10-24
 | # | File | Change | OOF PQ@1024 | Public LB |
 |---|---|---|---|---|
-| G1 | G1_mean_r34eff.csv | maps = mean(r34, EfficientNetV2-S) 5-fold each (public dariushafshar U-Nets, train-only, our CPU re-run), F2 cfg | pending (eff OOF in ch2-dari-cpu-b) | **0.37 (new honest best)** |
-| G2 | G2_eff.csv | EfficientNetV2-S maps alone, F2 cfg | pending | 0.37 |
+| G1 | G1_mean_r34eff.csv | maps = mean(r34, EfficientNetV2-S) 5-fold each (public dariushafshar U-Nets, train-only, our CPU re-run), F2 cfg | 0.4418 | **0.37 (new honest best)** |
+| G2 | G2_eff.csv | EfficientNetV2-S maps alone, F2 cfg | 0.4316 (tuned cfg) | 0.37 |
+| G3 | G3_mean_tuned.csv | G1 maps, cfg re-tuned on mean OOF: t 0.40 hyst 0.85 merge 2 area 110 | 0.4423 (G1 cfg 0.4418) | 0.37 |
 - Our pipeline reproduces F2 byte-identically from the map dirs (apply_maps.py check), so G1/G2 differ from F2 only in maps.
 - The pre-registered F4/F5 used the author's keep rules; F3 showed those lose to our OOF-tuned cfg on the same maps
   (0.34 vs 0.36), so the cfg stayed at F2's and only the maps changed (single factor).
 - Next (slots 3-5): re-tune the cfg on mean(r34, eff) OOF maps when ch2-dari-cpu-b lands (est. ~02:30 UTC), then an
   eff-weighted mean (eff stronger: 0.37 vs 0.36).
+- eff OOF landed 03:37: eff alone 0.4316 = r34 0.4310 on OOF; the equal mean 0.4423 beats a 1:2 eff-weighted mean
+  (0.4372), so the members are complementary at equal weight. Mean +0.011 OOF -> +0.01 LB (ratio ~0.85 again).
+- Slots 4-5 reserved for D4-TTA maps (TTA 4: identity, flip, rot180, rot180+flip) of both families, test + OOF, on GPU
+  (`kaggle/ch2/ch2-dari-gpu-tta`, pushed 04:00 after the weekly GPU reset). The author's 0.39-0.40 likely includes TTA.
