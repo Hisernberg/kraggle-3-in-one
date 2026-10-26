@@ -1,6 +1,6 @@
 {
- "best_score": 0.20036,
- "best_name": "d25_S2_pas090",
+ "best_score": 0.1997,
+ "best_name": "d27_S3_mts1014",
  "best_args": [
   "--w",
   "0.60",
@@ -86,7 +86,10 @@
   "daily/inputs/ref_mix_vdl15.csv",
   "--spread",
   "pa_deg",
-  "0.90"
+  "0.90",
+  "--spread",
+  "mt_mm",
+  "1.014"
  ],
  "settled": [
   "d25: FL anchor 0.85 Vera + 0.15 DLTrack prior -0.00092 (anchor-mix vertex ~0.17 from w=0/0.15/1); PA spread x0.90 -0.00099, x0.80 +0.00135 vs 0.90 (vertex ~0.91); FL spread x0.92 +0.00456, x1.04 +0.00097 (settled 1.0)",
