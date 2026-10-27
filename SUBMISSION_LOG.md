@@ -236,3 +236,18 @@ Also tested and dropped: gain-normalising the 32-bit PCM clips before Whisper (H
 | 57111810 | w1_grand | user: combine all the best. 0.9 × (bagged heads + fusion head + w2v-BERT + concat LR) + 0.1 × T3, + transcript TF-IDF 0.03, waveform + transcript overrides | 0.936 / 0.956 | 0.94230 | clip 41 only (not public) |
 
 Combining everything did not beat V1 in CV (V1 0.937; all-member equal blend 0.931; 2nd-level stacking 0.935). Final selection unchanged: **V1 + T3**.
+
+## 2026-10-27 UMUD (`umud-challenge-muscle-architecture-in-ultrasound-data`), 5 of 5 used (user-authorised)
+
+Base d27_S3 0.19970 (rank 3). Lower is better. Details: `umud/daily/plans/d28.md`.
+
+| File | What | Expected | Public | Uses Vera CSV? |
+|---|---|---|---|---|
+| d28_flcnx | FL from new ConvNeXt-S fascicle map, level-matched | -0.004..+0.001 | 0.20184 | yes |
+| d28_elig_pipe | reference-free pipeline only (eligibility floor) | 0.27..0.36 | 0.34380 | **no** |
+| d28_vdljl0 | FL DLTrack-prior anchor share 0 on Juniper+Lumify | ±0.0005 | 0.19966 | yes (+ DLTrack-prior CSV) |
+| d28_othpaw066 | PA weight 0.66 on left_ticks/Telemed/small | ±0.0004 | 0.20024 | yes |
+| d28_jlpaw05 | PA weight Juniper 0.80 / Lumify 0.85 | ±0.0003 | **0.19897** | yes |
+
+LB after: 0.18297 (Mateo Allmer), 0.18704, **0.19897 (us, 3rd)**. Not #1. Every sub-0.21 line depends on the
+hard-coded Vera CSV; the only reference-free score is 0.34380.
