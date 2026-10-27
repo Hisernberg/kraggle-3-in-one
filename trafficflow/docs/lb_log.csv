@@ -34,3 +34,5 @@ utc,file,kind,status,public,best_before,delta,message
 2026-10-23 08:25,K4b_v11heavy.zip,candidate,COMPLETE,0.88256,0.88314,-0.00058,"oct23 K4b: K2 with v11-heavy ongoing weights (J4 recipe on our components); pseudo3 Mar +0.0026 / Apr +0.0010 (paired -0.0002+-0.0014); 24 Mar / 23 Apr cells. Expect +0.0002..+0.0005"
 2026-10-24 00:13,K7_fd065.zip,probe,COMPLETE,0.88305,0.88314,-9e-05,"oct24 K7 PROBE: K2 + FD congested-branch flow recon extended v<0.60vf -> v<0.65vf (5,558 band rows). Expect -0.0001..+0.0001"
 2026-10-24 00:16,K6_cm10.zip,probe,COMPLETE,0.8831,0.88314,-4e-05,"oct24 K6 PROBE: K2 with the full common-mode beta gap (K1/K2 half). Expect -0.00003..+0.00005"
+2026-10-27 15:08,L1_state.zip,candidate,COMPLETE,0.88384,0.88318,0.00070,"oct27 L1: K2 rebuild + Task1 state moved by the H13P/H14P recipe delta (x0.92 speed / x0.62 flow, FD recon kept; scripts/oct27_state_pair.sh + oct27_state_delta.py)"
+2026-10-27 18:56,L2_fullAD.zip,probe,COMPLETE,0.88384,0.88384,0.0,"oct27 L2 (private line): L1 + April ongoing from fully March-adapted v12v11 (all 6 components); 158 April cells; public = L1 by construction; pseudo3 April +0.016+-0.004 vs aprAD"

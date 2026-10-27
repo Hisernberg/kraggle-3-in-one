@@ -416,3 +416,26 @@ writes its own file (model dir, `state_<tag>.parquet`, zip). Then re-arm the wai
 5. **Research state (hours, in the background):**
    - Task 2: `trafficflow/t2/run_all.sh`;
    - Task 1: `trafficflow/t1_pipeline.py` stages (`TFB_FD=1`).
+
+### 2026-10-27 (L1, L2)
+**New best: `L1_state.zip` = 0.88384** (+0.00070 vs K2 0.88314): K2 rebuild (ongoing rows verified identical to K2) with
+the Task 1 state moved by the never-submitted H13P/H14P recipe delta (blackout rows mean(fullPD, fullPD2), regular rows
+0.25 P2 + 0.375 P3 + 0.375 P4, minus the H11P recipe), scaled 0.92 speed / 0.62 flow (the K-line's public blend
+weights), FD congested-branch recon re-applied. Build: `scripts/oct27_state_pair.sh`, `scripts/oct27_state_delta.py`.
+
+**Ongoing gate on pseudo3 (`scripts/oct27_gate_adapt.sh`, 332 March / 334 April official-style windows; April is the
+honest test for adapted components):**
+
+| scheme | March S (dS) | April S (dS) | note |
+|---|---|---|---|
+| v12v11 (public line) | 0.8391 | 0.8667 | base |
+| aprAD (K3/K13: v11 pair adapted) | +0.0256 | +0.0096 | March in-sample |
+| **fullAD (all 6 components adapted)** | +0.0728 | **+0.0237** | vs aprAD April: +0.016 +- 0.004 (101 / 43 windows) |
+| v14v11 (v12 recipe at p4) | +0.0005 | -0.0023 | capacity does not help: closed |
+| aprAD14 | +0.0235 | +0.0065 | |
+
+**L2_fullAD.zip = 0.88384 = L1** (as designed: L1 + 158 April ongoing cells from fullAD; `scripts/oct27_L2_fullAD.sh`).
+Final-pair recommendation: **L1 (public line) + L2 (private line)**. Caveat: the adaptation gain is measured on pseudo
+windows only; it has never been confirmed on official windows (cannot be, before the private reveal).
+Remaining 3 slots of 2026-10-27 unused: no other change passed a gate. The gap to #1 (0.92809, +0.044) needs about
++0.15 S_queue; no single validated lever is near that size.

@@ -251,3 +251,14 @@ Base d27_S3 0.19970 (rank 3). Lower is better. Details: `umud/daily/plans/d28.md
 
 LB after: 0.18297 (Mateo Allmer), 0.18704, **0.19897 (us, 3rd)**. Not #1. Every sub-0.21 line depends on the
 hard-coded Vera CSV; the only reference-free score is 0.34380.
+
+## 2026-10-27 TrafficFlowBench (`2026-ieee-big-data-traffic-flow-bench`), 2 of 5 used
+
+Details: `trafficflow/docs/LOOP.md` (2026-10-27 section).
+
+| Ref | File | Parent | Change | Public |
+|---|---|---|---|---|
+| 57705116 | L1_state | K2 (0.88314) | Task 1 state moved by the H13P/H14P recipe delta | **0.88384** (best) |
+| 57710820 | L2_fullAD | L1 | April ongoing rows from fully March-adapted v12v11 (158 April cells; pseudo3 April +0.016 ± 0.004 vs aprAD) | 0.88384 (= parent, as designed) |
+
+Recommended final pair: **L1 (public line) + L2 (private line)**. 3 slots left unused (nothing else passed a gate).
