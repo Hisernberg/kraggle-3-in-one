@@ -36,3 +36,6 @@ utc,file,kind,status,public,best_before,delta,message
 2026-10-24 00:16,K6_cm10.zip,probe,COMPLETE,0.8831,0.88314,-4e-05,"oct24 K6 PROBE: K2 with the full common-mode beta gap (K1/K2 half). Expect -0.00003..+0.00005"
 2026-10-27 15:08,L1_state.zip,candidate,COMPLETE,0.88384,0.88318,0.00070,"oct27 L1: K2 rebuild + Task1 state moved by the H13P/H14P recipe delta (x0.92 speed / x0.62 flow, FD recon kept; scripts/oct27_state_pair.sh + oct27_state_delta.py)"
 2026-10-27 18:56,L2_fullAD.zip,probe,COMPLETE,0.88384,0.88384,0.0,"oct27 L2 (private line): L1 + April ongoing from fully March-adapted v12v11 (all 6 components); 158 April cells; public = L1 by construction; pseudo3 April +0.016+-0.004 vs aprAD"
+2026-10-27 20:06,M3_onset_blend15.zip,probe,COMPLETE,0.88322,0.88384,-0.00062,"oct27 M3 onset probe: L1 onset re-decoded eIoU on 0.15*incumbent + 0.85*v8 p; +6 March cells (2 windows)"
+2026-10-27 20:22,M2_onset_prune20.zip,probe,COMPLETE,0.88331,0.88384,-0.00053,"oct27 M2 onset probe: L1 minus incumbent onset cells with v8 p<0.2 (never empty); -6 March cells (2 windows)"
+2026-10-27 20:30,M1_onset_union50.zip,probe,COMPLETE,0.88322,0.88384,-0.00062,"oct27 M1 onset probe: L1 + 2 March cells (1 window) with v8 p>=0.8 where the incumbent is empty"

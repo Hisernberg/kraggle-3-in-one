@@ -439,3 +439,21 @@ Final-pair recommendation: **L1 (public line) + L2 (private line)**. Caveat: the
 windows only; it has never been confirmed on official windows (cannot be, before the private reveal).
 Remaining 3 slots of 2026-10-27 unused: no other change passed a gate. The gap to #1 (0.92809, +0.044) needs about
 +0.15 S_queue; no single validated lever is near that size.
+
+### 2026-10-27 evening: onset sensitivity probes (user request: use the 3 remaining slots on onset)
+No pseudo ranking was possible: the incumbent onset rows are the public T08 kernel's binary output (+ O1 safe v8 cells)
+and the v8 onset models are not on disk (only their official-window T+30 probabilities), so neither can be scored on
+pseudo onset windows. The probes were ranked by expected IoU under the v8 probabilities (self-scored, biased toward
+v8) and built with `scripts/oct27_onset_probe.py` on L1. T08 and v8 agree on ~133/153 March cells.
+
+| Probe | March change | v8-calibrated dTotal | Public | March onset IoU change |
+|---|---|---|---|---|
+| M3 blend 0.15 inc + 0.85 v8, eIoU | +6 cells, 2 windows | +0.0014 | 0.88322 (-0.00062) | -0.0041 |
+| M2 prune incumbent cells with v8 p < 0.2 | -6 cells, 2 windows | -0.0003 | 0.88331 (-0.00053) | -0.0035 |
+| M1 add v8 p >= 0.8 cells | +2 cells, 1 window | +0.0012 | 0.88322 (-0.00062) | -0.0041 |
+
+Reading: every v8-vs-T08 disagreement on March went T08's way, in both directions. M3's whole loss is M1's two
+confident v8 cells in one window (the other 4 added cells net 0). The incumbent onset set is a local optimum against
+our v8 model (as F1/F2 found for v6 decoding). Sensitivity: one window's IoU = 0.15/40 = 0.0037 x dIoU of total, so a
+single wrong 2-cell edit costs ~0.0006. Onset gains must come from a better model than T08 (or T08 retrained/adapted),
+not from re-mixing with v8. Not adopted; finals stay L1 + L2.

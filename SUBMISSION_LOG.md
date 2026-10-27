@@ -252,7 +252,7 @@ Base d27_S3 0.19970 (rank 3). Lower is better. Details: `umud/daily/plans/d28.md
 LB after: 0.18297 (Mateo Allmer), 0.18704, **0.19897 (us, 3rd)**. Not #1. Every sub-0.21 line depends on the
 hard-coded Vera CSV; the only reference-free score is 0.34380.
 
-## 2026-10-27 TrafficFlowBench (`2026-ieee-big-data-traffic-flow-bench`), 2 of 5 used
+## 2026-10-27 TrafficFlowBench (`2026-ieee-big-data-traffic-flow-bench`), 5 of 5 used
 
 Details: `trafficflow/docs/LOOP.md` (2026-10-27 section).
 
@@ -260,5 +260,8 @@ Details: `trafficflow/docs/LOOP.md` (2026-10-27 section).
 |---|---|---|---|---|
 | 57705116 | L1_state | K2 (0.88314) | Task 1 state moved by the H13P/H14P recipe delta | **0.88384** (best) |
 | 57710820 | L2_fullAD | L1 | April ongoing rows from fully March-adapted v12v11 (158 April cells; pseudo3 April +0.016 ± 0.004 vs aprAD) | 0.88384 (= parent, as designed) |
+| 57712104 | M3_onset_blend15 | L1 | onset probe: eIoU on 0.15 incumbent + 0.85 v8 (+6 March cells) | 0.88322 |
+| 57712292 | M2_onset_prune20 | L1 | onset probe: drop incumbent cells with v8 p < 0.2 (-6 March cells) | 0.88331 |
+| 57712326 | M1_onset_union50 | L1 | onset probe: add v8 p >= 0.8 cells (+2 March cells) | 0.88322 |
 
-Recommended final pair: **L1 (public line) + L2 (private line)**. 3 slots left unused (nothing else passed a gate).
+Recommended final pair: **L1 (public line) + L2 (private line)**. The onset probes (user-requested) all lost: T08's onset set beats every v8 edit in both directions.
