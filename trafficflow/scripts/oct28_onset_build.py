@@ -2,7 +2,7 @@
 
     python oct28_onset_build.py BASE.csv OUT.csv VAL_SPEC PRIV_SPEC
 SPEC: "keep" (base rows unchanged) or "<members>@<decoder>", members = "T08" and/or model names in t08/
-("model_<name>.txt"), averaged; decoder "eiou" or a threshold ("0.55" = T08's rule with top-1 fallback).
+("model_<name>.txt" LightGBM or "model_<name>.cbm" CatBoost), averaged; decoder "eiou" or a threshold ("0.55" = T08's rule with top-1 fallback).
 The O1 cells of the base (base onset cells that T08 does not select) are kept in every changed window.
 Only T+30 onset cells change; everything else stays byte-identical to BASE.
 """
@@ -25,6 +25,8 @@ T["t08"] = False
 for _, g in T.groupby("window_id"):
     T.loc[g.index, "t08"] = decode_t08(g)
 X = np.concatenate([r[5] for r in rows])
+from trafficflow.t2.onset_prior import for_windows
+XR = np.column_stack([X, for_windows(rows)])          # + recurrence prior (87 features)
 
 
 def probs(members):
@@ -32,8 +34,13 @@ def probs(members):
     for m in members:
         if m == "T08":
             ps.append(T.p.to_numpy())
+        elif __import__("os").path.exists(f"{W08}/model_{m}.cbm"):
+            from catboost import CatBoostClassifier
+            c = CatBoostClassifier(); c.load_model(f"{W08}/model_{m}.cbm")
+            ps.append(c.predict_proba(XR if len(c.feature_names_) == 87 else X, thread_count=4)[:, 1])
         else:
-            ps.append(lgb.Booster(model_file=f"{W08}/model_{m}.txt").predict(X, num_threads=4))
+            b = lgb.Booster(model_file=f"{W08}/model_{m}.txt")
+            ps.append(b.predict(XR if b.num_feature() == 87 else X, num_threads=4))
     return np.mean(ps, 0)
 
 

@@ -54,20 +54,24 @@ def candidates(P, v, e):
 
 def build_rows(drop: float = 0.05, reps: int = 2):
     rng = np.random.default_rng(20261005)
-    X, Xp, y, meta = [], [], [], []
+    X, Xp, y, yh, meta = [], [], [], [], []
     for pi, name in enumerate(panel_names()):
         P = T08Panel(name, pi); st = statics(name)
         perm = np.array([st["lid"][l] for l in P.links])
         d = load(name)
         V, Q, E = d["tspeed"][:, perm], d["tflow"][:, perm], d["elig"][:, perm]
+        zq = np.load(f"/home/urad/tfbroot/work/t2/ds_{name}_y2.npz")
+        QH = np.unpackbits(zq["qtrue"], axis=1, count=int(zq["L"])).astype(bool)[:, perm]   # hybrid truth, train slots
         a, b = SPLIT_DAYS["train"]
         for day in range(a, b):
             sl = slice(day * SLOTS, (day + 1) * SLOTS)
             v, q, e = V[sl], Q[sl], E[sl]
+            qh = QH[sl]
             if np.isnan(v).all():
                 continue
             for t in candidates(P, v, e):
                 lab = (v[t + HORIZON] <= P.cut) & np.isfinite(v[t + HORIZON])
+                labh = qh[t + HORIZON]
                 ok = e[t + HORIZON] & np.isfinite(v[t + HORIZON])
                 origin = T0 + pd.Timedelta(minutes=5 * (day * SLOTS + t))
                 for rep in range(reps):
@@ -75,10 +79,10 @@ def build_rows(drop: float = 0.05, reps: int = 2):
                     if rep:
                         m = rng.random(hv.shape) < drop
                         hv[m] = np.nan; hq[m] = np.nan; he[m] = 0
-                    X.append(P.onset_rows(hv, hq, he, origin)[ok]); Xp.append(patch(P, hv)[ok]); y.append(lab[ok])
+                    X.append(P.onset_rows(hv, hq, he, origin)[ok]); Xp.append(patch(P, hv)[ok]); y.append(lab[ok]); yh.append(labh[ok])
                     meta.append(np.column_stack([np.full(ok.sum(), pi), np.full(ok.sum(), day), np.full(ok.sum(), rep), np.full(ok.sum(), t)]))
         print(name, "rows", sum(len(x) for x in y), flush=True)
-    np.savez_compressed(W08 / "rows.npz", X=np.concatenate(X), Xp=np.concatenate(Xp), y=np.concatenate(y),
+    np.savez_compressed(W08 / "rows.npz", X=np.concatenate(X), Xp=np.concatenate(Xp), y=np.concatenate(y), yh=np.concatenate(yh),
                         meta=np.concatenate(meta))
 
 
@@ -115,9 +119,12 @@ def get_pseudo(d):
     return _PR[d]
 
 
-def fit(name: str, patch_on=False, drop_rep=True, adapt=0.0, seed=0, rounds=None, holdout=False, leaves=15):
+def fit(name: str, patch_on=False, drop_rep=True, adapt=0.0, seed=0, rounds=None, holdout=False, leaves=15,
+        hybrid=False, prior=False):
     z = np.load(W08 / "rows.npz")
-    X, y, meta = z["X"], z["y"], z["meta"]
+    X, y, meta = z["X"], (z["yh"] if hybrid else z["y"]), z["meta"]
+    if prior:
+        X = np.column_stack([X, np.load(W08 / "rows_prior.npz")["Xr"]])
     keep = np.ones(len(y), bool) if drop_rep else meta[:, 2] == 0
     if patch_on:
         X = np.column_stack([X, z["Xp"]])
@@ -200,4 +207,4 @@ if __name__ == "__main__":
         fit(sys.argv[2], patch_on=kw.get("patch") == "1", drop_rep=kw.get("drop", "1") == "1",
             adapt=float(kw.get("adapt", 0)), seed=int(kw.get("seed", 0)),
             rounds=int(kw["rounds"]) if "rounds" in kw else None, holdout=kw.get("holdout") == "1",
-            leaves=int(kw.get("leaves", 15)))
+            leaves=int(kw.get("leaves", 15)), hybrid=kw.get("hybrid") == "1", prior=kw.get("prior") == "1")
