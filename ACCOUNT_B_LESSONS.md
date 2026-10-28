@@ -7,7 +7,9 @@
 - 2026-10-28: N1 eIoU re-decode of March onset 0.87759 (-0.0063) and N3 CatBoost+recurrence-prior onset 0.87969 (-0.0042): onset re-decoding keeps losing on public; T08 thr 0.55 is a sharp optimum - stop onset probes. Q1 = L1 + test-month speed level correction (t1_bias, K=30) 0.88400 NEW BEST (+0.00016, ~1.5x the pseudo estimate +0.00010; month-bias transfers on the K-line as on H15b).
 - Gap to top-3 (0.924-0.928) is ~0.04: small state tweaks cannot close it; the top teams must solve a task differently (likely Task 2 queue / Task 4 ODME). Artefacts for L1/Q1 live only on the DGX session; tfb-work backup is J2-era (10-22), so a cloud run cannot build on Q1 until the backup is refreshed.
 ## Misconception
+- 2026-10-28: V4 (3-fold own Qwen3-VL-8B LoRA mean, w2 logp + promotions) 0.64766; V5 prob-space mix 0.4 + stricter promotions 0.64200 (-0.006: OOF +0.006 picked from ~30 variants did not transfer - logp blend > prob mix); V7 pseudo-label student 4th member 0.64900 NEW BEST (+0.0013, inside expected +0.000..+0.004). Ensemble tweaks are now worth ~+0.001-0.006; gap to top (0.833) needs a stronger single model.
 ## ClimX
+- 2026-10-28: E1 rule-compliant analog (systematic resampling, h=0.35K) 0.04882 NEW BEST vs A1 0.04738; holdout 370/585 (0.117/0.136) overstate LB by ~2.5x - holdouts are optimistic. Probe precip-off -0.34830 decodes to sum precip nNSE -0.043 (6 indices ~0 each); non-precip 9 indices avg ~0.086. P1 (R95p in kg m-2 s-1) -0.00638 -> truth R95p is in mm.
 ## Squares in Squares
 ## Name That LLM
 - 2026-10-28: history best 0.559 (public adaptive centred stylegram repro); own models 0.31-0.42. Public ensembles (nlm-v27 line) reach 0.651+; LB top 0.728. Weekly GPU quota (30h) was exhausted on 10-28 -> GPU forks blocked until reset; fork prepared at ntl/k_whoami (commit-run short-circuit).
