@@ -39,3 +39,4 @@ utc,file,kind,status,public,best_before,delta,message
 2026-10-27 20:06,M3_onset_blend15.zip,probe,COMPLETE,0.88322,0.88384,-0.00062,"oct27 M3 onset probe: L1 onset re-decoded eIoU on 0.15*incumbent + 0.85*v8 p; +6 March cells (2 windows)"
 2026-10-27 20:22,M2_onset_prune20.zip,probe,COMPLETE,0.88331,0.88384,-0.00053,"oct27 M2 onset probe: L1 minus incumbent onset cells with v8 p<0.2 (never empty); -6 March cells (2 windows)"
 2026-10-27 20:30,M1_onset_union50.zip,probe,COMPLETE,0.88322,0.88384,-0.00062,"oct27 M1 onset probe: L1 + 2 March cells (1 window) with v8 p>=0.8 where the incumbent is empty"
+2026-10-28 05:23,N1_t08eiou.zip,candidate,COMPLETE,0.87759,0.88384,-0.00625,"oct28 N1: L1 with March onset re-decoded eIoU top-m on the reproduced T08 probabilities (+11 cells, 7 windows); pseudo onset gate +0.006 Mar / +0.016 Apr; Feb -0.007"

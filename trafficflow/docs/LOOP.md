@@ -457,3 +457,16 @@ confident v8 cells in one window (the other 4 added cells net 0). The incumbent 
 our v8 model (as F1/F2 found for v6 decoding). Sensitivity: one window's IoU = 0.15/40 = 0.0037 x dIoU of total, so a
 single wrong 2-cell edit costs ~0.0006. Onset gains must come from a better model than T08 (or T08 retrained/adapted),
 not from re-mixing with v8. Not adopted; finals stay L1 + L2.
+
+### 2026-10-28: T08 onset reproduced; the pseudo onset gate does not transfer
+- T08 = the anubisyy v20 onset (LightGBM onset_lgb.txt + CatBoost onset.cbm, 0.5/0.5, thr 0.55, top-1 fallback; the
+  yeashu kernel copies the anubisyy queue rows). Re-implemented its 83 features ourselves (`t2/t08_features.py`; the
+  downloaded notebook code is not executed, only the released model files are loaded) -> **285/285 official onset
+  cells reproduced exactly** (`t2/onset_t08.py official`). L1 onset = T08 + 27 O1 cells.
+- Pseudo onset windows (pseudo3 417 / pseudo2 457, T+30 cells only ~54 % known): T08 IoU 0.745 Mar / 0.751 Apr.
+  eIoU decoding on T08 p: +0.006 Mar / +0.016 Apr (pooled +0.011 +- 0.006, 8/8 panels >= 0); February candidate
+  windows (T08's own selection set): -0.007.
+- **N1 (eIoU on March, +11 cells) = 0.87759 (-0.00625 -> March onset IoU -0.042).** The pseudo onset gate is wrong in
+  sign for set-size changes; February (full truth) had the right sign. Onset gating moves to February/full-truth
+  windows. The April-adapted onset models (trained on March pseudo onset windows; pseudo April +0.03 vs T08) are
+  therefore NOT used for the private line: their evidence is the same pseudo metric.
