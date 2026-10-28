@@ -42,3 +42,5 @@ utc,file,kind,status,public,best_before,delta,message
 2026-10-28 05:23,N1_t08eiou.zip,candidate,COMPLETE,0.87759,0.88384,-0.00625,"oct28 N1: L1 with March onset re-decoded eIoU top-m on the reproduced T08 probabilities (+11 cells, 7 windows); pseudo onset gate +0.006 Mar / +0.016 Apr; Feb -0.007"
 2026-10-28 07:20,N3_catprior.zip,candidate,COMPLETE,0.87969,0.88384,-0.00415,"oct28 N3: L1 with March onset from 3 CatBoost seeds on T08 features + train recurrence prior (thr 0.55); +7/-7 cells, 7 windows; Feb gate +0.016+-0.006, pseudo Mar -0.013"
 2026-10-28 11:40,Q1_monthbias.zip,candidate,COMPLETE,0.88400,0.88384,0.00016,"oct28 Q1: L1 + test-month speed level (t1_bias on P2/P3/P4 scheme) through the K-line delta; pseudo +0.00010/+0.00012, 10/10"
+2026-10-28 12:47,Q2_P2to6.zip,candidate,COMPLETE,0.88409,0.88400,0.00009,"oct28 Q2: Q1 with regular rows = equal mix P2..P6 (new P5/P6 seeds 17/18, 4x rows) + month bias refit; pseudo +0.00006/+0.00012"
+2026-10-28 12:51,Q3_P2to6_fullAD.zip,probe,COMPLETE,0.88409,0.88409,0.0,"oct28 Q3 (private line): Q2 + April ongoing from fully March-adapted v12v11 (L2 recipe); public = Q2 by construction"

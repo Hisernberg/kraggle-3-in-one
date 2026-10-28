@@ -278,7 +278,7 @@ Recommended final pair: **L1 (public line) + L2 (private line)**. The onset prob
 
 LB after: 0.18297, 0.18704, **0.19888 (us, 3rd)**. Best eligible (no public CSV): 0.29936.
 
-## 2026-10-28 TrafficFlowBench (`2026-ieee-big-data-traffic-flow-bench`), 2 of 5 used
+## 2026-10-28 TrafficFlowBench (`2026-ieee-big-data-traffic-flow-bench`), 5 of 5 used
 
 Details: `trafficflow/docs/LOOP.md` (2026-10-28 section). T08 onset reproduced exactly; both onset candidates lost.
 
@@ -286,6 +286,8 @@ Details: `trafficflow/docs/LOOP.md` (2026-10-28 section). T08 onset reproduced e
 |---|---|---|---|---|
 | 57724300 | N1_t08eiou | L1 (0.88384) | March onset: eIoU decode of the reproduced T08 probabilities (+11 cells) | 0.87759 |
 | 57725087 | N3_catprior | L1 | March onset: CatBoost x3 on T08 features + train recurrence prior (+7/-7 cells) | 0.87969 |
+| 57735495 | Q1_monthbias | L1 | Task 1 month speed level (t1_bias) via the K-line delta | 0.88400 |
+| 57736944 | Q2_P2to6 | Q1 | Task 1 regular rows = equal mix of 5 transductive members (P5/P6 new) | **0.88409** (best) |
+| 57737081 | Q3_P2to6_fullAD | Q2 | April ongoing from fully March-adapted v12v11 (private line) | 0.88409 (= parent, as designed) |
 
-Final pair unchanged: **L1 (public line) + L2 (private line)**. 3 slots left unused (further March onset edits would be
-public hill-climbing).
+Recommended final pair: **Q2 (public line) + Q3 (private line)**.

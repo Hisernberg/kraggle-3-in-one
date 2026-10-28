@@ -482,3 +482,19 @@ not from re-mixing with v8. Not adopted; finals stay L1 + L2.
   hill-climbing the public split, so they stop here. No onset change goes into either final: April evidence (Feb,
   pseudo April +0.013..+0.019 for the prior model) is the same kind of evidence that failed twice on March.
 - Slots 2026-10-28: N1, N3 (2 of 5); 3 left unused on purpose.
+
+### 2026-10-28 afternoon: Task 1 line (the gate with a clean transfer record)
+Decomposition (probes): ODME 0.994 (closed), S_LWR at its noise floor, FD/common-mode knobs at their vertices, onset
+over-fit to the public windows, March ongoing adaptation not possible (all 40 official March ongoing windows lie in
+March 1-12, before enough March pseudo data exists). The Task 1 pseudo-holdout transferred at 1.2-2x on every
+transductive step, so the slots went there.
+
+| File | Change | Pseudo 0.35*dS (Mar / Apr, panels up) | Public |
+|---|---|---|---|
+| Q1_monthbias | L1 + month speed level (t1_bias on P2/P3/P4) via the K-line delta | +0.00010 / +0.00012 (10 / 10) | **0.88400** (+0.00016) |
+| Q2_P2to6 | Q1, regular rows = equal mix P2..P6 (P5/P6 new) + bias refit | +0.00006 / +0.00012 (9 / 10) | **0.88409** (+0.00009) |
+| Q3_P2to6_fullAD | Q2 + April ongoing from fullAD (private line) | April ongoing +0.024 | 0.88409 (= Q2) |
+
+Not submitted: cross-fitted GBM residual correction (no better than the group bias), flow-specific bias (hurts),
+time-block bias (+0.00005 < plain), third dark member fullPD3 (blackout speed RMSE -0.4 %, flow mixed: ~+0.00002).
+**Final pair: Q2 (public line) + Q3 (private line).**
