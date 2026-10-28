@@ -34,7 +34,8 @@ FL_SCALE = 0.9912
 
 
 def est(f: pd.DataFrame) -> pd.DataFrame:
-    pa = (f.pa_wmed + f.v2_pa_lowhalf.fillna(f.pa_wmed)) / 2 if "v2_pa_lowhalf" in f else f.get("pa_wmed")
+    nan = pd.Series(np.nan, index=f.index)
+    pa = (f.pa_wmed + f.v2_pa_lowhalf.fillna(f.pa_wmed)) / 2 if "v2_pa_lowhalf" in f else f.get("pa_wmed", nan)
     fl = (f.fl_med + f.v2_fl_chord_mid.fillna(f.fl_med)) / 2 * FL_SCALE if "fl_med" in f else np.nan
     ok = f.ok == 1
     return pd.DataFrame({"pa_deg": pa.where(ok), "fl_mm": pd.Series(fl, index=f.index).where(ok),

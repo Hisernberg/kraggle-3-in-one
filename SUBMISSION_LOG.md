@@ -265,3 +265,15 @@ Details: `trafficflow/docs/LOOP.md` (2026-10-27 section).
 | 57712326 | M1_onset_union50 | L1 | onset probe: add v8 p >= 0.8 cells (+2 March cells) | 0.88322 |
 
 Recommended final pair: **L1 (public line) + L2 (private line)**. The onset probes (user-requested) all lost: T08's onset set beats every v8 edit in both directions.
+
+## 2026-10-28 UMUD, 5 of 5 used (user-authorised via coordinator)
+
+| File | What | Expected | Public | Uses Vera CSV? |
+|---|---|---|---|---|
+| d29_S1_jlpa_vdljl0 | d28 J/L PA + J/L FL combination | 0.19893 | 0.19893 | yes |
+| d29_elig_mt1014 | eligible line, MT spread 1.014 | 0.300..0.330 | 0.31239 | **no** |
+| d29_pa6 | PA from 6 fascicle maps (harness-best) | -0.0010..+0.0008 | 0.19983 | yes |
+| d29_lumpaw090 | Lumify PA weight 0.90 | ±0.0004 | **0.19888** | yes |
+| d29_elig_shr | eligible line, shrinkage PA 0.66 / FL 0.58 | 0.308..0.316 | **0.29936** | **no** |
+
+LB after: 0.18297, 0.18704, **0.19888 (us, 3rd)**. Best eligible (no public CSV): 0.29936.
