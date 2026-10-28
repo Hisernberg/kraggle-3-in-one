@@ -1,0 +1,30 @@
+{
+ "chem": {
+  "status": "PASS",
+  "score": 343477342.01019543,
+  "lambda_eff": 48.51703816221939,
+  "toffoli_count": 16464.0,
+  "num_qubits": 430
+ },
+ "gm_est": 22.66583476360929,
+ "members": {
+  "dfthcsos/angle_k_0.kmb": "3a30d56f7e94aa1ce1ad11baef442df19fe23addfe6f1611887282c12a3d3834",
+  "dfthcsos/angle_k_1.kmb": "823d731f44600d8477ffca2ef08147f915cc91c17f81c76cbfcae8bf18902238",
+  "dfthcsos/angle_k_10.kmb": "614138a920d3ea3a4f51b80825a80438cafe3ff8b101d6756ad2c294b1363445",
+  "dfthcsos/angle_k_11.kmb": "d26b5ad02e2075ebe3f7b1576c9d3df49fe4bccdc4c3bacda2e272ffe336f87f",
+  "dfthcsos/angle_k_12.kmb": "e185e58b01af8f7ae10a03a773c8db76fc5669171b6659e1637830398c9e75d6",
+  "dfthcsos/angle_k_13.kmb": "86b4982361e4ab28ee621d558684fc26130219152ac3c6f72b9c2274cbb367bc",
+  "dfthcsos/angle_k_14.kmb": "0254a303fdec2dc3bcac319795b44a1a68b70eb7b7a058914462e79c6a8a6bb2",
+  "dfthcsos/angle_k_2.kmb": "574203769f7db50e043a52795164a95d09d9491a29debec759ee886bab38a2bb",
+  "dfthcsos/angle_k_3.kmb": "4168d37815e41264e2e1be2d7c1e47dc9b230758f6e256eb633acf5a0d6e8fe9",
+  "dfthcsos/angle_k_4.kmb": "1f711ca179a31b3d3e90fb664451b5a2372e54ac15a605a46f92a49c86bcce89",
+  "dfthcsos/angle_k_5.kmb": "32d76baba607fb60e15efc9c51da760de74ba03f781c8d22dc7aa85f88048783",
+  "dfthcsos/angle_k_6.kmb": "cc25aae3abe08ac02b831d8b71c40fbd64c7934b1e1dad9d69aa1c2a039c33fe",
+  "dfthcsos/angle_k_7.kmb": "712d8a3a51f96515cf282a98d9fc69a199babdaab99979e587d7f4e02c6a4f63",
+  "dfthcsos/angle_k_8.kmb": "b56e2c267b69eef0c0d582954d3f1416f4bd89dc485433313e33973dce3302d5",
+  "dfthcsos/angle_k_9.kmb": "3ded452d13710f3c5cf11f8309f6e3780cf2f2264930bf676310661a898853ac",
+  "dfthcsos/submission.npz": "c9ec04ad81204eae9ff3ad3885a6eddfe68308f436717bb90d5723e35a082407",
+  "dqi.kmb": "4ee7a17b4cbca4053a19bc951e7f2ef91fabdbb036006c9d658adcff4fe76da4",
+  "invsqrt.kmb": "07314803a0925970cf45007ebbdb8a146378c242e3991c70d6f7509af3d583da"
+ }
+}
