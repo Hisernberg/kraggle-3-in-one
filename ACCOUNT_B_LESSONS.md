@@ -11,6 +11,8 @@
 ## ClimX
 - 2026-10-28: E1 rule-compliant analog (systematic resampling, h=0.35K) 0.04882 NEW BEST vs A1 0.04738; holdout 370/585 (0.117/0.136) overstate LB by ~2.5x - holdouts are optimistic. Probe precip-off -0.34830 decodes to sum precip nNSE -0.043 (6 indices ~0 each); non-precip 9 indices avg ~0.086. P1 (R95p in kg m-2 s-1) -0.00638 -> truth R95p is in mm.
 ## Squares in Squares
+- 2026-10-28 S1 (11:59, earlier B3 run, files not in repo) certified merge of 13 public outputs = 22.2626642 (= public best busyaprime-33). S2 (13:06) + n=260,856 from avazaku c-seam-dp = local official 22.26266397 (-2e-7). Kaggle shows 10 subs/day here (8 left after S2).
+- Public packings already beat every Ellsworth/Friedman record where they differ (n=51,84,103,126,176...) -> records are no source. All 17 public outputs checked: merge frontier = ours. Monotonicity and grid-border extension give nothing. Local SAT-penalty quench (n=51,108): jammed, penalty ~ds^2 -> no local gain. Gap 0.184 to #1 must come from new constructions (547 non-integer n carry 14.98 of score; 422 grid-ceiling n carry 7.29; frontier deficiency ~0.8k).
 ## Name That LLM
 - 2026-10-28: history best 0.559 (public adaptive centred stylegram repro); own models 0.31-0.42. Public ensembles (nlm-v27 line) reach 0.651+; LB top 0.728. Weekly GPU quota (30h) was exhausted on 10-28 -> GPU forks blocked until reset; fork prepared at ntl/k_whoami (commit-run short-circuit).
 ## Quantum
