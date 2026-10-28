@@ -1,0 +1,25 @@
+{
+ "id": "kragglenote2forwork/qcc-public-best-repro-acctb",
+ "title": "qcc public best repro acctb",
+ "code_file": "qcc-repro-v1.ipynb",
+ "language": "python",
+ "kernel_type": "notebook",
+ "is_private": true,
+ "enable_gpu": false,
+ "enable_tpu": false,
+ "enable_internet": false,
+ "keywords": [],
+ "dataset_sources": [
+  "busyaprime/33-qcc-v8-members",
+  "somejoint/qcc-our-chemistry-b143-c60-xor"
+ ],
+ "kernel_sources": [
+  "heliosli/the-dataset-is-now-public-now-enjoy"
+ ],
+ "competition_sources": [
+  "google-verifiable-quantum-circuit-compilation"
+ ],
+ "model_sources": [],
+ "docker_image": "gcr.io/kaggle-images/python@sha256:17b2fc7f27c25c6c2fd4230ec8e66097ab2b89fc88e1e4d6f338b72e1ee0bc3e",
+ "machine_shape": "None"
+}
