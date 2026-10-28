@@ -23,3 +23,4 @@
 - 2026-10-28 12:51 UTC  NTL: kernels push retried -> still "weekly GPU quota 30h reached". Skipped.
 - 2026-10-28 12:52 UTC  Quantum: pushed kragglenote2forwork/qcc-combo-cache-gauge-acctb v1 (quantum/k_combo). Hypothesis: atakan loaders + kirill rotated NPZ multiply (chem cost 16464*430*48.517). Expected GM 22.666; kill if chem verifier FAIL or LB < 22.65.
 - 2026-10-28 12:54 UTC  Quantum: kernel PASS (official chem verifier, salt acctb-combo-v1): cost 343,477,342 (lambda 48.517, T 16464, Q 430), err1/err2 0.0199988 (<0.02). Local GM est 22.6658. Submitted (2/5 today).
+- 2026-10-28 13:15 UTC  B4 end. Quantum combo and SB zt-best repro both still PENDING (record next run; kill rule Q < 22.65). Next: Quantum = run own pair-rotation gauge search beyond kirill's (CPU) or adopt next public chem/DQI gain; SB = one-change ablation on zt-best once its score lands; NTL = fork romantamrazov who-am-i after GPU quota reset.
