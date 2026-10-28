@@ -1,7 +1,11 @@
 # Account B lessons (append one line per scored submission)
 
 ## UMUD
+- 2026-10-28 d29 (5/5 used 04:24-04:34): S1 disjoint PA+FL cell merge 0.19893 (additive as expected); S4 Lumify PA pipeline weight 0.90 = 0.19888 NEW BEST (-0.00005, tiny; Lumify PA weight vertex near 0.90); S3 6-map PA pipeline 0.19983 (+0.0009 worse: more fascicle maps != better PA, held-out mask harness gain did not transfer); eligible line: MT spread 1.014 0.31239, + within-device shrinkage PA 0.66/FL 0.58 0.29936 (shrinkage toward less shrink helps the no-public-CSV line, -0.013).
+- Rank 3 at 0.19888 vs 0.18297 / 0.18704 (both moved 10-28 morning). Per-device weight/spread tuning is now at the +-0.0001 noise floor; closing a 0.016 gap needs a new signal (better FL/PA measurement), not more spread/weight probes.
 ## Traffic Flow
+- 2026-10-28: N1 eIoU re-decode of March onset 0.87759 (-0.0063) and N3 CatBoost+recurrence-prior onset 0.87969 (-0.0042): onset re-decoding keeps losing on public; T08 thr 0.55 is a sharp optimum - stop onset probes. Q1 = L1 + test-month speed level correction (t1_bias, K=30) 0.88400 NEW BEST (+0.00016, ~1.5x the pseudo estimate +0.00010; month-bias transfers on the K-line as on H15b).
+- Gap to top-3 (0.924-0.928) is ~0.04: small state tweaks cannot close it; the top teams must solve a task differently (likely Task 2 queue / Task 4 ODME). Artefacts for L1/Q1 live only on the DGX session; tfb-work backup is J2-era (10-22), so a cloud run cannot build on Q1 until the backup is refreshed.
 ## Misconception
 ## ClimX
 ## Squares in Squares

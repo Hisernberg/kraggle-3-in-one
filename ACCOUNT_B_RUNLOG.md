@@ -8,3 +8,7 @@
 - 2026-10-28 11:53 UTC  Quantum: kernel v1 complete, official verifiers local GM 22.62971 (matches public). Submitted ref 57735662 (1/5 today). Score pending at 12:04.
 - 2026-10-28 11:55 UTC  SB: kernel v1 complete, submission.parquet produced. Submitted ref 57735695 (1/5 today). Score pending (expected ~0.0142).
 - 2026-10-28 12:04 UTC  B4 end. Next run: record both scores; Quantum next = beat public 22.63 on one task (chem lambda/T/Q or invsqrt qubits) verified locally; SB next = one-change ablation on zt-best (e.g. economic target 0.6->0.8 K); NTL waits for GPU quota reset.
+- 2026-10-28 12:30 UTC  B1 start. UMUD: 5/5 used today (d29, best 0.19888 rank 3; top 0.18297/0.18704). TFB: 3/5 used today (N1 0.87759, N3 0.87969, Q1 0.88400 = new best; top 0.92817). Lessons recorded.
+- 2026-10-28 12:35 UTC  B1 scout: no new public notebook beats our level (UMUD public best 0.3389; TFB public best 0.87141). To read: plarmuseau 'eleven anomalies of the data' (TFB, 10-27).
+- 2026-10-28 12:36 UTC  B1 TFB: no submission. This cloud container (2 CPU, 7 GB) has no L1/Q1 artefacts (tfb-work backup = J2, 10-22); rebuilding needs 12 GB data + hours of T1/T2 chain. Any file built here would be J2-based (0.88203) -> no evidence-backed change on the best possible. Action needed: DGX session to run `trafficflow.loop backup` with Q1 zip + L1 state/queue so cloud runs can build on Q1.
+- 2026-10-28 12:37 UTC  B1 end. Next: UMUD slots reopen 00:00 UTC (need a new measurement signal, not spread/weight); TFB 2 slots left today only if Q1 artefacts become available.
