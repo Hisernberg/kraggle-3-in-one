@@ -470,3 +470,15 @@ not from re-mixing with v8. Not adopted; finals stay L1 + L2.
   sign for set-size changes; February (full truth) had the right sign. Onset gating moves to February/full-truth
   windows. The April-adapted onset models (trained on March pseudo onset windows; pseudo April +0.03 vs T08) are
   therefore NOT used for the private line: their evidence is the same pseudo metric.
+- Feb gate (T08 candidate windows of February, full truth; our models trained Jun-Jan, early-stopped on Feb as T08):
+  our LightGBM/CatBoost re-trains on T08 features = T08 level (6-model ensemble +0.001 +- 0.003); patch features,
+  63 leaves, hybrid labels (identical to raw labels on eligible observed cells) add nothing. **A train recurrence prior**
+  (leave-day-out queued share at T+30 / T, same day type; `t2/onset_prior.py`) gives CatBoost x3 **+0.016 +- 0.006**
+  (13 better / 2 worse, every seed positive, logloss 0.0103 -> 0.0088).
+- **N3 (that model on March, +7/-7 cells in 7 windows) = 0.87969 (-0.00415 -> March onset -0.028).**
+- Five March onset edits now lost (M1-M3, N1, N3: onset -0.004 to -0.042), whatever the local gate said (pseudo
+  windows: wrong sign on N1; February: wrong sign on N3). The incumbent March onset rows (T08 + the O1 cells, both
+  chosen with public feedback) are a sharp optimum on the 40 public windows; further March onset probes would be
+  hill-climbing the public split, so they stop here. No onset change goes into either final: April evidence (Feb,
+  pseudo April +0.013..+0.019 for the prior model) is the same kind of evidence that failed twice on March.
+- Slots 2026-10-28: N1, N3 (2 of 5); 3 left unused on purpose.

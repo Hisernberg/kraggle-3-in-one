@@ -277,3 +277,15 @@ Recommended final pair: **L1 (public line) + L2 (private line)**. The onset prob
 | d29_elig_shr | eligible line, shrinkage PA 0.66 / FL 0.58 | 0.308..0.316 | **0.29936** | **no** |
 
 LB after: 0.18297, 0.18704, **0.19888 (us, 3rd)**. Best eligible (no public CSV): 0.29936.
+
+## 2026-10-28 TrafficFlowBench (`2026-ieee-big-data-traffic-flow-bench`), 2 of 5 used
+
+Details: `trafficflow/docs/LOOP.md` (2026-10-28 section). T08 onset reproduced exactly; both onset candidates lost.
+
+| Ref | File | Parent | Change | Public |
+|---|---|---|---|---|
+| 57724300 | N1_t08eiou | L1 (0.88384) | March onset: eIoU decode of the reproduced T08 probabilities (+11 cells) | 0.87759 |
+| 57725087 | N3_catprior | L1 | March onset: CatBoost x3 on T08 features + train recurrence prior (+7/-7 cells) | 0.87969 |
+
+Final pair unchanged: **L1 (public line) + L2 (private line)**. 3 slots left unused (further March onset edits would be
+public hill-climbing).
