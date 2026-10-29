@@ -22,3 +22,4 @@
 - 2026-10-28: lower is better. Our best 0.01702 (night setback 5K + 2h prestart). Night-setback depth variants 0.01702-0.01732 all flat -> setback is not the lever. Public malyshevdanil probe-zt-best = 0.01420 (per-zone PI + economic zone target + median supply temp + weekend setback + min static pressure). LB top 0.00514.
 ## Memecoins
 - (no submissions yet from this loop)
+- 2026-10-29 S3 22.26229068 NEW BEST (+24 n alexchilton fault-line, certified); S4 + 19 n busyaprime fq-quench. Public merges are now exhausted (our frontier = best public); 8 slots left today only worth spending on own constructions.

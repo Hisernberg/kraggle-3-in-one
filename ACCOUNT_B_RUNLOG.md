@@ -27,3 +27,5 @@
 - 2026-10-29 07:20 UTC  Setup: one hourly task 'Account B hourly' (:12) replaces B1-B4. Scope = 6 competitions incl. new memecoins-pump-or-dump; NTL/Quantum/SB dropped for account B (account A works those).
 - 2026-10-29 07:35 UTC  Plan: improvement-ladder rule + UMUD rank-1 route (new FL/PA signal, eligible line) added to ACCOUNT_B_DAILY.md. No B submission this session (scheduled-task session cannot create the B hourly task).
 - 2026-10-29 07:18 UTC  Squares S3 (10-29 slot 1/10): S2 + 24 n from alexchilton fault-line-DP public output, changed n certified with official metric (0 infeasible); expect 22.2622907, ref 57762849. busyaprime 22.2619999 notebook rerunning - merge its packings when its output is available.
+- 2026-10-29 07:27 UTC  Squares S3 scored 22.2622906803 (NEW BEST, = local).
+- 2026-10-29 07:35 UTC  Squares S4 (10-29 slot 2/10): S3 + 19 n from busyaprime fq-quench 10-29 output, certified (0 infeasible); expect 22.2619999 (= public best). Further gains need own constructions (gap 0.196 to #1 22.066).
