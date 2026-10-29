@@ -8,12 +8,13 @@ each verified (format check + local/OOF evidence) before it is spent.
 
 | task | competitions | cadence |
 |---|---|---|
-| B1 UMUD + Traffic | umud-challenge-muscle-architecture-in-ultrasound-data, 2026-ieee-big-data-traffic-flow-bench | every 4 h at :07 |
-| B2 Misconception + ClimX | misconception-detection-in-k-12-student-math-workings, climx-main-track | every 4 h at :17 |
-| B3 Squares in Squares | squares-in-squares | every 4 h at :27 |
-| B4 Independent | name-that-llm, google-verifiable-quantum-circuit-compilation, neurips-2026-smart-buildings | every 4 h at :37 |
+| "Account B hourly" (since 2026-10-29) | squares-in-squares, 2026-ieee-big-data-traffic-flow-bench, umud-challenge-muscle-architecture-in-ultrasound-data, memecoins-pump-or-dump, misconception-detection-in-k-12-student-math-workings, climx-main-track | hourly at :12 |
 
-6 runs per day per task -> at most one submission per competition per run, max 5 per day.
+At most one submission per competition per run; fill every daily slot by 23:59 UTC (5/day, Squares 10/day - check
+`kaggle competitions submissions`). The old B1-B4 tasks no longer exist.
+
+**Account B no longer enters name-that-llm, google-verifiable-quantum-circuit-compilation or neurips-2026-smart-buildings**
+(decided 2026-10-29): account A works those, and the same operator must not run both accounts in one competition.
 
 ## Starting point (2026-10-28 11:30 UTC)
 
@@ -36,8 +37,7 @@ history lives only in the Kaggle submission descriptions - read them before buil
 2. One change per submission, written down first (hypothesis, expected score, kill rule). Learn from every result:
    append the lesson to the competition's section in `ACCOUNT_B_LESSONS.md`.
 3. Prefer CPU; GPU only when the model needs it, and as short as possible.
-4. **Kaggle rules:** account B never uses code, outputs or notes from account A (gwey1025, repos
-   acco-cyber/*). In NTL / Quantum / Smart Buildings it works only from public notebooks/datasets and its own ideas.
-   No private sharing between teams.
+4. **Kaggle rules:** account B never uses code, outputs or notes from account A (gwey1025, repos acco-cyber/*) and never
+   submits to NTL / Quantum / Smart Buildings. No private sharing between teams.
 5. Near each deadline: make sure the two final selections are the best-validated, not just the best public.
 6. Never print tokens in logs or commits.
