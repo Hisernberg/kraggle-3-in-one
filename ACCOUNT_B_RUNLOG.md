@@ -29,3 +29,4 @@
 - 2026-10-29 07:18 UTC  Squares S3 (10-29 slot 1/10): S2 + 24 n from alexchilton fault-line-DP public output, changed n certified with official metric (0 infeasible); expect 22.2622907, ref 57762849. busyaprime 22.2619999 notebook rerunning - merge its packings when its output is available.
 - 2026-10-29 07:27 UTC  Squares S3 scored 22.2622906803 (NEW BEST, = local).
 - 2026-10-29 07:35 UTC  Squares S4 (10-29 slot 2/10): S3 + 19 n from busyaprime fq-quench 10-29 output, certified (0 infeasible); expect 22.2619999 (= public best). Further gains need own constructions (gap 0.196 to #1 22.066).
+- 2026-10-29 07:42 UTC  Squares S4 scored 22.2619998598 (NEW BEST, = local; ties public best busyaprime).
