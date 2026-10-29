@@ -41,3 +41,16 @@ history lives only in the Kaggle submission descriptions - read them before buil
    submits to NTL / Quantum / Smart Buildings. No private sharing between teams.
 5. Near each deadline: make sure the two final selections are the best-validated, not just the best public.
 6. Never print tokens in logs or commits.
+
+## Improvement ladder (user instruction 2026-10-29: every submission should beat the last)
+
+* Each slot goes to the candidate with the best evidence of beating the competition's current best (CV/offline gain,
+  or a credited public result above ours). Diagnostics only when they unblock a bigger gain, and say so in the card.
+* After each score: new best -> it becomes the base for the next card; worse -> revert and record why in LESSONS.
+* **UMUD (rank 3 -> target rank 1, gap 0.016 to 0.18297):** per-device weight/spread tuning is at the +-0.0001 noise
+  floor, so stop those probes. Gains must come from a better measurement signal: (1) FL - the weakest estimator
+  (pipeline vs reference 0.89 on the metric scale): stronger fascicle-orientation model / longer-fascicle
+  extrapolation, test on expert sets first; (2) PA from a new fascicle model that passes the held-out-mask gate;
+  (3) the prize-eligible line (no hard-coded public CSV, currently ~0.30): re-implement the reference's MT/FL steps
+  in a re-runnable member so the final selection is both eligible and close to the best. Final selections
+  (11-14): A = best public, B = best eligible.
