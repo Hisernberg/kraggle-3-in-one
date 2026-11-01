@@ -155,7 +155,8 @@
   "d30: isotropic (true-geometry) fascicle-map inference on Juniper+Lumify lost +0.0019 -> models want native pixel geometry",
   "d30: test is independent of train (thumbnail NCC max 0.70 over 3811 train frames)",
   "d30: eligible shrinkage vertex ~0.86 (PA 0.66/0.75/0.85 with FL 0.58/0.66/0.75 -> 0.29936/0.29156/0.28823); best eligible d30_elig_shr85",
-  "d30: FL weight x0.6 on top-quartile inter-map disagreement rows lost +0.0023 -> map disagreement is not pipeline error; Vera FL is weak on hard (low-PA) rows"
+  "d30: FL weight x0.6 on top-quartile inter-map disagreement rows lost +0.0023 -> map disagreement is not pipeline error; Vera FL is weak on hard (low-PA) rows",
+  "d30: gated FL weight x1.25 flat (+0.00016) after x0.6 +0.0023 -> per-row FL gate vertex ~1.0-1.1, axis settled"
  ],
  "queue": [
   "final B candidate = d30_elig_shr85 (0.28823, no public CSV); host ruling topic 744191 still needs user OK",
