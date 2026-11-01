@@ -151,10 +151,13 @@
   "MT weight 1.0 (0.9, 1.1, 1.25 all worse), MT offset 0; MT clip 3 best",
   "PA offset re-matched whenever the PA estimator changes (keeps mean pipeline PA = pa_wmed + 2.0)",
   "clip smoothing alpha 1.0 (full 5-frame median); anchors never pinned (--no-anchors)",
-  "public LB ~103 rows (~1/3); metric additive per target: tune one target per shot"
+  "public LB ~103 rows (~1/3); metric additive per target: tune one target per shot",
+  "d30: isotropic (true-geometry) fascicle-map inference on Juniper+Lumify lost +0.0019 -> models want native pixel geometry",
+  "d30: test is independent of train (thumbnail NCC max 0.70 over 3811 train frames)",
+  "d30: eligible shrinkage vertex ~0.86 (PA 0.66/0.75/0.85 with FL 0.58/0.66/0.75 -> 0.29936/0.29156/0.28823); best eligible d30_elig_shr85"
  ],
  "queue": [
-  "eligible: shrinkage bracket PA 0.75 / FL 0.66, then split PA vs FL; MT spread on the eligible line",
+  "final B candidate = d30_elig_shr85 (0.28823, no public CSV); host ruling topic 744191 still needs user OK",
   "blend: cards d28_vdltel30 / d28_mttel100 (rebuild on 0.19888)",
   "final pair: A = best blend (Vera-dependent), B = best eligible no-CSV line; host ruling topic 744191 (user approval needed before posting)",
   "d26: per-family PA spread (Juniper+Lumify 0.85 one-sided; joint vertex 0.91)",
