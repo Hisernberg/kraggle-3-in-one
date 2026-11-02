@@ -125,8 +125,9 @@ def main():
     for c in a.cand:
         name, ds = c.split("=", 1)
         dirs = [Path(d) if "/" in d else apo.parent / d for d in ds.split(",")]
-        apo_src = [apo] if a.set == "val_fasc" else dirs[:1]
-        f = features(crops, apo_src, dirs, "pred", cache / f"{a.set}_{name}.csv", a.workers)
+        # val_apo: the candidate's dirs are averaged as the apo map; fascicles fixed to the root dir (r34)
+        apo_src, fasc_src = ([apo], dirs) if a.set == "val_fasc" else (dirs, [apo])
+        f = features(crops, apo_src, fasc_src, "pred", cache / f"{a.set}_{name}.csv", a.workers)
         E[name] = est(f)
     names = list(E)
     rng = np.random.default_rng(0)
