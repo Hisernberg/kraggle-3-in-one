@@ -1,6 +1,6 @@
 {
- "best_score": 0.19888,
- "best_name": "d29_lumpaw090",
+ "best_score": 0.19864,
+ "best_name": "d31_combo",
  "best_args": [
   "--w",
   "0.60",
@@ -32,7 +32,7 @@
   "0.98232",
   "--fam-fl-scale",
   "left_ticks_800",
-  "1.02832",
+  "1.03507",
   "--fam-fl-scale",
   "juniper_right",
   "0.91701",
@@ -61,15 +61,15 @@
   "-0.4548",
   "--fam-w",
   "juniper_right",
-  "0.8",
+  "0.85",
   "0.45",
   "1.0",
   "--fam-pa-final",
   "juniper_right",
-  "-0.1197",
+  "-0.1598",
   "--fam-fl-scale",
   "telemed_644",
-  "1.01113",
+  "1.01501",
   "--fam-pa-final",
   "left_ticks_800",
   "-0.0626",
@@ -83,7 +83,7 @@
   "h512",
   "0.1160",
   "--ref",
-  "daily/inputs/ref_member_d28_vdljl0.csv",
+  "daily/inputs/ref_member_d31_jl0tel30.csv",
   "--spread",
   "pa_deg",
   "0.90",
@@ -156,17 +156,20 @@
   "d30: test is independent of train (thumbnail NCC max 0.70 over 3811 train frames)",
   "d30: eligible shrinkage vertex ~0.86 (PA 0.66/0.75/0.85 with FL 0.58/0.66/0.75 -> 0.29936/0.29156/0.28823); best eligible d30_elig_shr85",
   "d30: FL weight x0.6 on top-quartile inter-map disagreement rows lost +0.0023 -> map disagreement is not pipeline error; Vera FL is weak on hard (low-PA) rows",
-  "d30: gated FL weight x1.25 flat (+0.00016) after x0.6 +0.0023 -> per-row FL gate vertex ~1.0-1.1, axis settled"
+  "d30: gated FL weight x1.25 flat (+0.00016) after x0.6 +0.0023 -> per-row FL gate vertex ~1.0-1.1, axis settled",
+  "d31: Juniper PA pipeline weight 0.80/0.85/0.90 -> 0.19888/0.19871/0.19921 (vertex 0.85)",
+  "d31: Telemed+left_ticks FL DLTrack-prior share 0.30 -0.00007 (kept); Telemed+left_ticks MT spread 1.00 flat (MT 1.014 settled)",
+  "d31: combo S1+S3 = 0.19864 exactly additive (new best)"
  ],
  "queue": [
   "final B candidate = d30_elig_shr85 (0.28823, no public CSV); host ruling topic 744191 still needs user OK",
-  "blend: cards d28_vdltel30 / d28_mttel100 (rebuild on 0.19888)",
   "final pair: A = best blend (Vera-dependent), B = best eligible no-CSV line; host ruling topic 744191 (user approval needed before posting)",
   "d26: per-family PA spread (Juniper+Lumify 0.85 one-sided; joint vertex 0.91)",
   "d26: PA weights re-check after the spread change (tuned at spread 1.0)",
   "d26: MT spread probe only with evidence (two-rater beta 0.80-0.96, biased low by ~0.2 -> expect ~1.0)",
   "FL anchor mix 0.20 (vertex ~0.17, gain <= 0.0001) - last resort",
   "final selection (due 2026-11-07/14): A = best public (now d25_S2_pas090 0.20036); B = hedge (hedge B 0.20732 / fail-fill variant) - rebuild B on the new best",
-  "daily: new forum topics / notebooks; LB watch"
+  "daily: new forum topics / notebooks; LB watch",
+  "d31_lumpaw095 built, unsubmitted (low prior)"
  ]
 }
