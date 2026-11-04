@@ -1,3 +1,1 @@
-# One slot: best remaining branch per batch-2 outcomes, else hold for tomorrow's carve.
-# Bookkeeping regardless of submission: git commit (+push if GITHUB_TOKEN), refresh download/umud_d32,
-# update SUBMISSION_LOG + history.csv, write tomorrow's batch-1 manifest.
+/home/z/my-project/work/kraggle-3-in-one/umud/daily/out/recon/d33_gh75.csv /home/z/my-project/work/kraggle-3-in-one/umud/daily/batches/d33_gh75.msg

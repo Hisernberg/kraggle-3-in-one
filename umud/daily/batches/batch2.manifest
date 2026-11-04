@@ -1,5 +1,2 @@
-# Fill AFTER batch-1 scores, per decision rules (pre-built variants in daily/out/recon/):
-# if S1 gh60 wins  -> append: <repo>/daily/out/recon/d33_gh100.csv <repo>/daily/batches/d33_gh100.msg
-# if S1 flat/worse -> construct 0.525/0.55 interp before submitting
-# if S2 jlp15 wins -> append: <repo>/daily/out/recon/d33_jlp30.csv <repo>/daily/batches/d33_jlp30.msg
-# if S2 flat/worse -> jlp axis closed; use tl45-alone as the second slot
+/home/z/my-project/work/kraggle-3-in-one/umud/daily/out/recon/d33_gh100.csv /home/z/my-project/work/kraggle-3-in-one/umud/daily/batches/d33_gh100.msg
+/home/z/my-project/work/kraggle-3-in-one/umud/daily/out/recon/d33_tl45.csv /home/z/my-project/work/kraggle-3-in-one/umud/daily/batches/d33_tl45.msg
