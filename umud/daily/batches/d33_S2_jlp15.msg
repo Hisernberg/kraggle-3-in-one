@@ -1,0 +1,1 @@
+d33 S2: DLTrack prior on Juniper/Lumify geometry-corrected (prior_pixel x k, k=0.57 juniper / 0.45 lumify from OLS vs true-geometry blend) then share 0.15, level-matched (residual +0.0001 mm; 149 J/L FL rows, mean|d| 0.296 mm, PA/MT untouched). d28's share-0 was an artifact of the pixel-geometry prior; the corrected prior is admissible. Expect -0.0008..+0.0006

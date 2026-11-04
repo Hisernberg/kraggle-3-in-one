@@ -1,0 +1,3 @@
+# One slot: best remaining branch per batch-2 outcomes, else hold for tomorrow's carve.
+# Bookkeeping regardless of submission: git commit (+push if GITHUB_TOKEN), refresh download/umud_d32,
+# update SUBMISSION_LOG + history.csv, write tomorrow's batch-1 manifest.
