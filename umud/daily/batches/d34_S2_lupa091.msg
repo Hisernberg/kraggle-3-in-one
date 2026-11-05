@@ -1,0 +1,1 @@
+d34 S2: Lumify PA pipeline weight 0.90->0.91, level-matched — mirror of the Juniper bracket (f(0.80)=+0.00024/f(0.90)=+0.00050 there); one-sided probe tests whether Lumify's vertex sits above 0.90. Expect -0.0002..+0.0003

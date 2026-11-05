@@ -1,0 +1,1 @@
+d34 B2: FIRST J/L MT datum (149 MT rows, never probed). Disjoint cells: juniper +0.10mm, lumify -0.10mm, direction from pixel-geometry hypothesis (aniso R: juniper 1.12 up, lumify 0.87 down), magnitude deliberately small. Expect +-0.0003; win -> scale magnitude next, lose -> close that cell

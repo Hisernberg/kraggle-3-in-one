@@ -30,7 +30,7 @@ Verified 2026-11-03: byte-match TRUE (10,807/10,807 bytes) from a cold clone.
 
 ## What is where
 
-- `submission/BEST_d33_S1_gh60.csv` (+ `.args`) — current best, public 0.19748 (rank 6, 2026-11-04). Verification anchor remains BEST_d32_S5_gh45 (byte-exact).
+- `submission/BEST_d34_lupa092.csv` (+ `.args`) — current best, public 0.19747 (rank 6, 2026-11-05). Verification anchor remains BEST_d32_S5_gh45 (byte-exact). Carve space exhausted 2026-11-05; next lever = FM_PLAN.md (SLM).
 - `submission/d32_S3_gh30.csv`, `d32_S4_hedgeB2026.csv` (candidate B, 0.21150), `reconstructed_d31_combo.csv`.
 - `submission/ref_custom_gh30|gh45.csv` — reference mixes; `cards/` — d32.md, d33.md, SCHEDULE_3BATCH.md.
 - `scripts/` — recon_chain.py (verified build helpers), gate_members.py, projection_gate.py, verify_d25.py,
