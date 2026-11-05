@@ -75,3 +75,28 @@ only comparison that counts for adopting an encoder.
 - Any adopted encoder feeds P3 (PA/FL/MT heads + geometry layer); a submission card requires the
   offline MAE gate vs the current ensemble (paired bootstrap 2,000×, ≥2 CIs excluding 0).
 - Abort line: if by 2026-11-08 no encoder clears arm A, P2/P3 stop and the campaign banks the carve.
+
+## Bridge v6 result + member gate decision (2026-11-05 19:20 UTC)
+- Bridge v6 completed: winner **resnet34** (fasc 0.1168 / apo 0.2278 vs mit_b1 0.1031/0.2155 — note:
+  opposite of the 4,000-pair slm1 run where mit_b1 won; the race is tight and split-dependent).
+  All 309 test images predicted -> `slm_member.csv`.
+- **Member REJECTED at the gate.** Sanity vs ensemble: scale ratios PA 0.09, MT 0.20, FL 0.26;
+  correlations PA -0.06, MT -0.00, FL +0.32 — near-zero transferable signal. The apparent
+  "blend w=0.05 -> 0.1636 PASS" was an evaluation artifact (comparing the blend against our own
+  best prediction, not ground truth — small-w blends shrink toward the reference by construction).
+  No submission slot spent on it.
+- Root causes for v7: (1) largest-connected-component fill often captured a thin sub-structure
+  instead of the muscle body -> collapse MT; (2) 6 epochs/384px under-trains fascicles
+  (IoU ~0.12); (3) geometry layer never calibrated against GT annotations (no train pa/fl/mt CSV
+  exists in the competition mount).
+
+### v7 plan (next session, ordered)
+1. Fix muscle-region fill: choose the component with the largest COLUMN SPAN (top-to-bottom),
+   not max area; MT from its envelope.
+2. ROI crop (bbox of mask>10), AMP autocast, 25-30 epochs -> target fasc IoU >= 0.3.
+3. Predict masks on the EXTERNAL benchmark frames (umud/external, OSF family) and gate the
+   geometry end-to-end against `external/labels.csv` — the only valid offline metric (paired
+   bootstrap vs the ensemble's external score). Calibrate per-axis affine (scale+offset) on the
+   external frames if slopes are stable, then re-gate.
+4. Adopt into the blend ONLY if the external-gate CI passes; otherwise the SLM stays a research
+   track while d35 cards carry the ranking (pas092 queued; submissions resume Nov 6, quota 5/5).
