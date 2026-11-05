@@ -6,11 +6,33 @@ Protocol: 2-class seg (aponeurosis, fascicle), Dice+BCE, TrivialAugment (one-op 
 10/8 epochs, bs8, 384px, leave-one-device-out (LODV) validation, GT mask pairs from the
 competition train layer. Runners: Kaggle GPU kernels `umud-seg-slm0` (v2) + `umud-seg-slm1`.
 
-| Arm | Encoder / init | Params (approx) | LODV fascicle IoU | LODV aponeurosis IoU | Status |
+| Arm | Encoder / init | Params (approx) | fascicle IoU (holdout) | aponeurosis IoU (holdout) | Status |
 |---|---|---|---|---|---|
-| A (P0 control) | U-Net ResNet-34, ImageNet | ~24M + head | _pending kernel run_ | _pending_ | slm0 v2 + slm1 RUNNING |
-| B (transformer) | U-Net mit_b1 (SegFormer), ImageNet | ~14M | _pending_ | _pending_ | slm0 v2 + slm1 RUNNING |
-| C (US-foundation) | ViT + FPN head, USFM/UltraSam init if loadable from HF (runtime probe); fallback timm vit_small augreg_in21k | ~22-86M | _pending_ | _pending_ | slm1 RUNNING |
+| A (P0 control) | U-Net ResNet-34, ImageNet | ~24M + head | _v3 kernels running_ | _v3 running_ | slm1 v3 + bridge v4 |
+| B (transformer) | U-Net mit_b1 (SegFormer), ImageNet | ~14M | _v3 running_ | _v3 running_ | slm1 v3 + bridge v4 |
+| C (US-foundation) | ViT + FPN head; **HF probe succeeded: `thelets/UltraSAM-3D-Ultrasound-MVSeg`** (UltraSam-lineage checkpoint) | ~22-86M | _v3 running_ | _v3 running_ | slm1 v3 |
+
+Protocol note: train filenames carry no device tags → seeded 85/15 holdout (LODV returns when
+devices become identifiable). Data: 5,905 GT pairs (`image_*.tif` + exact-stem masks), 297 test
+images (`IMG_*.tif`) with bar calibration from the new private dataset `umud-test-scales`.
+
+### Run history (honest log)
+- slm0 v1: 0 pairs — glob missed the `.tif` train layer (root-caused via v2 recon dump).
+- slm0 v2 / slm1 v1: **5,905 GT pairs found** (exact-stem) but every fold skipped (no device tags).
+- slm1 v2: all arms crashed in augmentation — `np.rot90` default axes rotated the channel dim of
+  `[C,H,W]` (DataLoader shape mismatch `[384,2,384] vs [2,384,384]`); arm C raised a bare
+  AssertionError (checkpoint key is `model_state_dict`, code read `state_dict`).
+- **v3/v4 fixes:** `axes=(-2,-1)` + contiguous copies; full checkpoint-key chain; arm-C fallback
+  chain (HF probe → augreg_in21k → vit_small → vit_tiny) with traceback logging; num_workers=0;
+  bridge kernel adds geometry + member CSV + `umud-test-scales` mm conversion.
+- slm1 v3 + bridge v4: **third bug found** — `iou()` bitwise-ANDed float targets with bool masks
+  (`bitwise_and` TypeError; v2 never reached eval so it was masked). ViTSeg head also resolved to
+  168×168 instead of 384×384 (2×6 upsample chain) → loss shape assert. Both fixed.
+- **bridge v5 RUNNING** (bug-fixed): trains resnet34 + mit_b1 (identical protocol, seeded 85/15),
+  picks the winner, predicts `IMG_*.tif` test images with hflip TTA, runs the geometry layer
+  (apo line fits, fascicle PCA, bar-calibration mm), writes `slm_member.csv` + `geometry_detail.csv`
+  + `run_record.json` (arm IoUs = the A/B comparison table). slm1 v4 (UltraSam-init arm C) queued
+  behind the GPU session limit.
 
 Fill-in rule when run_record.json lands: paste `arms.<arm>.lodv.<device>` per device + mean;
 a winner must beat arm A on BOTH classes' mean IoU AND on ≥2/3 of devices (gate protocol v3).

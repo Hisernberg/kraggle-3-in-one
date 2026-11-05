@@ -87,17 +87,21 @@ class SegDS(Dataset):
         y = np.stack([(mk > 63) & (mk < 192), mk >= 192]).astype(np.float32)
         if self.train:
             op = random.choice(["hflip", "rot", "bright", "contrast", "gamma", "identity"])
-            if op == "hflip" and random.random() < 0.5: im, y = im[:, ::-1], y[:, ::-1]
+            if op == "hflip" and random.random() < 0.5:
+                im, y = im[..., ::-1].copy(), y[..., ::-1].copy()
             elif op == "rot":
-                k = random.randint(0, 3); im, y = np.rot90(im, k), np.rot90(y, k)
+                k = random.randint(0, 3)
+                im, y = np.rot90(im, k, axes=(-2, -1)).copy(), np.rot90(y, k, axes=(-2, -1)).copy()
             elif op == "bright": im = np.clip(im * random.uniform(0.7, 1.3), 0, 1)
             elif op == "contrast":
                 m = im.mean(); im = np.clip((im - m) * random.uniform(0.7, 1.4) + m, 0, 1)
             elif op == "gamma": im = np.clip(im ** random.uniform(0.7, 1.4), 0, 1)
-        return (torch.from_numpy(np.ascontiguousarray(im))[None],
-                torch.from_numpy(np.ascontiguousarray(y)))
+        return (torch.from_numpy(np.ascontiguousarray(im.astype(np.float32)))[None],
+                torch.from_numpy(np.ascontiguousarray(y.astype(np.float32))))
 
-def iou(g, p, eps=1e-7): return ((g & p).sum() + eps) / ((g | p).sum() + eps)
+def iou(g, p, eps=1e-7):
+    g, p = np.asarray(g).astype(bool), np.asarray(p).astype(bool)
+    return ((g & p).sum() + eps) / ((g | p).sum() + eps)
 
 def evaluate(model, va):
     model.eval(); rows = []
@@ -112,7 +116,7 @@ def evaluate(model, va):
 def train(model, tr, va, tag, epochs=8, bs=8):
     opt = torch.optim.AdamW(model.parameters(), lr=3e-4)
     dsc = smp.losses.DiceLoss(mode="multilabel"); bce = nn.BCEWithLogitsLoss()
-    tl = DataLoader(SegDS(tr, True), batch_size=bs, shuffle=True, num_workers=2)
+    tl = DataLoader(SegDS(tr, True), batch_size=bs, shuffle=True, num_workers=0)
     best = None
     for ep in range(epochs):
         model.train(); t0 = time.time()
@@ -147,7 +151,7 @@ def probe_us_foundation():
                 if not ck: continue
                 p = hf_hub_download(rid, ck[0])
                 sd = torch.load(p, map_location="cpu", weights_only=False)
-                sd = sd.get("state_dict", sd.get("model", sd))
+                sd = sd.get("model_state_dict", sd.get("state_dict", sd.get("model", sd)))
                 k = list(sd.keys())[:3]
                 USFM_NOTES.append(f"loaded {rid} keys {k}")
                 return rid, sd
@@ -172,8 +176,8 @@ class ViTSeg(nn.Module):
         d = self.vit.embed_dim
         self.head = nn.Sequential(
             nn.Conv2d(d, 128, 1), nn.BatchNorm2d(128), nn.ReLU(),
-            nn.Upsample(scale_factor=2), nn.Conv2d(128, 64, 3, padding=1), nn.BatchNorm2d(64), nn.ReLU(),
-            nn.Upsample(scale_factor=6), nn.Conv2d(64, 2, 1))
+            nn.Conv2d(128, 64, 3, padding=1), nn.BatchNorm2d(64), nn.ReLU(),
+            nn.Conv2d(64, 2, 1), nn.Upsample(size=(384, 384), mode="bilinear"))
     def forward(self, x):
         x = nn.functional.interpolate(x, size=224, mode="bilinear")
         t = self.vit.forward_features(x)  # B, 1+N, D
@@ -187,16 +191,23 @@ def make_arm(name):
     if name == "mit_b1_segformer":
         return smp.Unet("mit_b1", encoder_weights="imagenet", in_channels=1, classes=2)
     rid, sd = probe_us_foundation()
-    arch = "vit_small_patch16_224"
+    chain = (["usfm_probe"] if rid is not None else []) + [
+        "vit_small_patch16_224.augreg_in21k", "vit_small_patch16_224", "vit_tiny_patch16_224"]
     if rid is not None:
         USFM_NOTES.append(f"arm-C init from {rid}")
     else:
-        USFM_NOTES.append("no US-foundation weights loadable; arm-C = timm vit_small augreg_in21k (generic SSL)")
+        USFM_NOTES.append("no US-foundation weights loadable; arm-C falls back through timm ViT chain")
+    last = None
+    for i, arch_tag in enumerate(chain):
         try:
-            arch = "vit_small_patch16_224.augreg_in21k"
-        except Exception:
-            arch = "vit_small_patch16_224"
-    return ViTSeg(sd if rid else None, arch)
+            arch = arch_tag.replace("usfm_probe", "vit_small_patch16_224")
+            return ViTSeg(sd if (rid is not None and i == 0) else None, arch)
+        except Exception as e:
+            import traceback
+            last = e
+            USFM_NOTES.append(f"arm-C {arch_tag} failed: {type(e).__name__}: {e} | "
+                              f"traceback tail: {traceback.format_exc()[-300:]}")
+    raise RuntimeError(f"arm-C all fallbacks failed; last error: {last}")
 
 devs = sorted({d for d in (device_of(ip) for ip, _ in pairs) if d})
 folds = [(f"lodv_{d}", [(c, m) for c, m in pairs if device_of(c) != d],
