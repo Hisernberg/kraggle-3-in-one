@@ -60,8 +60,17 @@ if len(pairs) < 50:
               open(f"{OUT}/run_record.json", "w"), indent=1); raise SystemExit(0)
 
 def device_of(p):
-    s = os.path.basename(p).lower()
-    return next((k for k in ("telemed", "juniper", "lumify", "gray853", "h512", "left_ticks") if k in s), "unknown")
+    s = p.lower()
+    return next((k for k in ("telemed", "juniper", "lumify", "gray853", "h512", "left_ticks") if k in s), None)
+
+for mp, _ in random.sample(pairs, min(8, len(pairs))):
+    mk = cv2.imread(mp, cv2.IMREAD_GRAYSCALE)
+    if mk is not None:
+        u, c = np.unique(mk, return_counts=True)
+        L(f"mask {os.path.basename(mp)} top values {sorted(zip(u.tolist(), c.tolist()), key=lambda x: -x[1])[:4]}")
+if len(pairs) > 4000:
+    pairs = random.sample(pairs, 4000)
+    L("pairs capped to 4000 for wall-time")
 
 IMG = 384
 class SegDS(Dataset):
@@ -189,23 +198,27 @@ def make_arm(name):
             arch = "vit_small_patch16_224"
     return ViTSeg(sd if rid else None, arch)
 
-devs = sorted({device_of(ip) for ip, _ in pairs})
-L(f"devices: {devs}")
-results = {"protocol": "identical: U-Net/head, Dice+BCE, TrivialAugment, ep8, bs8, IMG384, LODV",
+devs = sorted({d for d in (device_of(ip) for ip, _ in pairs) if d})
+folds = [(f"lodv_{d}", [(c, m) for c, m in pairs if device_of(c) != d],
+          [(c, m) for c, m in pairs if device_of(c) == d]) for d in devs]
+if not devs:
+    idx = list(range(len(pairs))); random.Random(2401).shuffle(idx)
+    nva = max(50, len(idx) // 7)
+    folds = [("random_holdout", [pairs[i] for i in idx[nva:]], [pairs[i] for i in idx[:nva]])]
+L(f"folds: {[f[0] for f in folds]} sizes {[len(f[2]) for f in folds]}")
+results = {"protocol": "identical: U-Net/head, Dice+BCE, TrivialAugment, ep8, bs8, IMG384, LODV (or seeded 85/15 holdout)",
            "arms": {}, "encoder_provenance": USFM_NOTES}
 for arm in ("resnet34_P0", "mit_b1_segformer", "usfm_vit"):
     agg = {}
     try:
-        for d in devs:
-            tr = [(c, m) for c, m in pairs if device_of(c) != d]
-            va = [(c, m) for c, m in pairs if device_of(c) == d]
+        for fname, tr, va in folds:
             if len(va) < 4 or len(tr) < 30:
-                L(f"LODV skip {d} for {arm}"); continue
+                L(f"skip {fname} for {arm}"); continue
             model = make_arm(arm).to(DEV)
-            rows = train(model, tr, va, f"{arm}_{d}")
+            rows = train(model, tr, va, f"{arm}_{fname}")
             arr = np.array([r[1:] for r in rows])
-            agg[d] = {"fasc_iou": float(arr[:, 1].mean()), "apo_iou": float(arr[:, 0].mean())}
-            L(f"[{arm}] LODV {d}: fasc {agg[d]['fasc_iou']:.4f} apo {agg[d]['apo_iou']:.4f}")
+            agg[fname] = {"fasc_iou": float(arr[:, 1].mean()), "apo_iou": float(arr[:, 0].mean())}
+            L(f"[{arm}] {fname}: fasc {agg[fname]['fasc_iou']:.4f} apo {agg[fname]['apo_iou']:.4f}")
         results["arms"][arm] = agg
     except Exception as e:
         results["arms"][arm] = {"error": f"{type(e).__name__}: {e}"}

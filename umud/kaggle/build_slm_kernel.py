@@ -107,12 +107,23 @@ from torch.utils.data import Dataset, DataLoader
 import segmentation_models_pytorch as smp
 
 IMG = 384
-def device_of(path, feats=None):
-    s = os.path.basename(path).lower()
+def device_of(path):
+    s = path.lower()
     for k in ("telemed", "juniper", "lumify", "gray853", "h512", "left_ticks", "lefttick"):
         if k in s:
             return k
-    return "unknown"
+    return None  # no device tag anywhere in the path -> random-split fallback
+
+# mask pixel-value sanity (apo/fasc encoding check)
+for mp, _ in random.sample(pairs, min(8, len(pairs))):
+    mk = cv2.imread(mp, cv2.IMREAD_GRAYSCALE)
+    if mk is not None:
+        u, c = np.unique(mk, return_counts=True)
+        top = sorted(zip(u.tolist(), c.tolist()), key=lambda x: -x[1])[:4]
+        L(f"mask {os.path.basename(mp)} {mk.shape} top values {top}")
+if len(pairs) > 4000:
+    pairs = random.sample(pairs, 4000)
+    L(f"pairs capped to 4000 for wall-time")
 
 class SegDS(Dataset):
     def __init__(self, pairs, train):
@@ -174,18 +185,23 @@ def run_variant(encoder, weights, tr, va, tag, epochs=10, bs=8):
     torch.save(model.state_dict(), f"{OUT}/slm0_{tag}.pt")
     return {"fasc_iou": best[0], "apo_iou": best[1]}
 
-devs = sorted({device_of(ip) for ip, _ in pairs})
-L(f"devices in GT pairs: {devs}")
-results = {"protocol": "U-Net, Dice+BCE, TrivialAugment, ep10, bs8, IMG384; LODV by device", "lodv": {}}
+devs = sorted({d for d in (device_of(ip) for ip, _ in pairs) if d})
+folds = [(f"lodv_{d}", [(c, m) for c, m in pairs if device_of(c) != d],
+          [(c, m) for c, m in pairs if device_of(c) == d]) for d in devs]
+if not devs:  # no device tags in paths -> seeded random 85/15 holdout
+    idx = list(range(len(pairs))); random.Random(2401).shuffle(idx)
+    nva = max(50, len(idx) // 7)
+    folds = [("random_holdout", [pairs[i] for i in idx[nva:]], [pairs[i] for i in idx[:nva]])]
+L(f"folds: {[f[0] for f in folds]} sizes {[len(f[2]) for f in folds]}")
+results = {"protocol": "U-Net, Dice+BCE, TrivialAugment, ep10, bs8, IMG384; LODV by device (or seeded 85/15 holdout)",
+           "lodv": {}}
 for enc, w, tag in [("resnet34", "imagenet", "resnet34_P0"), ("mit_b1", "imagenet", "mit_b1_segformer")]:
     agg = {}
-    for d in devs:
-        tr = [(c, m) for c, m in pairs if device_of(c) != d]
-        va = [(c, m) for c, m in pairs if device_of(c) == d]
+    for fname, tr, va in folds:
         if len(va) < 4 or len(tr) < 30:
-            L(f"LODV skip {d} for {tag}: train {len(tr)}/val {len(va)}"); continue
-        agg[d] = run_variant(enc, w, tr, va, f"{tag}_{d}")
-        L(f"[{tag}] LODV {d}: fasc {agg[d]['fasc_iou']:.4f} apo {agg[d]['apo_iou']:.4f}")
+            L(f"skip {fname} for {tag}: train {len(tr)}/val {len(va)}"); continue
+        agg[fname] = run_variant(enc, w, tr, va, f"{tag}_{fname}")
+        L(f"[{tag}] {fname}: fasc {agg[fname]['fasc_iou']:.4f} apo {agg[fname]['apo_iou']:.4f}")
     results["lodv"][tag] = agg
 json.dump({"status": "OK", "n_pairs": len(pairs), "strategy": strat, **results},
           open(f"{OUT}/run_record.json", "w"), indent=1)
