@@ -8,4 +8,4 @@
 2026-11-05T11:34:22Z	batch2	d34_lupa092.csv	0.19747
 2026-11-05T11:35:43Z	batch2	d34_jlmt01.csv	0.19855
 2026-11-05T11:37:52Z	batch3	d34_mts100.csv	0.19813
-2026-11-05T11:39:10Z	batch3	d34_pas092.csv	pending
+2026-11-05T11:39:10Z	batch3	d34_pas092.csv	REJECTED-quota(5/5)
