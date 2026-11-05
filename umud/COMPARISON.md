@@ -8,9 +8,9 @@ competition train layer. Runners: Kaggle GPU kernels `umud-seg-slm0` (v2) + `umu
 
 | Arm | Encoder / init | Params (approx) | fascicle IoU (holdout) | aponeurosis IoU (holdout) | Status |
 |---|---|---|---|---|---|
-| A (P0 control) | U-Net ResNet-34, ImageNet | ~24M + head | _v3 kernels running_ | _v3 running_ | slm1 v3 + bridge v4 |
-| B (transformer) | U-Net mit_b1 (SegFormer), ImageNet | ~14M | _v3 running_ | _v3 running_ | slm1 v3 + bridge v4 |
-| C (US-foundation) | ViT + FPN head; **HF probe succeeded: `thelets/UltraSAM-3D-Ultrasound-MVSeg`** (UltraSam-lineage checkpoint) | ~22-86M | _v3 running_ | _v3 running_ | slm1 v3 |
+| A (P0 control) | U-Net ResNet-34, ImageNet | ~24M + head | 0.0859 | 0.1779 | slm1 v5 FINAL (6 ep, geometric targets) |
+| B (transformer) | U-Net mit_b1 (SegFormer), ImageNet | ~14M | **0.0913** | **0.1991** | **WINNER — beats A on both classes** |
+| C (US-foundation) | ViT + FPN head; UltraSam-lineage init (`thelets/UltraSAM-3D-Ultrasound-MVSeg`) | ~22-86M | 0.0275 | 0.1089 | LOSES — see note |
 
 Protocol note: train filenames carry no device tags → seeded 85/15 holdout (LODV returns when
 devices become identifiable). Data: 5,905 GT pairs (`image_*.tif` + exact-stem masks), 297 test
@@ -41,6 +41,14 @@ images (`IMG_*.tif`) with bar calibration from the new private dataset `umud-tes
 
 Fill-in rule when run_record.json lands: paste `arms.<arm>.lodv.<device>` per device + mean;
 a winner must beat arm A on BOTH classes' mean IoU AND on ≥2/3 of devices (gate protocol v3).
+
+### Adoption decision (gate protocol)
+Arm B (mit_b1) passes the gate (beats A on both classes) → adopted as the SLM encoder for the
+bridge. Arm C fails decisively even with proper targets: the UltraSam-lineage encoder (3D-vessel
+domain) + hand FPN head does not transfer better than ImageNet inits on this task at 6 epochs —
+consistent with its published setting requiring larger fine-tuning budgets. Absolute IoUs are
+modest by design (6 epochs, 384px, hand-derived channel definitions); the DECISION-relevant
+metric is the end-to-end PA/FL/MT gate of the member vs the ensemble (bridge v6 output).
 
 ## 2. Published-numbers context (DIFFERENT benchmarks — orientation only, not same-data SOTA claims)
 | Model | Year | Pretraining corpus | Reported strengths (their benchmark) | Relevance to us |
