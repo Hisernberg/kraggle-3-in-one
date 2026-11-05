@@ -62,6 +62,26 @@ if len(pairs) < 50:
     json.dump({"status": "NO_GT_PAIRS", "n_pairs": len(pairs)}, open(f"{OUT}/run_record.json", "w"), indent=1)
     raise SystemExit(0)
 
+def decode_y(mk):
+    """Instance/level-coded masks (observed: muscle body at one mid gray, fascicles at distinct
+    levels, background 0/1) -> two geometric channels: apo envelope band + interior fascicles."""
+    st = (mk > 10).astype(np.uint8)
+    if st.sum() < 100:
+        return np.zeros((2,) + mk.shape, np.float32), 0.0
+    k = np.ones((25, 25), np.uint8)
+    closed = cv2.morphologyEx(st, cv2.MORPH_CLOSE, k)
+    n, lab = cv2.connectedComponents(closed)
+    if n > 1:  # keep the largest component = muscle body
+        sizes = [(lab == i).sum() for i in range(1, n)]
+        fill = (lab == (1 + int(np.argmax(sizes)))).astype(np.uint8)
+    else:
+        fill = closed
+    fill = cv2.morphologyEx(fill, cv2.MORPH_CLOSE, np.ones((15, 15), np.uint8))
+    band = cv2.dilate(fill, np.ones((7, 7), np.uint8)) - cv2.erode(fill, np.ones((7, 7), np.uint8))
+    fasc = (st & ~cv2.dilate(band, np.ones((9, 9), np.uint8))).astype(np.float32)
+    y = np.stack([band.astype(np.float32), fasc])
+    return y, float(fasc.sum())
+
 class SegDS(Dataset):
     def __init__(self, pairs, train): self.pairs, self.train = pairs, train
     def __len__(self): return len(self.pairs)
@@ -73,7 +93,7 @@ class SegDS(Dataset):
         if mk.shape[:2] != (h, w): mk = cv2.resize(mk, (w, h), interpolation=cv2.INTER_NEAREST)
         im = cv2.resize(im, (IMG, IMG)).astype(np.float32) / 255.0
         mk = cv2.resize(mk, (IMG, IMG), interpolation=cv2.INTER_NEAREST)
-        y = np.stack([(mk > 63) & (mk < 192), mk >= 192]).astype(np.float32)
+        y, fasc_px = decode_y(mk)
         if self.train:
             op = random.choice(["hflip", "rot", "bright", "contrast", "gamma", "identity"])
             if op == "hflip" and random.random() < 0.5:
@@ -90,6 +110,8 @@ class SegDS(Dataset):
 
 def iou(g, p, eps=1e-7):
     g, p = np.asarray(g).astype(bool), np.asarray(p).astype(bool)
+    if g.sum() == 0 and p.sum() == 0:
+        return 1.0
     return ((g & p).sum() + eps) / ((g | p).sum() + eps)
 
 def evaluate(model, va):
@@ -131,8 +153,8 @@ scores, models = {}, {}
 for enc, tag in [("resnet34", "resnet34"), ("mit_b1", "mit_b1")]:
     try:
         m = smp.Unet(enc, encoder_weights="imagenet", in_channels=1, classes=2).to(DEV)
-        apo_iou, fasc_iou, _ = train(m, tr, va, tag)
-        scores[tag] = {"apo_iou": apo_iou, "fasc_iou": fasc_iou}
+        h = train(m, tr, va, tag, epochs=6)
+        scores[tag] = {"apo_iou": h[1], "fasc_iou": h[2], "loss": h[0]}
         models[tag] = m
     except Exception as e:
         scores[tag] = {"error": f"{type(e).__name__}: {e}"}
@@ -196,9 +218,9 @@ def predict_mask(path):
         p = torch.sigmoid(model(t))[0].cpu().numpy()
         p += torch.sigmoid(model(torch.flip(t, dims=[-1])))[0].cpu().numpy()[..., ::-1]  # hflip TTA
         p /= 2
-    mk = (cv2.resize(p[0], (w, h)) > 0.5).astype(np.uint8) * 127 + \
-         (cv2.resize(p[1], (w, h)) > 0.5).astype(np.uint8) * 255
-    return im, mk
+    band = (cv2.resize(p[0], (w, h)) > 0.5).astype(np.uint8)
+    fasc = (cv2.resize(p[1], (w, h)) > 0.5).astype(np.uint8)
+    return im, band, fasc
 
 # scales for test images
 scales = {}
@@ -227,12 +249,11 @@ test_imgs = [p for p in imgs if os.path.basename(p).upper().startswith("IMG_")]
 L(f"test images (IMG_*): {len(test_imgs)}")
 t0 = time.time()
 for j, ip in enumerate(sorted(test_imgs)):
-    im, mk = predict_mask(ip)
-    if mk is None:
+    out = predict_mask(ip)
+    if out[0] is None:
         continue
-    apo = (mk == 127) | (mk == 255)  # gray band incl. overlap; fasc = 255
-    fasc = mk == 255
-    sup, deep = apo_lines(apo)
+    im, band, fasc = out
+    sup, deep = apo_lines(band)
     cal = float(scales.get(os.path.basename(ip), med_scale))
     mm_per_px = 10.0 / cal
     row = {"image_id": os.path.basename(ip), "pa_deg": np.nan, "fl_mm": np.nan, "mt_mm": np.nan}
@@ -242,7 +263,7 @@ for j, ip in enumerate(sorted(test_imgs)):
             row["pa_deg"], row["fl_mm"] = pa, fl_px * mm_per_px
         if sup is not None:
             # vertical separation sampled across the middle 60% of columns
-            xs = np.arange(int(mk.shape[1] * .2), int(mk.shape[1] * .8), 8)
+            xs = np.arange(int(im.shape[1] * .2), int(im.shape[1] * .8), 8)
             sep = np.abs((sup[0] * xs + sup[1]) - (deep[0] * xs + deep[1]))
             row["mt_mm"] = float(np.median(sep)) * mm_per_px
         geoms.append({"image_id": row["image_id"], "n_fasc": ncomp if pa is not None else 0,

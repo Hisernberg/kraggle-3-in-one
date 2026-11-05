@@ -28,11 +28,16 @@ images (`IMG_*.tif`) with bar calibration from the new private dataset `umud-tes
 - slm1 v3 + bridge v4: **third bug found** — `iou()` bitwise-ANDed float targets with bool masks
   (`bitwise_and` TypeError; v2 never reached eval so it was masked). ViTSeg head also resolved to
   168×168 instead of 384×384 (2×6 upsample chain) → loss shape assert. Both fixed.
-- **bridge v5 RUNNING** (bug-fixed): trains resnet34 + mit_b1 (identical protocol, seeded 85/15),
-  picks the winner, predicts `IMG_*.tif` test images with hflip TTA, runs the geometry layer
-  (apo line fits, fascicle PCA, bar-calibration mm), writes `slm_member.csv` + `geometry_detail.csv`
-  + `run_record.json` (arm IoUs = the A/B comparison table). slm1 v4 (UltraSam-init arm C) queued
-  behind the GPU session limit.
+- **slm1 v4 completed (targets mis-decoded — treat as a pilot):** with the gray/white two-band
+  assumption the apo channel was empty on BOTH sides (IoU degenerate 1.0) and fasc targets were
+  near-empty. Under that handicap: mit_b1 0.1329 / resnet34 0.1318 / **UltraSam-init ViT+FPN 0.0575**
+  — arm C clearly behind; the `thelets/UltraSAM-3D-Ultrasound-MVSeg` encoder did not transfer better
+  than ImageNet inits at this scale (3D vessel domain shift + hand FPN head).
+- **Mask format decoded from pixel histograms:** instance/level-coded (muscle body one mid gray,
+  fascicles distinct levels 87/88/89 etc., background 0/1) — NOT a gray-apo/white-fasc pair.
+- **Fix v6/v5 (both kernels):** geometric channel decode — apo = envelope band of the closed muscle
+  region (what MT measures), fascicles = interior structures (PA/FL) — plus IoU empty-empty guard,
+  train() unpack fix (bridge v5 crash), 6 epochs. Bridge v6 + slm1 v5 RUNNING.
 
 Fill-in rule when run_record.json lands: paste `arms.<arm>.lodv.<device>` per device + mean;
 a winner must beat arm A on BOTH classes' mean IoU AND on ≥2/3 of devices (gate protocol v3).

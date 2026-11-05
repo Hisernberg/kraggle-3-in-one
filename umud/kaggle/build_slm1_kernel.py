@@ -73,6 +73,25 @@ if len(pairs) > 4000:
     L("pairs capped to 4000 for wall-time")
 
 IMG = 384
+
+def decode_y(mk):
+    """Instance/level-coded masks -> two geometric channels: apo envelope band + interior fascicles."""
+    st = (mk > 10).astype(np.uint8)
+    if st.sum() < 100:
+        return np.zeros((2,) + mk.shape, np.float32)
+    k = np.ones((25, 25), np.uint8)
+    closed = cv2.morphologyEx(st, cv2.MORPH_CLOSE, k)
+    n, lab = cv2.connectedComponents(closed)
+    if n > 1:
+        sizes = [(lab == i).sum() for i in range(1, n)]
+        fill = (lab == (1 + int(np.argmax(sizes)))).astype(np.uint8)
+    else:
+        fill = closed
+    fill = cv2.morphologyEx(fill, cv2.MORPH_CLOSE, np.ones((15, 15), np.uint8))
+    band = cv2.dilate(fill, np.ones((7, 7), np.uint8)) - cv2.erode(fill, np.ones((7, 7), np.uint8))
+    fasc = (st & ~cv2.dilate(band, np.ones((9, 9), np.uint8))).astype(np.float32)
+    return np.stack([band.astype(np.float32), fasc])
+
 class SegDS(Dataset):
     def __init__(self, pairs, train): self.pairs, self.train = pairs, train
     def __len__(self): return len(self.pairs)
@@ -84,7 +103,7 @@ class SegDS(Dataset):
         if mk.shape[:2] != (h, w): mk = cv2.resize(mk, (w, h), interpolation=cv2.INTER_NEAREST)
         im = cv2.resize(im, (IMG, IMG)).astype(np.float32) / 255.0
         mk = cv2.resize(mk, (IMG, IMG), interpolation=cv2.INTER_NEAREST)
-        y = np.stack([(mk > 63) & (mk < 192), mk >= 192]).astype(np.float32)
+        y = decode_y(mk)
         if self.train:
             op = random.choice(["hflip", "rot", "bright", "contrast", "gamma", "identity"])
             if op == "hflip" and random.random() < 0.5:
@@ -101,6 +120,8 @@ class SegDS(Dataset):
 
 def iou(g, p, eps=1e-7):
     g, p = np.asarray(g).astype(bool), np.asarray(p).astype(bool)
+    if g.sum() == 0 and p.sum() == 0:
+        return 1.0
     return ((g & p).sum() + eps) / ((g | p).sum() + eps)
 
 def evaluate(model, va):
@@ -113,7 +134,7 @@ def evaluate(model, va):
             rows.append((device_of(ip), *[iou(y[c].numpy(), pr[c]) for c in range(2)]))
     return rows
 
-def train(model, tr, va, tag, epochs=8, bs=8):
+def train(model, tr, va, tag, epochs=6, bs=8):
     opt = torch.optim.AdamW(model.parameters(), lr=3e-4)
     dsc = smp.losses.DiceLoss(mode="multilabel"); bce = nn.BCEWithLogitsLoss()
     tl = DataLoader(SegDS(tr, True), batch_size=bs, shuffle=True, num_workers=0)
