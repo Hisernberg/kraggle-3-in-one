@@ -42,7 +42,7 @@ def merge_args(base, extra):
     Repeatable per-device flags (--fam-w FAMILY ..., --fam-pa-offset FAMILY ...) are keyed by flag + family, so an
     override replaces only that family's entry.
     """
-    multi = {"--fam-w", "--fam-pa-offset", "--fam-fl-scale", "--aniso", "--fam-mt-offset", "--fam-pa-final", "--spread"}
+    multi = {"--fam-w", "--fam-pa-offset", "--fam-fl-scale", "--aniso", "--fam-mt-offset", "--fam-pa-final", "--spread", "--fam-spread"}
 
     def parse(tokens):
         groups, cur = [], None
@@ -52,7 +52,8 @@ def merge_args(base, extra):
                 groups.append(cur)
             else:
                 cur.append(tok)
-        return {(g[0], g[1]) if g[0] in multi else (g[0],): g for g in groups}
+        return {((g[0], g[1], g[2]) if g[0] == "--fam-spread" else (g[0], g[1])) if g[0] in multi else (g[0],): g
+                for g in groups}
     b, e = parse(base), parse(extra)
     b.update(e)
     return [x for g in b.values() for x in g]

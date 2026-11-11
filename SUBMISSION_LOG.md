@@ -236,3 +236,58 @@ Also tested and dropped: gain-normalising the 32-bit PCM clips before Whisper (H
 | 57111810 | w1_grand | user: combine all the best. 0.9 × (bagged heads + fusion head + w2v-BERT + concat LR) + 0.1 × T3, + transcript TF-IDF 0.03, waveform + transcript overrides | 0.936 / 0.956 | 0.94230 | clip 41 only (not public) |
 
 Combining everything did not beat V1 in CV (V1 0.937; all-member equal blend 0.931; 2nd-level stacking 0.935). Final selection unchanged: **V1 + T3**.
+
+## 2026-10-27 UMUD (`umud-challenge-muscle-architecture-in-ultrasound-data`), 5 of 5 used (user-authorised)
+
+Base d27_S3 0.19970 (rank 3). Lower is better. Details: `umud/daily/plans/d28.md`.
+
+| File | What | Expected | Public | Uses Vera CSV? |
+|---|---|---|---|---|
+| d28_flcnx | FL from new ConvNeXt-S fascicle map, level-matched | -0.004..+0.001 | 0.20184 | yes |
+| d28_elig_pipe | reference-free pipeline only (eligibility floor) | 0.27..0.36 | 0.34380 | **no** |
+| d28_vdljl0 | FL DLTrack-prior anchor share 0 on Juniper+Lumify | ±0.0005 | 0.19966 | yes (+ DLTrack-prior CSV) |
+| d28_othpaw066 | PA weight 0.66 on left_ticks/Telemed/small | ±0.0004 | 0.20024 | yes |
+| d28_jlpaw05 | PA weight Juniper 0.80 / Lumify 0.85 | ±0.0003 | **0.19897** | yes |
+
+LB after: 0.18297 (Mateo Allmer), 0.18704, **0.19897 (us, 3rd)**. Not #1. Every sub-0.21 line depends on the
+hard-coded Vera CSV; the only reference-free score is 0.34380.
+
+## 2026-10-27 TrafficFlowBench (`2026-ieee-big-data-traffic-flow-bench`), 5 of 5 used
+
+Details: `trafficflow/docs/LOOP.md` (2026-10-27 section).
+
+| Ref | File | Parent | Change | Public |
+|---|---|---|---|---|
+| 57705116 | L1_state | K2 (0.88314) | Task 1 state moved by the H13P/H14P recipe delta | **0.88384** (best) |
+| 57710820 | L2_fullAD | L1 | April ongoing rows from fully March-adapted v12v11 (158 April cells; pseudo3 April +0.016 ± 0.004 vs aprAD) | 0.88384 (= parent, as designed) |
+| 57712104 | M3_onset_blend15 | L1 | onset probe: eIoU on 0.15 incumbent + 0.85 v8 (+6 March cells) | 0.88322 |
+| 57712292 | M2_onset_prune20 | L1 | onset probe: drop incumbent cells with v8 p < 0.2 (-6 March cells) | 0.88331 |
+| 57712326 | M1_onset_union50 | L1 | onset probe: add v8 p >= 0.8 cells (+2 March cells) | 0.88322 |
+
+Recommended final pair: **L1 (public line) + L2 (private line)**. The onset probes (user-requested) all lost: T08's onset set beats every v8 edit in both directions.
+
+## 2026-10-28 UMUD, 5 of 5 used (user-authorised via coordinator)
+
+| File | What | Expected | Public | Uses Vera CSV? |
+|---|---|---|---|---|
+| d29_S1_jlpa_vdljl0 | d28 J/L PA + J/L FL combination | 0.19893 | 0.19893 | yes |
+| d29_elig_mt1014 | eligible line, MT spread 1.014 | 0.300..0.330 | 0.31239 | **no** |
+| d29_pa6 | PA from 6 fascicle maps (harness-best) | -0.0010..+0.0008 | 0.19983 | yes |
+| d29_lumpaw090 | Lumify PA weight 0.90 | ±0.0004 | **0.19888** | yes |
+| d29_elig_shr | eligible line, shrinkage PA 0.66 / FL 0.58 | 0.308..0.316 | **0.29936** | **no** |
+
+LB after: 0.18297, 0.18704, **0.19888 (us, 3rd)**. Best eligible (no public CSV): 0.29936.
+
+## 2026-10-28 TrafficFlowBench (`2026-ieee-big-data-traffic-flow-bench`), 5 of 5 used
+
+Details: `trafficflow/docs/LOOP.md` (2026-10-28 section). T08 onset reproduced exactly; both onset candidates lost.
+
+| Ref | File | Parent | Change | Public |
+|---|---|---|---|---|
+| 57724300 | N1_t08eiou | L1 (0.88384) | March onset: eIoU decode of the reproduced T08 probabilities (+11 cells) | 0.87759 |
+| 57725087 | N3_catprior | L1 | March onset: CatBoost x3 on T08 features + train recurrence prior (+7/-7 cells) | 0.87969 |
+| 57735495 | Q1_monthbias | L1 | Task 1 month speed level (t1_bias) via the K-line delta | 0.88400 |
+| 57736944 | Q2_P2to6 | Q1 | Task 1 regular rows = equal mix of 5 transductive members (P5/P6 new) | **0.88409** (best) |
+| 57737081 | Q3_P2to6_fullAD | Q2 | April ongoing from fully March-adapted v12v11 (private line) | 0.88409 (= parent, as designed) |
+
+Recommended final pair: **Q2 (public line) + Q3 (private line)**.

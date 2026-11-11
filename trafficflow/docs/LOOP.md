@@ -144,6 +144,29 @@ public condition can flip a +0.0026 pseudo gain.
 K5 (April onset adaptation) has no pseudo evidence yet -> not built today. Day 2026-10-23: 2 TFB slots used (K2, K3).
 The 22:3x container restart killed the chain once; `scripts/chain_v12_adapt.sh` is now resumable (step markers).
 
+
+### Results 2026-10-24
+| Card | File | Public | Verdict |
+|---|---|---|---|
+| K7 | K7_fd065.zip (FD recon gate 0.60 -> 0.65 vf, 5,558 band rows) | 0.88305 (-0.00009) | gate vertex = 0.60 (0.55 = 0.60, 0.65 / 0.70 lose) |
+| K6 | K6_cm10.zip (full common-mode beta gap) | 0.88310 (-0.00004) | vertex = half gap (K1/K2) |
+| K8 gate | ongoing decode calibration p^gamma before eIoU (`T2_PGAMMA`), pseudo3 | gamma 0.8: Mar -0.0035 / Apr -0.0048; 1.25: +0.0005 / -0.0074 | fails both-month gate; eIoU on raw p is the vertex; not submitted |
+| K5 | April-onset adaptation | - | not built: onset rows are the public kernel's (T08) + safe v8 cells, adapt.py is ongoing-only |
+
+Standing: public 0.88314 (K2) rank ~56/591; leader 0.92406 (+0.041). Every cheap state/decode knob is at its vertex;
+the gap is structural (Task 2), not reachable with one-knob probes. Final pair stays K2 (public line) + K3 (private line).
+
+### Cards for 2026-10-24 (user standing order: fill all 5 slots; one change each, read each score first)
+Base K2 (0.88314; finals K2 + K3). Evidence is thin after K4b (pseudo3 weight gains did not transfer), so cards 2-5 are
+labelled probes with small expected value.
+1. **K5 April-onset adaptation (private line)**: onset models adapted on March pseudo windows (t2/adapt.py, onset
+   condition), April rows only; public must equal K2. Build only if the April pseudo onset IoU gains > 2 paired SE.
+2. **K6 probe: K2 + full common-mode beta** (K1 used half the gap; quadratic says +0.00001): exact-transfer state probe.
+3. **K7 probe: FD congested-branch gate 0.6 -> 0.65 vf** on K2 (0.55 = 0.6 = 0.88203, 0.7 -0.0002 on the J-line).
+4. **K8 probe: v12v11 ongoing decode threshold / top-m +1 cell** on K2 (only if pseudo3 official-style >= +0.0005 on
+   BOTH months).
+5. Unused slot -> resubmit nothing; keep for the other account user unless after 22:00 UTC.
+
 ### Cards for 2026-10-23 (one at a time; read each score first)
 1. **K2 = K1 + ongoing rows from `lgb_v8og_v12v11.csv`** (onset rows of K1 untouched; only ongoing queue rows change).
    Expect +0.0008..+0.0015. Adopt if >= +0.0003. If <= -0.001: the public-onset line interacts with ongoing; diagnose.
@@ -393,3 +416,85 @@ writes its own file (model dir, `state_<tag>.parquet`, zip). Then re-arm the wai
 5. **Research state (hours, in the background):**
    - Task 2: `trafficflow/t2/run_all.sh`;
    - Task 1: `trafficflow/t1_pipeline.py` stages (`TFB_FD=1`).
+
+### 2026-10-27 (L1, L2)
+**New best: `L1_state.zip` = 0.88384** (+0.00070 vs K2 0.88314): K2 rebuild (ongoing rows verified identical to K2) with
+the Task 1 state moved by the never-submitted H13P/H14P recipe delta (blackout rows mean(fullPD, fullPD2), regular rows
+0.25 P2 + 0.375 P3 + 0.375 P4, minus the H11P recipe), scaled 0.92 speed / 0.62 flow (the K-line's public blend
+weights), FD congested-branch recon re-applied. Build: `scripts/oct27_state_pair.sh`, `scripts/oct27_state_delta.py`.
+
+**Ongoing gate on pseudo3 (`scripts/oct27_gate_adapt.sh`, 332 March / 334 April official-style windows; April is the
+honest test for adapted components):**
+
+| scheme | March S (dS) | April S (dS) | note |
+|---|---|---|---|
+| v12v11 (public line) | 0.8391 | 0.8667 | base |
+| aprAD (K3/K13: v11 pair adapted) | +0.0256 | +0.0096 | March in-sample |
+| **fullAD (all 6 components adapted)** | +0.0728 | **+0.0237** | vs aprAD April: +0.016 +- 0.004 (101 / 43 windows) |
+| v14v11 (v12 recipe at p4) | +0.0005 | -0.0023 | capacity does not help: closed |
+| aprAD14 | +0.0235 | +0.0065 | |
+
+**L2_fullAD.zip = 0.88384 = L1** (as designed: L1 + 158 April ongoing cells from fullAD; `scripts/oct27_L2_fullAD.sh`).
+Final-pair recommendation: **L1 (public line) + L2 (private line)**. Caveat: the adaptation gain is measured on pseudo
+windows only; it has never been confirmed on official windows (cannot be, before the private reveal).
+Remaining 3 slots of 2026-10-27 unused: no other change passed a gate. The gap to #1 (0.92809, +0.044) needs about
++0.15 S_queue; no single validated lever is near that size.
+
+### 2026-10-27 evening: onset sensitivity probes (user request: use the 3 remaining slots on onset)
+No pseudo ranking was possible: the incumbent onset rows are the public T08 kernel's binary output (+ O1 safe v8 cells)
+and the v8 onset models are not on disk (only their official-window T+30 probabilities), so neither can be scored on
+pseudo onset windows. The probes were ranked by expected IoU under the v8 probabilities (self-scored, biased toward
+v8) and built with `scripts/oct27_onset_probe.py` on L1. T08 and v8 agree on ~133/153 March cells.
+
+| Probe | March change | v8-calibrated dTotal | Public | March onset IoU change |
+|---|---|---|---|---|
+| M3 blend 0.15 inc + 0.85 v8, eIoU | +6 cells, 2 windows | +0.0014 | 0.88322 (-0.00062) | -0.0041 |
+| M2 prune incumbent cells with v8 p < 0.2 | -6 cells, 2 windows | -0.0003 | 0.88331 (-0.00053) | -0.0035 |
+| M1 add v8 p >= 0.8 cells | +2 cells, 1 window | +0.0012 | 0.88322 (-0.00062) | -0.0041 |
+
+Reading: every v8-vs-T08 disagreement on March went T08's way, in both directions. M3's whole loss is M1's two
+confident v8 cells in one window (the other 4 added cells net 0). The incumbent onset set is a local optimum against
+our v8 model (as F1/F2 found for v6 decoding). Sensitivity: one window's IoU = 0.15/40 = 0.0037 x dIoU of total, so a
+single wrong 2-cell edit costs ~0.0006. Onset gains must come from a better model than T08 (or T08 retrained/adapted),
+not from re-mixing with v8. Not adopted; finals stay L1 + L2.
+
+### 2026-10-28: T08 onset reproduced; the pseudo onset gate does not transfer
+- T08 = the anubisyy v20 onset (LightGBM onset_lgb.txt + CatBoost onset.cbm, 0.5/0.5, thr 0.55, top-1 fallback; the
+  yeashu kernel copies the anubisyy queue rows). Re-implemented its 83 features ourselves (`t2/t08_features.py`; the
+  downloaded notebook code is not executed, only the released model files are loaded) -> **285/285 official onset
+  cells reproduced exactly** (`t2/onset_t08.py official`). L1 onset = T08 + 27 O1 cells.
+- Pseudo onset windows (pseudo3 417 / pseudo2 457, T+30 cells only ~54 % known): T08 IoU 0.745 Mar / 0.751 Apr.
+  eIoU decoding on T08 p: +0.006 Mar / +0.016 Apr (pooled +0.011 +- 0.006, 8/8 panels >= 0); February candidate
+  windows (T08's own selection set): -0.007.
+- **N1 (eIoU on March, +11 cells) = 0.87759 (-0.00625 -> March onset IoU -0.042).** The pseudo onset gate is wrong in
+  sign for set-size changes; February (full truth) had the right sign. Onset gating moves to February/full-truth
+  windows. The April-adapted onset models (trained on March pseudo onset windows; pseudo April +0.03 vs T08) are
+  therefore NOT used for the private line: their evidence is the same pseudo metric.
+- Feb gate (T08 candidate windows of February, full truth; our models trained Jun-Jan, early-stopped on Feb as T08):
+  our LightGBM/CatBoost re-trains on T08 features = T08 level (6-model ensemble +0.001 +- 0.003); patch features,
+  63 leaves, hybrid labels (identical to raw labels on eligible observed cells) add nothing. **A train recurrence prior**
+  (leave-day-out queued share at T+30 / T, same day type; `t2/onset_prior.py`) gives CatBoost x3 **+0.016 +- 0.006**
+  (13 better / 2 worse, every seed positive, logloss 0.0103 -> 0.0088).
+- **N3 (that model on March, +7/-7 cells in 7 windows) = 0.87969 (-0.00415 -> March onset -0.028).**
+- Five March onset edits now lost (M1-M3, N1, N3: onset -0.004 to -0.042), whatever the local gate said (pseudo
+  windows: wrong sign on N1; February: wrong sign on N3). The incumbent March onset rows (T08 + the O1 cells, both
+  chosen with public feedback) are a sharp optimum on the 40 public windows; further March onset probes would be
+  hill-climbing the public split, so they stop here. No onset change goes into either final: April evidence (Feb,
+  pseudo April +0.013..+0.019 for the prior model) is the same kind of evidence that failed twice on March.
+- Slots 2026-10-28: N1, N3 (2 of 5); 3 left unused on purpose.
+
+### 2026-10-28 afternoon: Task 1 line (the gate with a clean transfer record)
+Decomposition (probes): ODME 0.994 (closed), S_LWR at its noise floor, FD/common-mode knobs at their vertices, onset
+over-fit to the public windows, March ongoing adaptation not possible (all 40 official March ongoing windows lie in
+March 1-12, before enough March pseudo data exists). The Task 1 pseudo-holdout transferred at 1.2-2x on every
+transductive step, so the slots went there.
+
+| File | Change | Pseudo 0.35*dS (Mar / Apr, panels up) | Public |
+|---|---|---|---|
+| Q1_monthbias | L1 + month speed level (t1_bias on P2/P3/P4) via the K-line delta | +0.00010 / +0.00012 (10 / 10) | **0.88400** (+0.00016) |
+| Q2_P2to6 | Q1, regular rows = equal mix P2..P6 (P5/P6 new) + bias refit | +0.00006 / +0.00012 (9 / 10) | **0.88409** (+0.00009) |
+| Q3_P2to6_fullAD | Q2 + April ongoing from fullAD (private line) | April ongoing +0.024 | 0.88409 (= Q2) |
+
+Not submitted: cross-fitted GBM residual correction (no better than the group bias), flow-specific bias (hurts),
+time-block bias (+0.00005 < plain), third dark member fullPD3 (blackout speed RMSE -0.4 %, flow mixed: ~+0.00002).
+**Final pair: Q2 (public line) + Q3 (private line).**

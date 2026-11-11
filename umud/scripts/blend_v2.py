@@ -64,6 +64,8 @@ ap.add_argument("--fam-pa-final", nargs=2, action="append", default=[], metavar=
                 help="degrees added to the final PA of one device family (after smoothing)")
 ap.add_argument("--spread", nargs=2, action="append", default=[], metavar=("TARGET", "S"),
                 help="scale each device family's deviations from its own mean final value (means kept; applied last)")
+ap.add_argument("--fam-spread", nargs=3, action="append", default=[], metavar=("FAMILY", "TARGET", "S"),
+                help="per-family override of --spread for families whose features.family starts with FAMILY")
 ap.add_argument("--out", required=True)
 a = ap.parse_args()
 
@@ -141,11 +143,15 @@ for fp, rr, tg in a.aniso:  # true angle: tan = R * tan(pixel angle); true lengt
         out.loc[m, "fl_mm"] = out.loc[m, "fl_mm"] / np.sqrt((rr * np.cos(th)) ** 2 + np.sin(th) ** 2)
     if "pa" in tg:
         out.loc[m, "pa_deg"] = np.degrees(th)
-if a.spread:  # Juniper presets and gray853 variants pooled into one device family each
+if a.spread or a.fam_spread:  # Juniper presets and gray853 variants pooled into one device family each
     dev = fam.where(~fam.str.startswith("juniper"), "juniper").where(~fam.str.startswith("gray"), "gray853")
-    for t, sc in a.spread:
+    for t in sorted({t for t, _ in a.spread} | {t for _, t, _ in a.fam_spread}):
+        sc = pd.Series(float(dict(a.spread).get(t, 1.0)), index=out.index)
+        for fp, tt, v in a.fam_spread:
+            if tt == t:
+                sc[fam.str.startswith(fp)] = float(v)
         mu = out.groupby(dev)[t].transform("mean")
-        out[t] = mu + float(sc) * (out[t] - mu)
+        out[t] = mu + sc * (out[t] - mu)
 if not a.no_anchors:
     for k, v in ANCHORS.items():
         out.loc[k] = v

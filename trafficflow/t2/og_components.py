@@ -23,6 +23,8 @@ SETS = {
     "v7": ("p2", ["og_v3", "og_v3_noloc", "og_v2", "og_v2_noloc"]),
     "v11": ("p3", ["og_v3", "og_v3_noloc"]),
     "v12": ("p3", ["og_v3", "og_v3_noloc"]),
+    # 2026-10-27: v12 recipe at p4 capacity (511 leaves, 1200 rounds)
+    "v14": ("p4", ["og_v3", "og_v3_noloc"]),
 }
 
 

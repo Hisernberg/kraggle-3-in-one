@@ -11,6 +11,7 @@ month, no April data in training). Only the rows whose label is known (observed 
 from __future__ import annotations
 
 import gc
+import os
 import sys
 import time
 
@@ -26,6 +27,7 @@ from .robust import CAND_FRAC, VARIANTS
 
 ADAPT = WORK / "adapt"
 COND = "queue_ongoing"
+TMAX = int(os.environ.get("T2_ADAPT_TMAX", "0"))   # 0 = every pseudo window of the split
 
 
 def pseudo_rows(cols: list[str], split: str):
@@ -34,7 +36,10 @@ def pseudo_rows(cols: list[str], split: str):
     for p in PANELS8:
         pc = PANELS8.index(p)
         M = pd.read_parquet(PSEUDO / f"meta_{p}.parquet").set_index("w")
-        ws = M.index[(M.condition == COND) & (M.split == split)].to_numpy()
+        sel = (M.condition == COND) & (M.split == split)
+        if TMAX:                     # online cutoff: only pseudo windows whose horizon ends before slot TMAX
+            sel &= (M["T"] + K) < TMAX
+        ws = M.index[sel].to_numpy()
         read = list(dict.fromkeys([c for c in cols if c != "pcode"] + ["w", "k", "link"]))   # k / link are also features
         F = pd.read_parquet(PSEUDO / f"feat_{p}.parquet", columns=read, filters=[("w", "in", ws.tolist())])
         z = np.load(PSEUDO / f"windows_{p}.npz")
@@ -68,7 +73,7 @@ def train(variant: str, cfg: str, split: str, alpha: float, seed: int = 0) -> st
     gc.collect()
     m = lgb.train({**params, "seed": seed}, ds, rounds)
     ADAPT.mkdir(parents=True, exist_ok=True)
-    name = f"ad_{variant}_{cfg}_{split}_{alpha}" + (f"_s{seed}" if seed else "")
+    name = f"ad_{variant}_{cfg}_{split}_{alpha}" + (f"_s{seed}" if seed else "") + (f"_cut{TMAX}" if TMAX else "")
     m.save_model(str(ADAPT / f"model_{name}_{COND}.txt"))
     print(f"saved {name} in {time.time() - t0:.0f}s", flush=True)
     return name

@@ -20,6 +20,8 @@ import gc
 import json
 
 import lightgbm as lgb
+import os
+
 import numpy as np
 import pandas as pd
 
@@ -63,12 +65,15 @@ def probs(m: lgb.Booster, split: str, cond: str) -> pd.DataFrame:
     return X[["window_id", "panel", "k", "link", "p"]]
 
 
+PGAMMA = float(os.environ.get("T2_PGAMMA", "1"))
+
+
 def decode_topm(P: pd.DataFrame) -> dict:
     out = {}
     for wid, g in P.groupby("window_id"):
         L = statics(g.panel.iloc[0])["L"]
         kk = g.k.to_numpy().astype(int) - 1; ll = g.link.to_numpy().astype(int)
-        idx, _ = eiou_topm(g.p.to_numpy())
+        idx, _ = eiou_topm(g.p.to_numpy() ** PGAMMA)  # PGAMMA: calibration power before the eIoU decode
         A = np.zeros((K, L), bool); A[kk[idx], ll[idx]] = True
         out[wid] = A
     return out

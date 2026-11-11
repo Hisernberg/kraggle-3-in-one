@@ -5,7 +5,7 @@ verify: resnet34 fold-0 model on 40 seeded non-fold-0 (in-train) images -> fold-
 Output: <split>_<family>.tar of uint8 PNG maps at 2048."""
 import glob, hashlib, importlib, json, os, subprocess, sys, time, tarfile
 import numpy as np, pandas as pd
-JOBS = [("test","eff",1)]
+JOBS = [("test","eff",1), ("oof","eff",1)]
 T0 = time.time(); INP, OUT = "/kaggle/input", "/kaggle/working"
 def ff(name):
     h = sorted(glob.glob(os.path.join(INP, "**", name), recursive=True)); assert len(h) == 1, (name, h[:3]); return h[0]

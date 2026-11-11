@@ -482,3 +482,17 @@ Best unchanged: **0.20227 (d23_S2_junpa075), public rank 1**. Day-24 slots: 5/5 
 - Full-history review: every past win came from better maps, device physics or device weights/levels; the two new
   axes (partial second anchor, within-family dispersion) were the only untested ones and both paid.
 - Public rank 1 by 0.00195 (2nd 0.20231).
+
+## Day 26 (2026-10-24): dispersion per device and per target, best stays 0.20036 (public rank 1 by 0.00002)
+| Shot | Change vs best (d25 S2) | Public LB |
+|---|---|---|
+| S1 | Juniper + Lumify PA spread 0.82 (others 0.90) | 0.20087 |
+| S2 | Juniper + Lumify PA spread 0.97 (mirror) | 0.20062 (J+L PA vertex = the global 0.90) |
+| S3 | MT spread 0.92 | 0.21737 (+0.017: ~83 % of rows moved the wrong way) |
+| S4 | MT spread 1.05 (mirror) | 0.2029 (MT sits at a sharp vertex at 1.0) |
+| S5 | FL anchor mix 0.20 (vs 0.15) | 0.20044 (flat; anchor-mix vertex 0.15-0.17) |
+
+- 0/5 adopted; every dispersion/anchor axis is now bracketed on both sides. Talha Bacak is at 0.20038 (2nd, 0.00002
+  behind, submitted 10-23 13:47): rank 1 needs a new axis, not more of the same ones.
+- MT is 100 % pipeline (`--w ... 1.0`): an MT anchor mix toward the DLTrack prior moves 58 rows by 0.0007 mm (no-op,
+  card dropped). The DLTrack prior's PA is Vera's PA exactly, so there is no PA second anchor either.
