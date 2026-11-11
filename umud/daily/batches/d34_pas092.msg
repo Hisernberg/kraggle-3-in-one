@@ -1,0 +1,1 @@
+d34 B3: PA spread 0.90->0.92 — d25 quadratic put the vertex at ~0.91 (f(0.90)=-0.00099 win, f(0.80)=+0.00135 loss); 0.92 probes the upper side of that estimate. Expect -0.0002..+0.0003, sub-resolution gains possible

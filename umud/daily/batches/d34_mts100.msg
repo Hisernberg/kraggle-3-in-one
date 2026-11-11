@@ -1,0 +1,1 @@
+d34 B3: MT spread 1.014->1.00 — the last unbracketed global axis (PA spread bracketed at ~0.91 in d25, FL spread closed at 1.00; MT 1.014 predates d25 and was never two-sided tested). Means kept. Expect +-0.0003; closes the dispersion map either way

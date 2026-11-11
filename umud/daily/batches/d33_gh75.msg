@@ -1,0 +1,1 @@
+d33 B3: gray853+h512 FL DLTrack share 0.75 (0.25*vera+0.75*dl) — vertex probe: f(0.45)=0.19777, f(0.60)=0.19748 BEST, f(1.00)=0.19756 overshoots; interior vertex expected 0.60-1.00, probe midpoint. Level-matched (residual +0.00005 mm; 20 FL rows, PA/MT untouched). Expect -0.0003..+0.0002

@@ -1,0 +1,1 @@
+d33 S1: gray853+h512 FL DLTrack-prior share 0.45->0.60, level-matched (residual -0.00005 mm; 20 FL rows, PA/MT untouched). Square-pixel carve: 0.15: 0, 0.30: -0.00043, 0.45: -0.00044, linear so far. Expect -0.0005..+0.0003

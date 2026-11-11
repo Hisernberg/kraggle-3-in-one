@@ -1,0 +1,1 @@
+d34 S1: Juniper PA pipeline weight 0.85->0.84, level-matched (residual -0.0001 deg; 88 PA rows, FL/MT untouched). d31 bracket f(0.80)=+0.00024 / f(0.90)=+0.00050 -> vertex ~0.841; d32_S2 combo was confounded by T/L 0.45 (proven +0.00028 alone on d33). Clean vertex test. Expect -0.0002..+0.0002
