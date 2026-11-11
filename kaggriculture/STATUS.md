@@ -14,8 +14,9 @@ submission, read the ladder, learn, then submit the next.
 | P04 | 09-27 11:50 | router r3_cg | tape router (280 tapes, day-start switching) + cash guard (fixes P02) + lazy per-tape decode (load 8 s → 0.1 s) | 1291 after 54 games (17:05); 1309 after 64 (23:00) — **failed** |
 | (ext) | 09-27 13:50 | SB18 Macro-1 (not from this session) | tetsutani + turn-0 wheat duel | 1860 after 54 games (17:05), 34/40 wins; 1947 after 93 (23:00) |
 | P05 | 09-28 00:08 | d_sb_s150a0 (id 56623202) | cha22 + SB18 opener + armed sell-ahead-2 (sell sub-1.3×-base stock first from step 150) | 1926/17 games (01:13) · 2231/39 (02:14) · 2310/56 (03:15) · 2282/71 (04:16) · 2273/82 (04:51) · 2293/98 (09:36) — plateau ≈ 2280-2295, below P03 |
-| P06 | 09-28 04:51 | t_sb_s150 (id 56629305) | tetsutani base + SB18 opener + armed sell-ahead-2 from step 150 (targets the duel-opener wheat route) | 1440/12 (05:22) · 1961/30 (06:30) · 2289/81 (09:36): 63/78; duel 91%, buy5 (cha22 family) 62% |
-| P07 | 09-28 09:39 | t6_fb20 (id 56636707) | P06 with sell-first threshold 2.0× base (mirror tie-breaks) | pending (active pair P06 + P07; P05 2293 displaced) |
+| P06 | 09-28 04:51 | t_sb_s150 (id 56629305) | tetsutani base + SB18 opener + armed sell-ahead-2 from step 150 (targets the duel-opener wheat route) | 1440/12 (05:22) · 1961/30 (06:30) · 2289/81 (09:36): 63/78; duel 91%, buy5 (cha22 family) 62% · 2322/103 (14:22) |
+| P07 | 09-28 09:39 | t6_fb20 (id 56636707) | P06 with sell-first threshold 2.0× base (mirror tie-breaks) | 2053/18 (10:42) · 2406/36 (11:44) · 2379/77 (14:22): 47/74; duel 64%, buy5 70% |
+| P08 | 09-28 14:26 | sw_p05p07 (id 56643696) | opponent-adaptive switcher: P05 base vs cha22-family, P07 base otherwise (decided at step 92) | pending (active pair P07 + P08; P06 2322 displaced) |
 
 ## What the ladder taught us
 
@@ -91,6 +92,9 @@ productive than the public cluster (eggs/geese, wheat, wool pricing).
       - my check, seeds 12000-12007: P03 16/16, P05 15/16, P06 8/16.
     - With P07 as the tetsutani half (`sw_p05p07`, seeds 12100-12111): P03 23/24, P05 23/24, P06 15/24,
       P07 12/24, sw_p05p06 15/24, tets 23/24, m4 19/24. Official games DONE; worst turn 0.24 s.
+11. (09-28 S4) P07 peaked at 2406 (36 games) and settled at ≈2380. That's the first agent above P03 (2370).
+    At 2380 the duel openers are stronger: P07 wins 64% vs them (P06 had 91% at ~2000-2290). Ratings rise with
+    each base improvement but the field above keeps being near-mirror. Submitted P08 = switcher.
 
 ## Plan: automatic 5 slots per UTC day (09-28 → 09-30)
 
