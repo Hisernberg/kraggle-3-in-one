@@ -1,0 +1,32 @@
+group,rows,device,public_frames,private_frames,source
+IMG_00018-00019 (near-duplicate pair),2,juniper,1,1,pm1 decode
+IMG_00056-00060,5,telemed_644,1,4,pm1 decode
+IMG_00061-00065,5,telemed_644,1,4,pm1 decode
+IMG_00066-00070,5,left_ticks_800,0,5,pm1 decode
+IMG_00071-00075,5,left_ticks_800,1,4,pm1 decode
+IMG_00076-00080,5,left_ticks_800,0,5,pm1 decode + pairwise score equality
+IMG_00081-00085,5,left_ticks_800,0,5,pm1 decode + pairwise score equality
+IMG_00086-00090,5,left_ticks_800,2,3,pm1 decode
+IMG_00091-00095,5,left_ticks_800,2,3,pm1 decode
+IMG_00096-00100,5,left_ticks_800,0,5,pm1 decode
+IMG_00101-00105,5,left_ticks_800,5,0,pm2 + pm3a decode
+IMG_00106-00110,5,telemed_644,0,5,pm2 + pm3a decode
+IMG_00111-00115,5,telemed_644,0,5,pm2 + pm3a decode
+IMG_00116-00120,5,telemed_644,1,4,pm2 + pm3a decode
+IMG_00121-00125,5,telemed_644,1,4,pm2 + pm3a decode
+IMG_00126-00130,5,telemed_644,5,0,pm2 + pm3a decode
+IMG_00131-00135,5,telemed_644,0,5,pm2 + pm3b decode
+IMG_00136-00140,5,telemed_644,2,3,pm2 + pm3b decode
+IMG_00141-00145,5,telemed_644,0,5,pm2 decode
+IMG_00146-00150,5,left_ticks_800,1,4,pm2 decode (147 and 149 private by pairwise equality)
+IMG_00151-00155,5,left_ticks_800,1,4,pm3b decode
+IMG_00156-00160,5,left_ticks_800,3,2,pm3b decode
+IMG_00161-00165,5,left_ticks_800,4,1,pm3b decode
+IMG_00166-00170,5,left_ticks_800,2,3,pm3b decode
+IMG_00171-00195 (5 clips),25,left_ticks_800,?,?,not decoded yet
+single IMG_00251,1,juniper,0,1,pairwise score equality
+single IMG_00268,1,lumify_png,0,1,pairwise score equality (d24 S5 = S4)
+single IMG_00287,1,lumify_png,0,1,pairwise score equality
+single IMG_00303,1,lumify_png,0,1,pairwise score equality (d12 S4 = S2)
+single IMG_00305,1,lumify_png,1,0,single-row score change (d10 S1)
+single IMG_00038,1,gray853,1,0,single-row score change
