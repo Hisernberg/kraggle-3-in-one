@@ -64,16 +64,23 @@ if len(pairs) < 50:
 
 def decode_y(mk):
     """Instance/level-coded masks (observed: muscle body at one mid gray, fascicles at distinct
-    levels, background 0/1) -> two geometric channels: apo envelope band + interior fascicles."""
+    levels, background 0/1) -> two geometric channels: apo envelope band + interior fascicles.
+    v7: muscle body = the component with the largest VERTICAL SPAN (not max area — area picked
+    thin sub-structures in v6 and collapsed MT)."""
     st = (mk > 10).astype(np.uint8)
     if st.sum() < 100:
         return np.zeros((2,) + mk.shape, np.float32), 0.0
     k = np.ones((25, 25), np.uint8)
     closed = cv2.morphologyEx(st, cv2.MORPH_CLOSE, k)
     n, lab = cv2.connectedComponents(closed)
-    if n > 1:  # keep the largest component = muscle body
-        sizes = [(lab == i).sum() for i in range(1, n)]
-        fill = (lab == (1 + int(np.argmax(sizes)))).astype(np.uint8)
+    if n > 1:
+        best, span = 0, -1
+        for i in range(1, n):
+            ys = np.where((lab == i).any(axis=1))[0]
+            s = (ys.max() - ys.min()) if len(ys) else -1
+            if s > span:
+                span, best = s, i
+        fill = (lab == best).astype(np.uint8)
     else:
         fill = closed
     fill = cv2.morphologyEx(fill, cv2.MORPH_CLOSE, np.ones((15, 15), np.uint8))
@@ -81,6 +88,17 @@ def decode_y(mk):
     fasc = (st & ~cv2.dilate(band, np.ones((9, 9), np.uint8))).astype(np.float32)
     y = np.stack([band.astype(np.float32), fasc])
     return y, float(fasc.sum())
+
+def roi_bbox(mk):
+    ys, xs = np.where(mk > 10)
+    if len(ys) == 0:
+        return None
+    h, w = mk.shape
+    y0, y1 = max(0, ys.min() - 24), min(h, ys.max() + 24)
+    x0, x1 = max(0, xs.min() - 24), min(w, xs.max() + 24)
+    if (y1 - y0) < 64 or (x1 - x0) < 64:
+        return None
+    return y0, y1, x0, x1
 
 class SegDS(Dataset):
     def __init__(self, pairs, train): self.pairs, self.train = pairs, train
@@ -91,6 +109,10 @@ class SegDS(Dataset):
         if im is None or mk is None: return torch.zeros(1, IMG, IMG), torch.zeros(2, IMG, IMG)
         h, w = im.shape[:2]
         if mk.shape[:2] != (h, w): mk = cv2.resize(mk, (w, h), interpolation=cv2.INTER_NEAREST)
+        bb = roi_bbox(mk)
+        if bb is not None:
+            y0, y1, x0, x1 = bb
+            im, mk = im[y0:y1, x0:x1], mk[y0:y1, x0:x1]
         im = cv2.resize(im, (IMG, IMG)).astype(np.float32) / 255.0
         mk = cv2.resize(mk, (IMG, IMG), interpolation=cv2.INTER_NEAREST)
         y, fasc_px = decode_y(mk)
@@ -126,17 +148,19 @@ def evaluate(model, va):
                 rows.append([iou(y[c].numpy(), pr[b, c]) for c in range(2)])
     return np.array(rows)
 
-def train(model, tr, va, tag, epochs=10, bs=8):
+def train(model, tr, va, tag, epochs=20, bs=8):
     opt = torch.optim.AdamW(model.parameters(), lr=3e-4)
     dsc = smp.losses.DiceLoss(mode="multilabel"); bce = nn.BCEWithLogitsLoss()
+    scl = torch.cuda.amp.GradScaler()
     tl = DataLoader(SegDS(tr, True), batch_size=bs, shuffle=True, num_workers=0)
     hist = []
     for ep in range(epochs):
         model.train(); t0 = time.time()
         for im, y in tl:
             im, y = im.to(DEV), y.to(DEV)
-            loss = 0.5 * dsc(model(im), y) + 0.5 * bce(model(im), y)
-            opt.zero_grad(); loss.backward(); opt.step()
+            with torch.cuda.amp.autocast():
+                loss = 0.5 * dsc(model(im), y) + 0.5 * bce(model(im), y)
+            opt.zero_grad(); scl.scale(loss).backward(); scl.step(opt); scl.update()
         arr = evaluate(model, va)
         hist.append([float(loss.item()), float(arr[:, 0].mean()), float(arr[:, 1].mean()), time.time() - t0])
         L(f"[{tag}] ep{ep+1}/{epochs} loss {hist[-1][0]:.3f} IoU apo {hist[-1][1]:.4f} fasc {hist[-1][2]:.4f} ({hist[-1][3]:.0f}s)")
@@ -153,7 +177,7 @@ scores, models = {}, {}
 for enc, tag in [("resnet34", "resnet34"), ("mit_b1", "mit_b1")]:
     try:
         m = smp.Unet(enc, encoder_weights="imagenet", in_channels=1, classes=2).to(DEV)
-        h = train(m, tr, va, tag, epochs=6)
+        h = train(m, tr, va, tag, epochs=20)
         scores[tag] = {"apo_iou": h[1], "fasc_iou": h[2], "loss": h[0]}
         models[tag] = m
     except Exception as e:
@@ -207,20 +231,80 @@ def fasc_stats(mk, apo_line):
             float(np.median(fls)) if fls else None,
             len(pas))
 
+def img_bbox(im):
+    """ROI for unlabeled frames: the ultrasound fan has intensity, background is near-black."""
+    h, w = im.shape
+    col_ok = np.where(im.mean(axis=0) > 0.08 * im.max())[0]
+    row_ok = np.where(im.mean(axis=1) > 0.08 * im.max())[0]
+    if len(col_ok) < 64 or len(row_ok) < 64:
+        return None
+    x0, x1 = max(0, col_ok.min() - 24), min(w, col_ok.max() + 24)
+    y0, y1 = max(0, row_ok.min() - 24), min(h, row_ok.max() + 24)
+    if (y1 - y0) < 64 or (x1 - x0) < 64:
+        return None
+    return y0, y1, x0, x1
+
 def predict_mask(path):
     im = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
     if im is None:
         return None, None
-    h, w = im.shape[:2]
-    x = cv2.resize(im, (IMG, IMG)).astype(np.float32) / 255.0
-    t = torch.from_numpy(x[None, None]).to(DEV)
+    H, W = im.shape
+    bb = img_bbox(im)
+    if bb is None:
+        crop = cv2.resize(im, (IMG, IMG)).astype(np.float32) / 255.0
+        off = (0, 0)
+        cw, ch = W, H
+    else:
+        y0, y1, x0, x1 = bb
+        off = (x0, y0)
+        cw, ch = x1 - x0, y1 - y0
+        crop = cv2.resize(im[y0:y1, x0:x1], (IMG, IMG)).astype(np.float32) / 255.0
+    t = torch.from_numpy(crop[None, None]).to(DEV)
     with torch.no_grad():
         p = torch.sigmoid(model(t))[0].cpu().numpy()
         p += torch.sigmoid(model(torch.flip(t, dims=[-1])))[0].cpu().numpy()[..., ::-1]  # hflip TTA
         p /= 2
-    band = (cv2.resize(p[0], (w, h)) > 0.5).astype(np.uint8)
-    fasc = (cv2.resize(p[1], (w, h)) > 0.5).astype(np.uint8)
+    canvas = np.zeros((2, H, W), np.float32)
+    for c in range(2):
+        canvas[c, off[1]:off[1] + ch, off[0]:off[0] + cw] = cv2.resize(p[c], (cw, ch))
+    band = (canvas[0] > 0.5).astype(np.uint8)
+    fasc = (canvas[1] > 0.5).astype(np.uint8)
     return im, band, fasc
+
+def geometry_from(band, fasc):
+    """Per-frame geometry from (band, fasc) masks: returns dict(pa_deg, fl_px, mt_px)."""
+    sup, deep = apo_lines(band)
+    out = {"pa_deg": np.nan, "fl_px": np.nan, "mt_px": np.nan}
+    if deep is None:
+        return out
+    pa, fl_px, _ = fasc_stats(fasc, deep)
+    if pa is not None:
+        out["pa_deg"], out["fl_px"] = pa, fl_px
+    if sup is not None:
+        xs = np.arange(int(band.shape[1] * .2), int(band.shape[1] * .8), 8)
+        sep = np.abs((sup[0] * xs + sup[1]) - (deep[0] * xs + deep[1]))
+        out["mt_px"] = float(np.median(sep))
+    return out
+
+# end-to-end gate on the holdout: geometry from GT mask vs geometry from predicted mask
+gate_rows = []
+rng_gate = random.Random(77)
+for ip, mp in rng_gate.sample(va, min(120, len(va))):
+    mk = cv2.imread(mp, cv2.IMREAD_GRAYSCALE)
+    if mk is None:
+        continue
+    gt = decode_y(mk)[0] > 0.5
+    g_gt = geometry_from(gt[0].astype(np.uint8), gt[1].astype(np.uint8))
+    out = predict_mask(ip)
+    if out[0] is None:
+        continue
+    _, band_p, fasc_p = out
+    g_p = geometry_from(band_p, fasc_p)
+    gate_rows.append({k: g_p[k] - g_gt[k] for k in g_gt})
+gate_arr = pd.DataFrame(gate_rows)
+gate = {f"{c}_mae": float(gate_arr[c].abs().mean()) for c in gate_arr.columns} if len(gate_arr) else {}
+gate["n"] = len(gate_arr)
+L(f"GATE (pred-geometry vs GT-mask-geometry, holdout): {gate}")
 
 # scales for test images
 scales = {}
@@ -229,20 +313,6 @@ for c in glob.glob(f"{IN}/**/umud_test_scales.csv", recursive=True):
     scales = dict(zip(s.image_id, s.calib_px_per_10mm))
     L(f"scales loaded: {len(scales)} from {c}")
 med_scale = float(np.median(list(scales.values()))) if scales else 125.0
-
-# optional end-to-end validation vs train annotation CSVs
-val_rows = {}
-for c in glob.glob(f"{IN}/**/*.csv", recursive=True):
-    try:
-        d = pd.read_csv(c, nrows=3)
-    except Exception:
-        continue
-    lc = {col.lower(): col for col in d.columns}
-    if {"image_id"} <= set(lc) and ({"pa_deg", "pa"} & set(lc)):
-        ann = pd.read_csv(c)
-        pa_c = lc.get("pa_deg", lc.get("pa"))
-        val_rows[c] = (ann, pa_c, lc.get("fl_mm", lc.get("fl")), lc.get("mt_mm", lc.get("mt")))
-        L(f"annotation CSV: {c} rows={len(ann)} cols={list(ann.columns)[:10]}")
 
 member, geoms = {}, []
 test_imgs = [p for p in imgs if os.path.basename(p).upper().startswith("IMG_")]
@@ -253,21 +323,14 @@ for j, ip in enumerate(sorted(test_imgs)):
     if out[0] is None:
         continue
     im, band, fasc = out
-    sup, deep = apo_lines(band)
+    g = geometry_from(band, fasc)
     cal = float(scales.get(os.path.basename(ip), med_scale))
     mm_per_px = 10.0 / cal
-    row = {"image_id": os.path.basename(ip), "pa_deg": np.nan, "fl_mm": np.nan, "mt_mm": np.nan}
-    if deep is not None:
-        pa, fl_px, ncomp = fasc_stats(fasc, deep)
-        if pa is not None:
-            row["pa_deg"], row["fl_mm"] = pa, fl_px * mm_per_px
-        if sup is not None:
-            # vertical separation sampled across the middle 60% of columns
-            xs = np.arange(int(im.shape[1] * .2), int(im.shape[1] * .8), 8)
-            sep = np.abs((sup[0] * xs + sup[1]) - (deep[0] * xs + deep[1]))
-            row["mt_mm"] = float(np.median(sep)) * mm_per_px
-        geoms.append({"image_id": row["image_id"], "n_fasc": ncomp if pa is not None else 0,
-                      "pa": row["pa_deg"], "fl_mm": row["fl_mm"], "mt_mm": row["mt_mm"]})
+    row = {"image_id": os.path.basename(ip), "pa_deg": g["pa_deg"],
+           "fl_mm": g["fl_px"] * mm_per_px if np.isfinite(g["fl_px"]) else np.nan,
+           "mt_mm": g["mt_px"] * mm_per_px if np.isfinite(g["mt_px"]) else np.nan}
+    geoms.append({"image_id": row["image_id"], "pa": row["pa_deg"], "fl_mm": row["fl_mm"],
+                  "mt_mm": row["mt_mm"]})
     member[row["image_id"]] = row
     if (j + 1) % 50 == 0:
         L(f"predicted {j+1}/{len(test_imgs)} ({time.time()-t0:.0f}s)")
@@ -278,8 +341,9 @@ L(f"member CSV: {len(mdf)} rows; PA non-null {mdf.pa_deg.notna().sum()}, FL {mdf
 L(mdf[["pa_deg", "fl_mm", "mt_mm"]].describe().to_string())
 
 json.dump({"status": "OK", "winner": winner, "scores": scores, "n_pairs": len(pairs),
-           "n_test_predicted": len(mdf), "scales_source": "umud-test-scales (bar calib)",
-           "note": "geometry is v1 heuristic (apo line fits + fascicle PCA); expect refinement vs ensemble"},
+           "n_test_predicted": len(mdf), "gate": gate,
+           "scales_source": "umud-test-scales (bar calib)",
+           "note": "v7: column-span fill + ROI crop + AMP + 20 epochs + GT-geometry gate"},
           open(f"{OUT}/run_record.json", "w"), indent=1)
 L("== slm0 v4 bridge done ==")
 '''
